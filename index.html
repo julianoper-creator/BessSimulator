@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Simulador Estratégico · Energy Arb + Storage + Gen</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d1117; color: #e6edf3; font-family: 'IBM Plex Sans', sans-serif; }
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+
+
+
+const { useState, useMemo, useCallback, useRef, useEffect } = React;
+
+// ═══════════════════════════════════════════════════════════
+// PALETA
+// ═══════════════════════════════════════════════════════════
+const C = {
+  bg:"#07090c", surface:"#0c1117", card:"#111820", border:"#1a2535",
+  accent:"#3dd9eb", gold:"#f5c842", green:"#2ecc71", red:"#e74c3c",
+  amber:"#f39c12", violet:"#9b59b6", blue:"#3498db", teal:"#1abc9c",
+  text:"#d8e8f0", sub:"#7a9ab0", muted:"#3a5568", dim:"#1e303f",
+};
+const CORES = [C.muted, C.accent, C.gold, C.green, C.violet];
+
+// ═══════════════════════════════════════════════════════════
+// PERFIS HORÁRIOS
+// ═══════════════════════════════════════════════════════════
+const PERFIL_SOLAR = [0,0,0,0,0,0,0.05,0.18,0.42,0.65,0.82,0.92,0.95,0.90,0.80,0.62,0.38,0.15,0.03,0,0,0,0,0];
+// Perfil dia útil (referência 1.0 = pico)
+const PERFIL_DU   = [0.62,0.60,0.58,0.57,0.58,0.62,0.70,0.82,0.92,0.97,1.00,0.99,0.96,0.98,0.99,0.98,0.95,0.90,0.80,0.72,0.70,0.68,0.65,0.63];
+// Perfil fim de semana: carga ~20-30% menor, sem pico industrial, sem ponta tarifária
+const PERFIL_FDS  = [0.45,0.43,0.41,0.40,0.40,0.42,0.48,0.55,0.62,0.68,0.72,0.74,0.73,0.72,0.70,0.68,0.65,0.62,0.60,0.57,0.55,0.52,0.50,0.47];
+const HORAS_PONTA = [18,19,20]; // ponta ANEEL padrão — só dias úteis
+
+// ═══════════════════════════════════════════════════════════
+// CALENDÁRIO MENSAL — dias úteis vs fins de semana
+// ═══════════════════════════════════════════════════════════
+// Gera o calendário do mês corrente distinguindo DU e FDS
+// Retorna { diasUteis, diasFds, horasPontaMes, horasFPDU, horasFPFDS }
+function calcularCalendarioMes(ano, mes) {
+  // mes: 0-based (Date padrão JS)
+  const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+  let diasUteis = 0, diasFds = 0;
+  for (let d = 1; d <= diasNoMes; d++) {
+    const dow = new Date(ano, mes, d).getDay(); // 0=dom, 6=sab
+    if (dow === 0 || dow === 6) diasFds++;
+    else diasUteis++;
+  }
+  // Horas de ponta no mês: 3h/dia × dias úteis (ANEEL: ponta não existe em FDS/feriados)
+  const horasPontaMes    = HORAS_PONTA.length * diasUteis;
+  // Horas fora ponta: (24-3)h × dias úteis + 24h × dias FDS
+  const horasFPDU        = (24 - HORAS_PONTA.length) * diasUteis;
+  const horasFPFDS       = 24 * diasFds;
+  const horasFPMes       = horasFPDU + horasFPFDS;
+  const horasTotalMes    = 24 * diasNoMes;
+  return { diasUteis, diasFds, diasNoMes, horasPontaMes, horasFPDU, horasFPFDS, horasFPMes, horasTotalMes };
+}
+
+// ═══════════════════════════════════════════════════════════
+// DISTRIBUIDORAS
+// ═══════════════════════════════════════════════════════════
+const DISTRIBUIDORAS = [
+  "CPFL Paulista","CPFL Piratininga","Elektro","EDP SP","ENEL SP","ENERGISA SP",
+  "CEMIG-D","COPEL-DIS","CELESC-DIS","COELBA","COSERN","CELPE","ENERGISA MT",
+  "ENERGISA MS","ENERGISA TO","ENERGISA PB","ENERGISA SE","LIGHT","ENEL RJ",
+  "AMPLA","CELG-D","CERON","ELETROACRE","RORAIMA","AMAZONAS ENERGIA",
+  "CELPA","EDP ES","ESCELSA","COELCE","CEAL","CEPISA","ENEVA",
+];
+
+// ═══════════════════════════════════════════════════════════
+// MOTOR DE SIMULAÇÃO — considera dia útil E fim de semana
+// ═══════════════════════════════════════════════════════════
+// A simulação roda dois "dias tipo" por mês:
+//   • Dia Útil  (DU): tem ponta tarifária 18-21h, carga plena
+//   • Fim de Semana (FDS): sem ponta tarifária, carga reduzida, PLD menor
+// Os resultados são ponderados pelo calendário real do mês.
+//
+// pldPonta    = PLD médio nas horas 18-21h de dias ÚTEIS (R$/MWh)
+// pldFPDU     = PLD médio nas horas fora ponta de dias ÚTEIS (R$/MWh)
+// pldFDS      = PLD médio em TODOS os fins de semana (costuma ser pldFPDU × 0.85)
+function simularMes({ cargaMedia, potenciaGeracao, tipoGeracao, bess, tarifas, modalidade,
+                       demandaFP, demandaP, pldPonta=95, pldFPDU=85, pldFDS=75,
+                       demMedidaMediaP=null, demMedidaMediaFP=null,
+                       modoDespacho="corte_ultrap" }) {
+  // modoDespacho:
+  //   "corte_ultrap"  → BESS cobre só o excedente acima da demanda contratada (padrão)
+  //   "zerar_ponta"   → BESS cobre TODO o consumo de ponta (rede = 0 nas horas 18-21h)
+  // demMedidaMediaP / demMedidaMediaFP: média histórica da demanda MEDIDA (MW)
+  // Quando fornecida, substitui o pico sintético (maxP_mes/maxFP_mes) no cálculo
+  // de custo de demanda e multa — mais preciso que o perfil horário estimado.
+  const { te_fp, te_p, tusd_fp, tusd_p, dem_fp, dem_p, dem_unico,
+          temContratoACL, precoACL, volumeACL } = tarifas;
+  const isAzul = modalidade === "azul";
+
+  // ── Preço de energia por posto ───────────────────────────
+  // SEM contrato ACL: TE = PLD do posto (horário real) + TUSD
+  // COM contrato ACL: TE = preço bilateral + TUSD (igual P e FP)
+  // Em ambos os casos, a TUSD é sempre devida (componente de rede).
+  const pFP = temContratoACL
+    ? (precoACL||0) + (tusd_fp||0)          // contrato fixo + TUSD FP
+    : (pldFPDU||0)  + (tusd_fp||0);         // PLD fora ponta DU + TUSD FP
+  const pP = temContratoACL
+    ? (precoACL||0) + (tusd_p||0)           // contrato fixo + TUSD P
+    : (pldPonta||0) + (tusd_p||0);          // PLD ponta + TUSD P
+  const pFDS = temContratoACL
+    ? (precoACL||0) + (tusd_fp||0)
+    : (pldFDS||0)   + (tusd_fp||0);         // PLD FDS + TUSD FP
+  const ef       = bess.eficiencia || BESS_MODULO.eficiencia;
+  // Capacidade já é líquida (sem reserva de segurança) — SOC operacional 0–100%
+  const socMax   = 100;
+  const socMin   = 0;
+  const bessPot    = bess.potencia   || 0; // MW
+  const bessCapMWh = bess.capacidade || 0; // MWh líquido
+
+  // Demandas contratadas em MW (inputs já em MW)
+  const demContrP  = demandaP  || 0;  // MW — ponta  (Azul)
+  const demContrFP = demandaFP || 0;  // MW — fora ponta (Azul) ou única (Verde)
+
+  const agora = new Date();
+  const cal = calcularCalendarioMes(agora.getFullYear(), agora.getMonth());
+
+  // ── Fatores de escalonamento do perfil (nível simularMes) ─
+  // Calculados uma vez e reutilizados por simDia DU e FDS
+  // Garante que a energia ACL use os mesmos fatores do perfil simulado
+  let fatorP  = 1.0;
+  let fatorFP = 1.0;
+  if (demMedidaMediaP || demMedidaMediaFP) {
+    const mediaPerfilP  = HORAS_PONTA.reduce((s,h)=>s+PERFIL_DU[h],0) / HORAS_PONTA.length;
+    const horasFP_arr   = Array.from({length:24},(_,h)=>h).filter(h=>!HORAS_PONTA.includes(h));
+    const mediaPerfilFP = horasFP_arr.reduce((s,h)=>s+PERFIL_DU[h],0) / horasFP_arr.length;
+    if (demMedidaMediaP  && mediaPerfilP  > 0) fatorP  = demMedidaMediaP  / (cargaMedia * mediaPerfilP);
+    if (demMedidaMediaFP && mediaPerfilFP > 0) fatorFP = demMedidaMediaFP / (cargaMedia * mediaPerfilFP);
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // ESTRATÉGIA DE DESPACHO DO BESS — corrigida
+  // ─────────────────────────────────────────────────────────
+  // FASE 1 — Pré-carga (horas antes da ponta):
+  //   Carrega o BESS até capacidade máxima para garantir energia disponível na ponta.
+  //   Prioridade: excesso de geração própria → rede fora ponta.
+  //
+  // FASE 2 — Descarga na ponta (18-21h DU):
+  //   Objetivo primário: reduzir demanda líquida até a demanda contratada.
+  //   Se demanda_bruta > demanda_contratada → descarrega o excedente.
+  //   Limitado por: potência do BESS, SOC disponível, demanda contratada como piso.
+  //   Objetivo secundário: maximizar energia descarregada (arbitragem PLD) até esgotar SOC.
+  //
+  // FASE 3 — Recarga pós-ponta (horas após 21h):
+  //   Recarrega para ciclo do dia seguinte.
+
+  function simDia(tipoDia) {
+    const ehFDS = tipoDia === "fds";
+    const perfil = ehFDS ? PERFIL_FDS : PERFIL_DU;
+    const temPonta = h => !ehFDS && HORAS_PONTA.includes(h);
+
+    // fatorP e fatorFP são calculados em nível de simularMes (escopo externo)
+    // e reutilizados aqui para o perfil de cada dia
+
+    // Pré-calcular carga de cada hora com escalonamento por posto
+    const cargaHoras = Array.from({length:24}, (_,h) => {
+      const ehPontaH = !ehFDS && HORAS_PONTA.includes(h);
+      return cargaMedia * perfil[h] * (ehPontaH ? fatorP : fatorFP);
+    });
+
+    // Energia necessária na ponta para atender a estratégia de corte de demanda
+    // Em cada hora de ponta: descarregar max(0, carga - geracao - demContratada)
+    // Precisamos saber quanto BESS precisa ter carregado antes das 18h
+    let energiaNecessariaPonta = 0;
+    if (!ehFDS && bessCapMWh > 0) {
+      for (const h of HORAS_PONTA) {
+        const cargaH = cargaHoras[h];
+        const gerH = tipoGeracao==="solar" ? potenciaGeracao*PERFIL_SOLAR[h]
+                   : tipoGeracao==="eolica" ? potenciaGeracao*Math.max(0,0.3+Math.sin(h*0.5)*0.2)
+                   : tipoGeracao==="termica" ? potenciaGeracao*0.85 : 0;
+        // Quanto preciso descarregar para manter demanda ≤ demContratadaP (Azul) ou ≤ demContratadaFP (Verde)
+        const limDem = isAzul ? demContrP : demContrFP;
+        const excedente = Math.max(0, (cargaH - gerH) - limDem);
+        energiaNecessariaPonta += Math.min(excedente, bessPot); // limitado pela potência
+      }
+    }
+    // SOC alvo antes da ponta: suficiente para cobrir toda a ponta + reserva
+    const socAlvoPonta = bessCapMWh > 0
+      ? Math.min(socMax, ((energiaNecessariaPonta / ef) / bessCapMWh) * 100 + socMin)
+      : 0;
+
+    let soc = bessCapMWh * (bess.socInicial||50) / 100;
+    let eFP=0, eP=0, eGer=0, eArb=0, maxFP=0, maxP=0, maxGlob=0, descT=0;
+    const horas = [];
+
+    // ── Pré-calcular plano de despacho para as horas de ponta ──────────
+    // USA socAlvoPonta como SOC de entrada na ponta — é o SOC que o BESS terá
+    // após a pré-carga nas horas 14-17h. Não usa soc inicial (50%) que é muito menor.
+    const despachoPlano = {};
+    if (!ehFDS && bessCapMWh > 0) {
+      const limDemP = isAzul ? demContrP : demContrFP;
+      // Simula a pré-carga (14-17h) para saber o SOC REAL ao entrar na ponta
+      // Usa os mesmos parâmetros do loop principal para consistência
+      let socSimPre = soc; // começa no soc inicial do dia
+      for (let hpre = 0; hpre < HORAS_PONTA[0]; hpre++) {
+        const ehPontaH = HORAS_PONTA.includes(hpre);
+        if (!ehPontaH && socSimPre < bessCapMWh * socAlvoPonta / 100) {
+          const necessidade = bessCapMWh * socAlvoPonta / 100 - socSimPre;
+          const cargaRede = Math.min(bessPot * 0.8, necessidade, bessCapMWh - socSimPre);
+          socSimPre = Math.min(bessCapMWh, socSimPre + cargaRede * ef);
+        }
+      }
+      // SOC real ao entrar na ponta (após pré-carga simulada)
+      let socDisp = Math.min(socSimPre, bessCapMWh);
+
+      // 1ª passagem: aloca descarga por hora de ponta
+      // corte_ultrap: cobre só excedente acima do contratado
+      // zerar_ponta:  cobre toda a carga líquida (rede = 0)
+      const alocado = {};
+      for (const hp of HORAS_PONTA) {
+        const cargaHp = cargaHoras[hp];
+        const gerHp   = tipoGeracao==="solar"   ? potenciaGeracao*PERFIL_SOLAR[hp]
+                      : tipoGeracao==="eolica"  ? potenciaGeracao*Math.max(0,0.3+Math.sin(hp*0.5)*0.2)
+                      : tipoGeracao==="termica" ? potenciaGeracao*0.85 : 0;
+        const demLiq  = Math.max(0, cargaHp - gerHp);
+        const corteNec = modoDespacho === "zerar_ponta"
+          ? demLiq                              // zera 100% do consumo de ponta
+          : Math.max(0, demLiq - limDemP);      // cobre só ultrapassagem
+        const desp = Math.min(corteNec, bessPot, socDisp);
+        alocado[hp] = desp;
+        socDisp = Math.max(0, socDisp - desp / ef);
+      }
+      // 2ª passagem: distribui SOC restante como arbitragem extra
+      for (const hp of HORAS_PONTA) {
+        const extra = Math.min(bessPot - alocado[hp], socDisp);
+        if (extra > 0) { alocado[hp] += extra; socDisp = Math.max(0, socDisp - extra / ef); }
+      }
+      Object.assign(despachoPlano, alocado);
+    }
+
+    for (let h = 0; h < 24; h++) {
+      const ehP = temPonta(h);
+      const cargaH = cargaHoras[h];
+      let gerH = 0;
+      if (tipoGeracao==="solar") gerH = potenciaGeracao * PERFIL_SOLAR[h];
+      else if (tipoGeracao==="eolica") gerH = potenciaGeracao * Math.max(0, 0.3+Math.sin(h*0.5)*0.2);
+      else if (tipoGeracao==="termica") gerH = potenciaGeracao * 0.85;
+      eGer += gerH;
+
+      let cB=0, dB=0;
+      const socPct = bessCapMWh > 0 ? (soc/bessCapMWh)*100 : 0;
+      const socDispMWh = bessCapMWh * Math.max(0, socPct - socMin) / 100;
+      const socEspMWh  = bessCapMWh * Math.max(0, socMax - socPct) / 100;
+
+      if (bessCapMWh > 0) {
+        if (ehP) {
+          // ── PONTA (DU apenas): descarga pelo plano pré-calculado ──
+          // despachoPlano[h] foi calculado ANTES do loop com o SOC inicial real,
+          // garantindo que cada hora receba exatamente o corte necessário.
+          const dBplanejado = despachoPlano[h] || 0;
+          dB = Math.min(dBplanejado, socDispMWh, bessPot);
+          dB = Math.max(0, dB);
+          soc -= dB / ef;
+          descT += dB;
+          eArb  += dB;
+
+        } else {
+          // ── FORA PONTA: carga estratégica ───────────────────
+          const exc = gerH - cargaH; // excesso de geração
+
+          // Prioridade 1: absorver excesso de geração própria
+          if (exc > 0 && socPct < socMax) {
+            cB = Math.min(exc, bessPot, socEspMWh);
+            soc += cB * ef;
+          }
+
+          // Prioridade 2: pré-carregar da rede para garantir energia na ponta
+          // Mais agressivo nas horas antes da ponta (14-17h) e pós-ponta (21-23h)
+          const preCarregando = !ehFDS && (h >= 14 && h <= 17);
+          const posCarregando = !ehFDS && (h >= 21 && h <= 23);
+          const ehFDSCarregar = ehFDS;
+
+          if ((preCarregando || posCarregando || ehFDSCarregar) && socPct < socAlvoPonta) {
+            const necessidade = bessCapMWh * (socAlvoPonta - socPct) / 100;
+            const cargaRede = Math.min(bessPot * 0.8, necessidade, socEspMWh);
+            if (cargaRede > 0 && cargaRede > cB) {
+              const cargaExtra = cargaRede - cB;
+              soc += cargaExtra * ef;
+              cB += cargaExtra;
+              // Custo de recarga (paga pFP pela energia de rede)
+              // recarga custo incluso via pFP na energia
+            }
+          } else if (socPct < socMin + 15 && socEspMWh > 0) {
+            // Carga mínima de segurança
+            const cargaSeg = Math.min(bessPot * 0.3, socEspMWh);
+            if (cargaSeg > cB) {
+              soc += (cargaSeg - cB) * ef;
+              cB = cargaSeg;
+            }
+          }
+        }
+      }
+
+      const dRede = Math.max(0, cargaH - gerH - dB + cB);
+      maxGlob = Math.max(maxGlob, dRede);
+      if (ehP) { eP += dRede; maxP = Math.max(maxP, dRede); }
+      else      { eFP += dRede; maxFP = Math.max(maxFP, dRede); }
+      horas.push({ h, ehP, ehFDS, cargaH, gerH, cB, dB, dRede,
+        socPct: bessCapMWh>0?(soc/bessCapMWh)*100:0,
+        demContratada: ehP ? (isAzul?demContrP:demContrFP) : demContrFP,
+        ultrapassagem: ehP ? Math.max(0,dRede-(isAzul?demContrP:demContrFP)) : Math.max(0,dRede-demContrFP),
+      });
+    }
+    return { horas, eFP, eP, eGer, eArb, maxFP, maxP, maxGlob, descT,
+             energiaNecessariaPonta, socAlvoPonta };
+  }
+
+  const du  = simDia("du");
+  const fds = simDia("fds");
+
+  // ── Agregação mensal ─────────────────────────────────────
+  const eFP_mes   = du.eFP  * cal.diasUteis + fds.eFP  * cal.diasFds;
+  const eP_mes    = du.eP   * cal.diasUteis;
+  const eGer_mes  = du.eGer * cal.diasUteis + fds.eGer * cal.diasFds;
+  const eArb_mes  = du.eArb * cal.diasUteis;
+  const maxFP_mes     = Math.max(du.maxFP, fds.maxFP);
+  const maxP_mes      = du.maxP;
+  const maxGlobal_mes = Math.max(du.maxGlob, fds.maxGlob);
+  const ciclosMes = (du.descT * cal.diasUteis + fds.descT * cal.diasFds) / Math.max(1, bessCapMWh);
+
+  // ── Custo de energia TUSD+TE ─────────────────────────────
+  // Energia separada por posto para aplicar preço correto de cada período
+  const eFP_DU_mes  = du.eFP  * cal.diasUteis;   // MWh fora ponta DU (rede líquida)
+  const eFP_FDS_mes = fds.eFP * cal.diasFds;      // MWh fim de semana (rede líquida)
+
+  // ── Custo de energia: ACL vs Spot ────────────────────────
+  // SPOT: paga sobre energia líquida da rede (BESS/solar reduzem o que compra da rede)
+  // ACL:  energia é FIXA — calculada sobre a carga bruta da UC ANTES de qualquer BESS/solar
+  //       O medidor da distribuidora está na entrada da UC: BESS e solar ficam internos.
+  //       Por isso a energia ACL é IDÊNTICA em todos os cenários.
+  //       O ganho do BESS no ACL é EXCLUSIVAMENTE via demanda e multa.
+
+  // Energia bruta por posto: calculada direto do perfil × fator (sem loop de simulação)
+  // Usa os mesmos fatores de escalonamento (fatorP, fatorFP) do simDia,
+  // mas sem o efeito de BESS (cB/dB) e sem geração solar (gerH)
+  const simDuBruto = (() => {
+    let efp=0, ep=0;
+    for (let h=0; h<24; h++) {
+      const ehPontaH = HORAS_PONTA.includes(h);
+      const cargaBruta = cargaMedia * PERFIL_DU[h] * (ehPontaH ? fatorP : fatorFP);
+      if (ehPontaH) ep  += cargaBruta;
+      else          efp += cargaBruta;
+    }
+    return { efp, ep };
+  })();
+  const simFdsBruto = (() => {
+    let efp=0;
+    for (let h=0; h<24; h++) {
+      efp += cargaMedia * PERFIL_FDS[h] * fatorFP;
+    }
+    return { efp };
+  })();
+
+  const eBruta_FP_DU = simDuBruto.efp  * cal.diasUteis;  // MWh — carga bruta FP dias úteis
+  const eBruta_P_DU  = simDuBruto.ep   * cal.diasUteis;  // MWh — carga bruta Ponta dias úteis
+  const eBruta_FDS   = simFdsBruto.efp * cal.diasFds;    // MWh — carga bruta FDS
+
+  // temContratoACL and precoACL already destructured from tarifas above
+  // Geração solar no mês (apenas solar — térmica/eólica tratadas diferente)
+  // Solar injetada na UC reduz a medição da distribuidora → reduz energia faturada
+  const eGerSolar_mes = tipoGeracao === "solar" ? eGer_mes : 0;
+
+  let custoEnergia;
+  if (temContratoACL) {
+    const te = precoACL || 0;
+    // ACL + BESS (sem solar): energia IGUAL ao Cenário Base — BESS não altera medição
+    // ACL + Solar: solar reduz energia MEDIDA → reduz custo de TE
+    // Energia líquida ACL = carga bruta − geração solar (≥0)
+    const eLiqACL_FP = Math.max(0, eBruta_FP_DU + eBruta_FDS - eGerSolar_mes);
+    const eLiqACL_P  = eBruta_P_DU; // solar não gera na ponta (18-21h) — negligível
+    custoEnergia = eLiqACL_FP * (te + (tusd_fp||0))
+                 + eLiqACL_P  * (te + (tusd_p ||0));
+  } else {
+    // SPOT: PLD+TUSD sobre energia LÍQUIDA da rede (BESS e solar reduzem consumo)
+    custoEnergia = (eFP_DU_mes * pFP + eP_mes * pP + eFP_FDS_mes * pFDS);
+  }
+
+  // ── Custo de demanda + multa ──────────────────────────────
+  // demMedidaMediaP/FP calibram o perfil via fatorP/fatorFP (já aplicado no cargaHoras)
+  // O maxP_mes / maxFP_mes JÁ reflete a demanda real histórica (via fatorP) para o
+  // Cenário Base, e a demanda reduzida pelo BESS para cenários com BESS.
+  // → Usar maxP_mes para TODOS os cenários é correto e consistente.
+  // → NÃO usar demMedidaMedia diretamente aqui (já está embutida no perfil).
+  const MW2kW = 1000;
+  const demEfetP    = maxP_mes;                        // MW — ponto mais alto da ponta simulada
+  const demEfetFP   = maxFP_mes;                       // MW — ponto mais alto FP simulada
+  const demEfetGlob = maxGlobal_mes;                   // MW — máximo global (Verde)
+
+  let custoDFP=0, custoDemP=0, multa=0;
+  if (isAzul) {
+    // Fatura: paga o maior entre contratado e medido
+    custoDFP  = Math.max(demEfetFP, demContrFP) * MW2kW * (dem_fp||0);
+    custoDemP = Math.max(demEfetP,  demContrP)  * MW2kW * (dem_p||0);
+    // Multa: 200% da tarifa sobre o excedente acima do contratado
+    multa = (Math.max(0, demEfetFP - demContrFP) * MW2kW * (dem_fp||0)
+           + Math.max(0, demEfetP  - demContrP)  * MW2kW * (dem_p||0)) * 2;
+  } else {
+    custoDFP  = Math.max(demEfetGlob, demContrFP) * MW2kW * (dem_unico||0);
+    multa = Math.max(0, demEfetGlob - demContrFP) * MW2kW * (dem_unico||0) * 2;
+  }
+
+  // ── Ganho de arbitragem PLD ───────────────────────────────
+  // SPOT: ganho real = descarrega no pico (pldPonta) e recarrega fora ponta (pldFPDU)
+  // ACL:  não há ganho de arbitragem de energia (preço fixo do contrato)
+  //       O benefício do BESS no ACL é EXCLUSIVAMENTE via demanda e multa
+  const ganhoDescarga  = temContratoACL ? 0 : du.eArb * cal.diasUteis * pldPonta;
+  const custoRecarga   = temContratoACL ? 0 : (du.eArb / ef) * cal.diasUteis * pldFPDU;
+  const ganhoArbPLD    = Math.max(0, ganhoDescarga - custoRecarga);
+
+  // ── Custo total do cenário ────────────────────────────────
+  // Total = (energia + demanda + multa) - ganho de arbitragem PLD
+  // O ganho de arbitragem é real: vendemos/economizamos no horário caro e compramos no barato
+  const total = custoEnergia + custoDFP + custoDemP + multa - ganhoArbPLD;
+
+  // ── Indicadores de efetividade ────────────────────────────
+  // Redução de demanda ponta: diferença entre demanda efetiva antes/depois do BESS
+  const demPontaSemBESS  = demMedidaMediaP || (cargaMedia * PERFIL_DU[19]);
+  const reducaoDemandaP  = bessCapMWh > 0 ? Math.max(0, demPontaSemBESS - maxP_mes) : 0;
+  const coberturaContrat = demContrP > 0
+    ? Math.min(100, (1 - Math.max(0, maxP_mes - demContrP) / demContrP) * 100) : 100;
+
+  const { diasUteis, diasFds, diasNoMes, horasPontaMes, horasFPDU, horasFPFDS } = cal;
+
+  return {
+    horasDU:  du.horas,
+    horasFDS: fds.horas,
+    eFP_mes, eP_mes, eGer_mes, eArb_mes,
+    maxFP: maxFP_mes, maxP: maxP_mes, maxGlobal: maxGlobal_mes,
+    demEfetP, demEfetFP,  // demanda efetiva usada no faturamento
+    ciclosMes, reducaoDemandaP, coberturaContrat,
+    pFP, pP, pFDS, pldPonta, pldFPDU, pldFDS, temContratoACL: !!temContratoACL,
+    ganhoArbPLD, ganhoDescarga, custoRecarga,
+    cal: { diasUteis, diasFds, diasNoMes, horasPontaMes, horasFPDU, horasFPFDS },
+    custos:{ energia:custoEnergia, demandaFP:custoDFP, demandaP:custoDemP,
+             multa, arbPLD: -ganhoArbPLD, total },
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTEGRAÇÕES VIA CLAUDE API
+// ═══════════════════════════════════════════════════════════
+async function callClaude(prompt, systemPrompt, fileBase64=null, mediaTipo=null) {
+  let content;
+  if (fileBase64) {
+    // PDF → document block; imagens → image block
+    const isPdf = (mediaTipo||"").includes("pdf");
+    const fileBlock = isPdf
+      ? { type:"document", source:{ type:"base64", media_type:"application/pdf", data:fileBase64 } }
+      : { type:"image",    source:{ type:"base64", media_type:mediaTipo||"image/jpeg", data:fileBase64 } };
+    content = [ fileBlock, { type:"text", text:prompt } ];
+  } else {
+    content = prompt;
+  }
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:2000,
+      system: systemPrompt ||
+        "Você é um especialista em mercado de energia elétrica brasileiro. Responda APENAS com JSON válido, sem markdown, sem texto extra. Nunca use undefined, sempre use null para valores desconhecidos.",
+      messages:[{ role:"user", content }]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  const txt = data.content?.find(b=>b.type==="text")?.text || "";
+  return txt;
+}
+
+// Buscar tarifas ANEEL para distribuidora + subgrupo + modalidade
+async function buscarTarifasANEEL(distribuidora, subgrupo, modalidade) {
+  const prompt = `Busque os dados de tarifas homologadas pela ANEEL para:
+- Distribuidora: ${distribuidora}
+- Subgrupo: ${subgrupo}
+- Modalidade tarifária: ${modalidade === "azul" ? "Azul" : "Verde"}
+
+As tarifas estão disponíveis no CSV público da ANEEL:
+https://dadosabertos.aneel.gov.br/dataset/5a583f3e-1646-4f67-bf0f-69db4203e89e/resource/fcf2906c-7c32-4b9b-a637-054e7a5234f4/download/tarifas-homologadas-distribuidoras-energia-eletrica.csv
+
+Use seus dados de treinamento e conhecimento atualizado para retornar os valores mais recentes de tarifas homologadas para essa distribuidora.
+
+Retorne APENAS este JSON (valores em R$/MWh para energia e R$/kW para demanda):
+{
+  "te_fp": <número>,
+  "te_p": <número>,
+  "tusd_fp": <número>,
+  "tusd_p": <número>,
+  "dem_fp": <número ou null se verde>,
+  "dem_p": <número ou null se verde>,
+  "dem_unico": <número ou null se azul>,
+  "vigencia": "<mês/ano>",
+  "fonte": "ANEEL dados abertos"
+}`;
+
+  const txt = await callClaude(prompt);
+  try {
+    const clean = txt.replace(/```json|```/g,"").trim();
+    return JSON.parse(clean);
+  } catch { return null; }
+}
+
+// Buscar PLD horário real da CCEE — CSV público por ano
+// Roda no browser (fetch direto, sem proxy) calculando médias reais
+// ponta = horas 18,19,20 de dias úteis (seg-sex)
+// fora ponta = demais horas de dias úteis + todos os fins de semana
+async function buscarPLDCCEE(submercado) {
+  const hoje = new Date();
+  const anoAtual = hoje.getFullYear();
+  const anoAnterior = anoAtual - 1;
+
+  // URLs dos CSVs públicos da CCEE (um por ano)
+  // CORS aberto — funciona direto do browser
+  const CSV_URLS = {
+    2024: "https://dadosabertos.ccee.org.br/dataset/pld_horario/resource/1b5b6946-8036-4622-a7a3-b21f33fc52b7/download/pld_horario_2024.csv",
+    2025: "https://dadosabertos.ccee.org.br/dataset/pld_horario/resource/2a180a6b-f092-43eb-9f82-a48798b803dc/download/pld_horario_2025.csv",
+    2026: "https://dadosabertos.ccee.org.br/dataset/pld_horario/resource/3f279d6b-1069-42f7-9b0a-217b084729c4/download/pld_horario_2026.csv",
+  };
+
+  // Tenta buscar CSV do ano atual, fallback para ano anterior
+  async function fetchCSV(ano) {
+    const url = CSV_URLS[ano];
+    if (!url) return null;
+    try {
+      const r = await fetch(url, { cache: "force-cache" });
+      if (!r.ok) return null;
+      return await r.text();
+    } catch { return null; }
+  }
+
+  // Parseia CSV da CCEE e retorna array de { data, hora, submercado, pld }
+  // Formato típico: data_referencia;hora;id_submercado;val_pld  (separador ; ou ,)
+  function parseCSV(txt, sub) {
+    if (!txt) return [];
+    const lines = txt.trim().split(/\r?\n/);
+    const header = lines[0].toLowerCase();
+    // Detecta separador
+    const sep = header.includes(";") ? ";" : ",";
+    const cols = header.split(sep).map(c => c.trim().replace(/"/g,""));
+
+    // Mapeia colunas por nome (flexível para variações do CCEE)
+    const iData = cols.findIndex(c => c.includes("data") || c.includes("dat_ref"));
+    const iHora = cols.findIndex(c => c.includes("hora") || c.includes("hre"));
+    const iSub  = cols.findIndex(c => c.includes("submercado") || c.includes("id_sub") || c.includes("nom_sub"));
+    const iPLD  = cols.findIndex(c => c.includes("pld") || c.includes("val_pld") || c.includes("preco"));
+
+    if (iData < 0 || iHora < 0 || iPLD < 0) {
+      console.warn("CCEE CSV: colunas não encontradas", cols);
+      return [];
+    }
+
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(sep).map(c => c.trim().replace(/"/g,""));
+      if (parts.length < 3) continue;
+
+      // Filtra submercado se coluna disponível
+      if (iSub >= 0) {
+        const s = parts[iSub]?.toUpperCase();
+        if (!s.includes(sub.toUpperCase()) && s !== sub.toUpperCase()) continue;
+      }
+
+      const rawData = parts[iData] || "";
+      const hora    = parseInt(parts[iHora]) || 0;
+      const pld     = parseFloat((parts[iPLD]||"0").replace(",","."));
+      if (isNaN(pld) || pld <= 0) continue;
+
+      // Parseia data (aceita dd/mm/yyyy ou yyyy-mm-dd)
+      let date;
+      if (rawData.includes("/")) {
+        const [d,m,y] = rawData.split("/");
+        date = new Date(+y, +m-1, +d);
+      } else {
+        date = new Date(rawData);
+      }
+      if (isNaN(date.getTime())) continue;
+
+      rows.push({ date, hora, pld });
+    }
+    return rows;
+  }
+
+  // Calcula médias dos últimos 3 meses com separação ponta/fora-ponta/fds
+  function calcularMedias(rows) {
+    const hoje = new Date();
+    const limite = new Date(hoje);
+    limite.setMonth(limite.getMonth() - 3);
+
+    // Agrupa por mês para o detalhe mensal
+    const porMes = {};
+    let totalP=0, cntP=0, totalFP=0, cntFP=0, totalFDS=0, cntFDS=0;
+
+    for (const r of rows) {
+      if (r.date < limite || r.date > hoje) continue;
+
+      const dow = r.date.getDay(); // 0=dom, 6=sab
+      const isFDS = (dow === 0 || dow === 6);
+      const isPonta = !isFDS && (r.hora === 18 || r.hora === 19 || r.hora === 20);
+
+      const mesKey = `${r.date.getFullYear()}-${String(r.date.getMonth()+1).padStart(2,"0")}`;
+      if (!porMes[mesKey]) porMes[mesKey] = { P:[], FP:[], FDS:[] };
+
+      if (isFDS) {
+        porMes[mesKey].FDS.push(r.pld);
+        totalFDS += r.pld; cntFDS++;
+      } else if (isPonta) {
+        porMes[mesKey].P.push(r.pld);
+        totalP += r.pld; cntP++;
+      } else {
+        porMes[mesKey].FP.push(r.pld);
+        totalFP += r.pld; cntFP++;
+      }
+    }
+
+    const avg = (arr) => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+    const pldPonta   = cntP   > 0 ? totalP/cntP     : 0;
+    const pldFPDU    = cntFP  > 0 ? totalFP/cntFP   : 0;
+    const pldFDS_val = cntFDS > 0 ? totalFDS/cntFDS : pldFPDU * 0.85;
+    const pldMedio   = (totalP+totalFP+totalFDS) / Math.max(1, cntP+cntFP+cntFDS);
+    const spread     = pldFPDU > 0 ? ((pldPonta/pldFPDU)-1)*100 : 0;
+
+    const meses = Object.entries(porMes)
+      .sort((a,b) => b[0].localeCompare(a[0]))
+      .slice(0,3)
+      .map(([key, v]) => {
+        const [y,m] = key.split("-");
+        const nomeMes = new Date(+y,+m-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+        return {
+          mes: nomeMes,
+          medio:      +avg([...v.P,...v.FP,...v.FDS]).toFixed(2),
+          ponta:      +avg(v.P).toFixed(2),
+          fora_ponta: +avg(v.FP).toFixed(2),
+          fds:        +avg(v.FDS).toFixed(2),
+          horas_ponta: v.P.length,
+        };
+      });
+
+    return { pldMedio, pldPonta, pldFPDU, pldFDS: pldFDS_val, spread, meses,
+             totalHoras: cntP+cntFP+cntFDS, cntP, cntFP, cntFDS };
+  }
+
+  // ── Execução principal ─────────────────────────────────────
+  // Tenta ano atual + anterior para garantir 3 meses de dados
+  let rows = [];
+  const csv1 = await fetchCSV(anoAtual);
+  if (csv1) rows = parseCSV(csv1, submercado);
+
+  // Se não tem dados suficientes no ano atual, busca anterior também
+  if (rows.length < 500) {
+    const csv0 = await fetchCSV(anoAnterior);
+    if (csv0) rows = [...parseCSV(csv0, submercado), ...rows];
+  }
+
+  if (rows.length === 0) {
+    throw new Error("Não foi possível obter dados do CSV da CCEE. Verifique sua conexão.");
+  }
+
+  const m = calcularMedias(rows);
+
+  return {
+    submercado,
+    pld_medio_3m:      +m.pldMedio.toFixed(2),
+    pld_ponta_3m:      +m.pldPonta.toFixed(2),
+    pld_fora_ponta_3m: +m.pldFPDU.toFixed(2),
+    pld_fds_3m:        +m.pldFDS.toFixed(2),
+    spread_ponta_fp_pct: +m.spread.toFixed(1),
+    meses: m.meses,
+    horas_analisadas: m.totalHoras,
+    horas_ponta: m.cntP,
+    fonte: `CCEE PLD Horário ${anoAnterior}–${anoAtual} · ${m.totalHoras.toLocaleString("pt-BR")} obs · Calculado no browser`,
+  };
+}
+
+
+// Ler fatura PDF e extrair premissas
+async function lerFaturaPDF(base64Data, mediaType) {
+  const sys = `Você é especialista em faturas de energia elétrica do Brasil (distribuidoras ANEEL).
+Sua única função é extrair dados estruturados de faturas e retornar JSON válido.
+
+REGRAS ABSOLUTAS:
+- Retorne SOMENTE o objeto JSON, sem nenhum texto antes ou depois
+- Nunca use undefined — use null para campos não encontrados
+- Demandas em kW, energias em MWh, tarifas em R$/kW ou R$/MWh
+
+═══ COMO IDENTIFICAR A MODALIDADE TARIFÁRIA (CRÍTICO) ═══
+
+TARIFA AZUL → possui DUAS linhas de demanda separadas na fatura:
+  • "Demanda Fora Ponta" (ou "Dem FP", "TUSD Demanda FP") com seu preço unitário
+  • "Demanda Ponta" (ou "Dem P", "TUSD Demanda Ponta") com preço unitário DIFERENTE e mais caro
+  Palavras-chave: "Azul", "AZUL", "Dem Ponta", "Demanda Ponta", "DP", "DFP"
+  → modalidade = "azul"
+  → dem_fp_tarifa = preço unitário da demanda fora ponta (R$/kW)
+  → dem_p_tarifa  = preço unitário da demanda ponta (R$/kW)
+  → dem_unico_tarifa = null
+
+TARIFA VERDE → possui UMA única linha de demanda na fatura:
+  • "Demanda" (sem distinção ponta/fora ponta), ou "TUSD Demanda"
+  Palavras-chave: "Verde", "VERDE", "Demanda Única", "DU"
+  → modalidade = "verde"
+  → dem_unico_tarifa = preço unitário da demanda única (R$/kW)
+  → dem_fp_tarifa = null
+  → dem_p_tarifa  = null
+
+REGRA DE OURO: Se a fatura cobrar demanda com dois preços unitários distintos
+(um para ponta e outro para fora ponta) → É AZUL, independente do que estiver escrito.
+Se cobrar demanda com um único preço → É VERDE.
+
+═══ TARIFAS UNITÁRIAS (CRÍTICO) ═══
+Cada linha de faturamento tem: DESCRIÇÃO | QUANTIDADE | PREÇO UNITÁRIO | VALOR TOTAL
+Você deve extrair SOMENTE o PREÇO UNITÁRIO — NUNCA o valor total.
+
+Exemplo CORRETO:
+  "TUSD Energia FP | 850 MWh | R$ 185,40/MWh | R$ 157.590,00"
+  → tusd_fp = 185.40 ✅   NÃO 157590 ❌
+
+  "TUSD Demanda FP | 5.000 kW | R$ 22,50/kW | R$ 112.500,00"
+  → dem_fp_tarifa = 22.50 ✅   NÃO 112500 ❌
+
+Faixas de sanidade (se fora disso, você pegou o total, não o unitário):
+- te_fp, tusd_fp: R$ 30–500/MWh
+- te_p, tusd_p: R$ 50–1500/MWh
+- dem_fp_tarifa: R$ 5–100/kW
+- dem_p_tarifa: R$ 10–200/kW
+- dem_unico_tarifa: R$ 5–80/kW`;
+
+  const prompt = `Analise esta fatura de energia elétrica com máxima atenção.
+
+PASSO 1 — IDENTIFICAR MODALIDADE:
+- Duas cobranças de demanda com preços distintos (ponta ≠ FP) → modalidade = "azul"
+- Uma única cobrança de demanda → modalidade = "verde"
+Procure também as palavras "Azul", "Verde", "Modalidade" no cabeçalho.
+
+PASSO 2 — EXTRAIR TODOS OS CAMPOS ABAIXO:
+
+A) IDENTIFICAÇÃO:
+- distribuidora: nome da distribuidora
+- subgrupo: "A3a" (≥88kV) | "A4" (2,3–25kV) | "AS" (subterrânea)
+- modalidade: "azul" | "verde"
+- mes_referencia: mês/ano da fatura (ex: "JUL/2025")
+- dias_faturamento: número de dias do período (ex: 31)
+
+B) DEMANDAS (em kW):
+- demanda_contratada_fp_kw: demanda CONTRATADA Fora Ponta
+- demanda_contratada_p_kw: demanda CONTRATADA Ponta
+- demanda_medida_fp_kw: demanda MEDIDA/REGISTRADA Fora Ponta (valor real medido no mês)
+- demanda_medida_p_kw: demanda MEDIDA/REGISTRADA Ponta (valor real medido no mês)
+- ultrapassagem_fp_kw: kW excedente na Fora Ponta (medida - contratada, se positivo)
+- ultrapassagem_p_kw: kW excedente na Ponta (medida - contratada, se positivo)
+
+C) ENERGIA (em MWh):
+- consumo_fp_mwh: consumo total Fora Ponta em MWh
+- consumo_p_mwh: consumo total Ponta em MWh
+
+D) TARIFAS UNITÁRIAS (PREÇO POR UNIDADE — NÃO O TOTAL):
+- te_fp, te_p: Tarifa de Energia FP e Ponta (R$/MWh)
+- tusd_fp, tusd_p: TUSD energia FP e Ponta (R$/MWh)
+- dem_fp_tarifa, dem_p_tarifa: tarifa de demanda FP e Ponta (R$/kW)
+- dem_unico_tarifa: tarifa de demanda única Verde (R$/kW)
+
+E) TOTAIS:
+- total_fatura: valor total da fatura (R$)
+- valor_multa_ultrapassagem: valor total cobrado de multa por ultrapassagem (R$)
+
+Retorne EXATAMENTE este JSON (null para campos não encontrados):
+{"distribuidora":null,"subgrupo":null,"modalidade":null,"mes_referencia":null,"dias_faturamento":30,"demanda_contratada_fp_kw":null,"demanda_contratada_p_kw":null,"demanda_medida_fp_kw":null,"demanda_medida_p_kw":null,"ultrapassagem_fp_kw":0,"ultrapassagem_p_kw":0,"consumo_fp_mwh":null,"consumo_p_mwh":null,"te_fp":null,"te_p":null,"tusd_fp":null,"tusd_p":null,"dem_fp_tarifa":null,"dem_p_tarifa":null,"dem_unico_tarifa":null,"total_fatura":null,"valor_multa_ultrapassagem":0,"observacoes":null}`;
+
+  const txt = await callClaude(prompt, sys, base64Data, mediaType);
+  try {
+    let clean = txt.replace(/```json|```/g, "").trim();
+    const match = clean.match(/\{[\s\S]*\}/);
+    if (match) clean = match[0];
+    clean = clean.replace(/:\s*undefined/g, ":null");
+    const parsed = JSON.parse(clean);
+
+    // ── Validação cruzada de modalidade ──────────────────────────────
+    // Se veio como "verde" mas tem dem_p_tarifa preenchida → provavelmente é azul
+    if (parsed.modalidade === "verde" && parsed.dem_p_tarifa) {
+      parsed.modalidade = "azul";
+      parsed.observacoes = (parsed.observacoes||"") + " ⚠ Modalidade corrigida de Verde→Azul (dem_p_tarifa detectada).";
+    }
+    // Se veio como "azul" mas só tem dem_unico_tarifa e sem dem_fp nem dem_p → provavelmente é verde
+    if (parsed.modalidade === "azul" && !parsed.dem_fp_tarifa && !parsed.dem_p_tarifa && parsed.dem_unico_tarifa) {
+      parsed.modalidade = "verde";
+      parsed.observacoes = (parsed.observacoes||"") + " ⚠ Modalidade corrigida de Azul→Verde (apenas demanda única detectada).";
+    }
+    // Se modalidade nula mas temos pistas estruturais
+    if (!parsed.modalidade) {
+      if (parsed.dem_p_tarifa || (parsed.dem_fp_tarifa && parsed.dem_p_tarifa)) parsed.modalidade = "azul";
+      else if (parsed.dem_unico_tarifa) parsed.modalidade = "verde";
+    }
+
+    // Validação de sanidade: detecta se veio valor total em vez de unitário
+    const FAIXAS = {
+      te_fp:   [30, 500], te_p:   [50, 1500],
+      tusd_fp: [30, 500], tusd_p: [50, 1500],
+      dem_fp_tarifa: [5, 100], dem_p_tarifa: [10, 200], dem_unico_tarifa: [5, 80],
+    };
+    const alertas = [];
+    for (const [campo, [min, max]] of Object.entries(FAIXAS)) {
+      const v = parsed[campo];
+      if (v !== null && v !== undefined && (v < min || v > max)) {
+        alertas.push(`${campo}=${v} (fora da faixa ${min}–${max} R$/unidade — provavelmente valor total)`);
+        parsed[campo] = null; // zera para forçar preenchimento manual
+      }
+    }
+    if (alertas.length) parsed.observacoes = (parsed.observacoes||"") + " ⚠ Valores rejeitados (possível total em vez de unitário): " + alertas.join("; ");
+    return parsed;
+  } catch(e) {
+    console.error("lerFaturaPDF parse error:", e, "\nRaw:", txt);
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// UI PRIMITIVES
+// ═══════════════════════════════════════════════════════════
+function Tag({ children, color=C.accent }) {
+  return <span style={{ background:`${color}18`, color, border:`1px solid ${color}35`,
+    borderRadius:3, padding:"2px 8px", fontSize:10, fontWeight:700, letterSpacing:1 }}>{children}</span>;
+}
+
+function Spinner({ color=C.accent }) {
+  return <span style={{ display:"inline-block", width:14, height:14,
+    border:`2px solid ${color}30`, borderTop:`2px solid ${color}`,
+    borderRadius:"50%", animation:"spin 0.8s linear infinite" }}/>;
+}
+
+function SliderRow({ label, value, min, max, step, onChange, unit, color=C.accent, fmt:fmtFn }) {
+  const pct = Math.max(0,Math.min(100,((value-min)/(max-min))*100));
+  return (
+    <div style={{ marginBottom:12 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+        <span style={{ color:C.sub, fontSize:11 }}>{label}</span>
+        <span style={{ color, fontSize:12, fontWeight:700, fontFamily:"monospace" }}>
+          {fmtFn?fmtFn(value):value} {unit}
+        </span>
+      </div>
+      <div style={{ position:"relative" }}>
+        <div style={{ height:3, background:C.dim, borderRadius:2 }}>
+          <div style={{ height:"100%", width:`${pct}%`, background:color, borderRadius:2 }}/>
+        </div>
+        <input type="range" min={min} max={max} step={step} value={value}
+          onChange={e=>onChange(+e.target.value)}
+          style={{ position:"absolute", top:-8, left:0, width:"100%", opacity:0, cursor:"pointer", height:20 }}/>
+      </div>
+    </div>
+  );
+}
+
+function KPI({ label, value, unit, color=C.accent, icon, delta, loading }) {
+  return (
+    <div style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:10,
+      padding:"12px 14px", position:"relative", overflow:"hidden" }}>
+      <div style={{ position:"absolute", top:0, right:0, width:50, height:50,
+        background:`radial-gradient(circle at top right,${color}15,transparent 70%)` }}/>
+      <div style={{ color:C.sub, fontSize:9, letterSpacing:1.5, marginBottom:5, textTransform:"uppercase" }}>{icon} {label}</div>
+      <div style={{ color, fontSize:20, fontWeight:700, fontFamily:"monospace", lineHeight:1 }}>
+        {loading ? <Spinner color={color}/> : <>{value}<span style={{ fontSize:11, color:C.sub, marginLeft:3 }}>{unit}</span></>}
+      </div>
+      {delta!==undefined&&!loading&&<div style={{ marginTop:4, fontSize:10, color:delta<=0?C.green:C.red }}>
+        {delta<=0?"▼":"▲"} {Math.abs(delta).toFixed(1)}% vs baseline
+      </div>}
+    </div>
+  );
+}
+
+function PerfilChart({ horas, pFP, pP, isFDS=false }) {
+  if (!horas?.length) return null;
+  const W=460, H=130;
+  const max = Math.max(...horas.map(d=>Math.max(d.cargaH,d.gerH||0,d.dRede,0.1)));
+  const toY = v => H-(v/max)*(H-8)-4;
+  const pathOf = key => horas.map((d,i)=>`${i===0?"M":"L"}${i*(W/23)},${toY(d[key]||0)}`).join(" ");
+  return (
+    <svg viewBox={`0 0 ${W} ${H+22}`} style={{ width:"100%" }}>
+      <defs>
+        <linearGradient id="gc3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={C.accent} stopOpacity="0.22"/><stop offset="100%" stopColor={C.accent} stopOpacity="0.01"/>
+        </linearGradient>
+        <linearGradient id="gg3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={C.gold} stopOpacity="0.28"/><stop offset="100%" stopColor={C.gold} stopOpacity="0.01"/>
+        </linearGradient>
+      </defs>
+      {HORAS_PONTA.map(h=><rect key={h} x={h*(W/23)} y={0} width={W/23} height={H} fill={C.red} opacity={0.07}/>)}
+      <path d={pathOf("cargaH")+` L${W},${H} L0,${H} Z`} fill="url(#gc3)"/>
+      <path d={pathOf("cargaH")} stroke={C.accent} strokeWidth="2" fill="none"/>
+      {horas.some(d=>d.gerH>0)&&<>
+        <path d={pathOf("gerH")+` L${W},${H} L0,${H} Z`} fill="url(#gg3)"/>
+        <path d={pathOf("gerH")} stroke={C.gold} strokeWidth="1.8" fill="none" strokeDasharray="5,3"/>
+      </>}
+      <path d={pathOf("dRede")} stroke={C.green} strokeWidth="1.5" fill="none"/>
+      {horas.some(d=>d.socPct>0)&&<path d={horas.map((d,i)=>`${i===0?"M":"L"}${i*(W/23)},${toY(d.socPct/100*max)}`).join(" ")}
+        stroke={C.violet} strokeWidth="1.5" fill="none" strokeDasharray="3,3" opacity={0.8}/>}
+      {[0,6,12,18,23].map(h=><text key={h} x={h*(W/23)} y={H+16} fill={C.muted} fontSize="9" textAnchor="middle">{h}h</text>)}
+      {isFDS
+        ? <text x={W} y={H+16} fill={C.amber} fontSize="9" textAnchor="end">⚠ FIM DE SEMANA — sem ponta tarifária · carga reduzida</text>
+        : pFP&&pP&&<text x={W} y={H+16} fill={C.muted} fontSize="9" textAnchor="end">FP R${pFP.toFixed(0)} <tspan fill={C.red}>▐ P R${pP.toFixed(0)}/MWh</tspan></text>
+      }
+    </svg>
+  );
+}
+
+function BarrasCusto({ cenarios, isAzul }) {
+  // Usa custo bruto (sem subtrair arbitragem) para escala visual, mas mostra o líquido
+  const maxBruto = Math.max(...cenarios.map(c=>{
+    const cu=c.sim?.custos||{}; return (cu.energia||0)+(cu.demandaFP||0)+(cu.demandaP||0)+(cu.multa||0);
+  }), 1);
+  return (
+    <div style={{ display:"flex", gap:10, alignItems:"flex-end", height:150 }}>
+      {cenarios.map((c,i)=>{
+        const cu = c.sim?.custos||{};
+        const e=cu.energia||0, dFP=cu.demandaFP||0, dP=cu.demandaP||0;
+        const m=cu.multa||0, arb=Math.abs(cu.arbPLD||0), total=cu.total||0;
+        const bruto = e+dFP+dP+m;
+        const cor=CORES[i];
+        const hBruto = (bruto/maxBruto)*130;
+        const hArb   = bruto>0 ? (arb/bruto)*hBruto : 0;
+        return (
+          <div key={i} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
+            <div style={{ color:cor, fontSize:10, fontWeight:700, fontFamily:"monospace" }}>
+              R${(total/1000).toFixed(0)}k
+              {arb>0&&<span style={{ color:C.green, fontSize:8, display:"block" }}>-R${(arb/1000).toFixed(0)}k arb</span>}
+            </div>
+            <div style={{ width:"100%", position:"relative" }}>
+              {/* Barra de custo bruto */}
+              <div style={{ width:"100%", height:hBruto, display:"flex", flexDirection:"column",
+                justifyContent:"flex-end", border:`1px solid ${cor}40`,
+                borderRadius:"4px 4px 0 0", overflow:"hidden", minHeight:bruto>0?6:0 }}>
+                {m>0&&<div style={{ background:C.red, height:`${(m/bruto)*100}%`, minHeight:3 }}/>}
+                {dP>0&&<div style={{ background:`${C.blue}90`, height:`${(dP/bruto)*100}%`, minHeight:3 }}/>}
+                {dFP>0&&<div style={{ background:`${C.amber}80`, height:`${(dFP/bruto)*100}%`, minHeight:4 }}/>}
+                <div style={{ background:`${cor}70`, flex:1 }}/>
+              </div>
+              {/* Seta verde = ganho arbitragem PLD */}
+              {hArb>2&&<div style={{
+                position:"absolute", bottom:0, left:"10%", width:"80%", height:hArb,
+                background:`${C.green}35`, border:`1px solid ${C.green}70`,
+                borderRadius:2, display:"flex", alignItems:"center", justifyContent:"center",
+              }}>
+                <span style={{ color:C.green, fontSize:8, fontWeight:700 }}>↓ arb</span>
+              </div>}
+            </div>
+            <div style={{ color:C.sub, fontSize:9, textAlign:"center", lineHeight:1.3, maxWidth:70 }}>{c.nome}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAINEL: INTEGRAÇÃO DE DADOS
+// ═══════════════════════════════════════════════════════════
+function PainelIntegracao({ tarifas, setTarifas, modalidade, setModalidade, submercado, setSubmercado,
+                             distribuidora, setDistribuidora, pldData, setPldData, onFaturaLida }) {
+  const [loadingTarifa, setLoadingTarifa] = useState(false);
+  const [loadingPld,    setLoadingPld]    = useState(false);
+  const [loadingPdf,    setLoadingPdf]    = useState(false);
+  const [subgrupo, setSubgrupo] = useState("A4");
+  const [msgT, setMsgT] = useState("");
+  const [msgP, setMsgP] = useState("");
+  const [msgPdf, setMsgPdf] = useState("");
+  const [pldModoManual, setPldModoManual] = useState(false);
+  const [pldManual, setPldManual] = useState({ pld_ponta_3m:0, pld_fora_ponta_3m:0, pld_fds_3m:0, pld_medio_3m:0, spread_ponta_fp_pct:0 });
+  const pdfInputRef = useRef();
+
+  const isAzul = modalidade === "azul";
+
+  const handleBuscarTarifas = async () => {
+    setLoadingTarifa(true); setMsgT("Consultando ANEEL...");
+    try {
+      const dados = await buscarTarifasANEEL(distribuidora, subgrupo, modalidade);
+      if (dados) {
+        setTarifas(dados);
+        setMsgT(`✅ Tarifas carregadas · Vigência: ${dados.vigencia||"—"}`);
+      } else {
+        setMsgT("⚠️ Não encontrado — verifique distribuidora/subgrupo");
+      }
+    } catch(e) { setMsgT("❌ Erro: "+e.message); }
+    setLoadingTarifa(false);
+  };
+
+  // Auto-fetch PLD ao montar e ao trocar submercado
+  const fetchPLD = useCallback(async (sub) => {
+    setLoadingPld(true);
+    setMsgP("⏳ Buscando PLD horário real da CCEE...");
+    try {
+      const dados = await buscarPLDCCEE(sub);
+      setPldData(dados);
+      const ponta = dados.pld_ponta_3m||0, fp = dados.pld_fora_ponta_3m||0, fds = dados.pld_fds_3m||0;
+      setMsgP(`✅ CCEE · Ponta: R$${ponta.toFixed(2)} · FP DU: R$${fp.toFixed(2)} · FDS: R$${fds.toFixed(2)}/MWh · ${dados.horas_analisadas?.toLocaleString("pt-BR")||"?"} obs`);
+    } catch(e) {
+      setMsgP(`⚠️ ${e.message} — verifique conexão`);
+    }
+    setLoadingPld(false);
+  }, []);
+
+  // Busca automática ao montar e ao trocar submercado
+  useEffect(() => { fetchPLD(submercado); }, [submercado, fetchPLD]);
+
+  const handlePDF = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLoadingPdf(true); setMsgPdf(`Lendo fatura: ${file.name}...`);
+    try {
+      const b64 = await new Promise((res,rej)=>{
+        const r = new FileReader();
+        r.onload = () => res(r.result.split(",")[1]);
+        r.onerror = () => rej(new Error("Falha na leitura"));
+        r.readAsDataURL(file);
+      });
+      const dados = await lerFaturaPDF(b64, file.type||"application/pdf");
+      if (dados) {
+        // ── Atualizar distribuidora, subgrupo, modalidade ──
+        if (dados.distribuidora) setDistribuidora(dados.distribuidora);
+        if (dados.modalidade)    setModalidade(dados.modalidade);
+        if (dados.subgrupo)      setSubgrupo(dados.subgrupo);
+
+        // ── Atualizar tarifas unitárias ────────────────────
+        const t = {};
+        if (dados.te_fp)           t.te_fp    = dados.te_fp;
+        if (dados.te_p)            t.te_p     = dados.te_p;
+        if (dados.tusd_fp)         t.tusd_fp  = dados.tusd_fp;
+        if (dados.tusd_p)          t.tusd_p   = dados.tusd_p;
+        if (dados.dem_fp_tarifa)   t.dem_fp   = dados.dem_fp_tarifa;
+        if (dados.dem_p_tarifa)    t.dem_p    = dados.dem_p_tarifa;
+        if (dados.dem_unico_tarifa) t.dem_unico = dados.dem_unico_tarifa;
+        if (Object.keys(t).length > 0) setTarifas(prev => ({...prev,...t}));
+
+        // ── Atualizar carga, demandas e cenário baseline ───
+        const diasMes = dados.dias_faturamento || 30;
+
+        // Carga média = consumo total ÷ horas reais do período
+        const consumoTotal = (dados.consumo_fp_mwh||0) + (dados.consumo_p_mwh||0);
+        const cargaEstimada = consumoTotal > 0 ? consumoTotal / (diasMes * 24) : null;
+
+        // Demanda contratada (prioridade: contratada > medida) em MW
+        const demFP = (dados.demanda_contratada_fp_kw || dados.demanda_medida_fp_kw || 0) / 1000 || null;
+        const demP  = (dados.demanda_contratada_p_kw  || dados.demanda_medida_p_kw  || 0) / 1000 || null;
+
+        // Demanda medida (valor real registrado no medidor) em MW
+        // Usada para dimensionar o BESS corretamente
+        const demMedidaFP = (dados.demanda_medida_fp_kw || 0) / 1000;
+        const demMedidaP  = (dados.demanda_medida_p_kw  || 0) / 1000;
+
+        // Ultrapassagem extraída da fatura (já calculada pela distribuidora)
+        const ultrapFP = (dados.ultrapassagem_fp_kw || 0) / 1000; // MW
+        const ultrapP  = (dados.ultrapassagem_p_kw  || 0) / 1000; // MW
+
+        // Notifica o App com todos os dados necessários
+        if (onFaturaLida) onFaturaLida({
+          cargaEstimada, demFP, demP,
+          demMedidaFP, demMedidaP,
+          ultrapFP, ultrapP,
+          modalidade: dados.modalidade,
+          dadosBrutos: dados,
+        });
+
+        // ── Mensagem de retorno ────────────────────────────
+        const alertPdf = dados.observacoes?.includes("⚠") ? " ⚠ Alguns campos rejeitados — revise" : "";
+        const camposOk = [
+          dados.consumo_fp_mwh   && `Energia FP: ${dados.consumo_fp_mwh.toFixed(0)} MWh`,
+          dados.consumo_p_mwh    && `P: ${dados.consumo_p_mwh.toFixed(0)} MWh`,
+          demFP                  && `Dem contrat. FP: ${(demFP).toFixed(2)} MW`,
+          demP                   && `P: ${(demP).toFixed(2)} MW`,
+          demMedidaFP>0          && `Dem medida FP: ${demMedidaFP.toFixed(2)} MW`,
+          demMedidaP>0           && `P: ${demMedidaP.toFixed(2)} MW`,
+          ultrapP>0              && `⚠ Ultrapass. P: ${(ultrapP*1000).toFixed(0)} kW`,
+          ultrapFP>0             && `FP: ${(ultrapFP*1000).toFixed(0)} kW`,
+          cargaEstimada          && `Carga média: ~${cargaEstimada.toFixed(2)} MW`,
+        ].filter(Boolean).join(" · ");
+        setMsgPdf(`✅ ${dados.mes_referencia||""} · R$ ${(dados.total_fatura||0).toLocaleString("pt-BR",{minimumFractionDigits:2})} · ${camposOk}${alertPdf}`);
+      } else {
+        setMsgPdf("⚠️ Não foi possível extrair dados da fatura");
+      }
+    } catch(e) { setMsgPdf("❌ Erro: "+e.message); }
+    setLoadingPdf(false);
+  };
+
+  const fieldStyle = { background:C.card, border:`1px solid ${C.border}`, borderRadius:6,
+    padding:"6px 10px", color:C.text, fontFamily:"inherit", fontSize:12, width:"100%" };
+
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+
+      {/* ── PDF Fatura ─────────────────────────────── */}
+      <div style={{ background:C.surface, border:`1px solid ${C.teal}40`, borderRadius:12, padding:16 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
+          <Tag color={C.teal}>📄 FATURA PDF</Tag>
+          <span style={{ color:C.sub, fontSize:11 }}>Extração automática de premissas via IA</span>
+        </div>
+        <div style={{ display:"flex", gap:10, alignItems:"center", flexWrap:"wrap" }}>
+          <button onClick={()=>pdfInputRef.current?.click()} disabled={loadingPdf}
+            style={{ padding:"8px 16px", borderRadius:8, background:`${C.teal}20`,
+              border:`1px solid ${C.teal}60`, color:C.teal, fontSize:12, fontWeight:600,
+              cursor:"pointer", display:"flex", alignItems:"center", gap:6 }}>
+            {loadingPdf?<Spinner color={C.teal}/>:"📤"} {loadingPdf?"Lendo PDF...":"Subir Fatura PDF"}
+          </button>
+          <input ref={pdfInputRef} type="file" accept=".pdf,image/*" onChange={handlePDF} style={{ display:"none" }}/>
+          {msgPdf && <div style={{ color: msgPdf.startsWith("✅")?C.green:msgPdf.startsWith("⚠")?C.amber:C.red,
+            fontSize:11, flex:1, lineHeight:1.5 }}>{msgPdf}</div>}
+        </div>
+        {!msgPdf && <div style={{ color:C.muted, fontSize:10, marginTop:8 }}>
+          Suba a fatura em PDF ou imagem — o sistema extrai distribuidora, subgrupo, modalidade,
+          tarifas, demandas contratadas e consumo automaticamente.
+        </div>}
+      </div>
+
+      {/* ── Tarifas ANEEL ──────────────────────────── */}
+      <div style={{ background:C.surface, border:`1px solid ${C.blue}40`, borderRadius:12, padding:16 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
+          <Tag color={C.blue}>⚡ TARIFAS ANEEL</Tag>
+          <span style={{ color:C.sub, fontSize:11 }}>Dados homologados por distribuidora</span>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))", gap:10, marginBottom:12 }}>
+          <div>
+            <div style={{ color:C.sub, fontSize:10, marginBottom:4 }}>DISTRIBUIDORA</div>
+            <select value={distribuidora} onChange={e=>setDistribuidora(e.target.value)} style={fieldStyle}>
+              {DISTRIBUIDORAS.map(d=><option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ color:C.sub, fontSize:10, marginBottom:4 }}>SUBGRUPO</div>
+            <select value={subgrupo} onChange={e=>setSubgrupo(e.target.value)} style={fieldStyle}>
+              <option value="A3a">A3a — ≥88kV</option>
+              <option value="A4">A4 — 2,3–25kV</option>
+              <option value="AS">AS — Subterrânea</option>
+            </select>
+          </div>
+          <div>
+            <div style={{ color:C.sub, fontSize:10, marginBottom:4 }}>MODALIDADE</div>
+            <div style={{ display:"flex", gap:6 }}>
+              {[["azul","🔵 Azul"],["verde","🟢 Verde"]].map(([v,l])=>(
+                <button key={v} onClick={()=>setModalidade(v)} style={{
+                  flex:1, padding:"6px 4px", borderRadius:7, fontSize:12, fontWeight:600,
+                  background:modalidade===v?`${v==="azul"?C.blue:C.green}20`:C.dim,
+                  border:`1px solid ${modalidade===v?(v==="azul"?C.blue:C.green):"transparent"}`,
+                  color:modalidade===v?(v==="azul"?C.blue:C.green):C.sub,
+                }}>{l}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <button onClick={handleBuscarTarifas} disabled={loadingTarifa}
+          style={{ padding:"8px 16px", borderRadius:8, background:`${C.blue}20`,
+            border:`1px solid ${C.blue}60`, color:C.blue, fontSize:12, fontWeight:600,
+            cursor:"pointer", display:"flex", alignItems:"center", gap:6 }}>
+          {loadingTarifa?<Spinner color={C.blue}/>:"🔄"} {loadingTarifa?"Consultando ANEEL...":"Buscar Tarifas ANEEL"}
+        </button>
+        {msgT&&<div style={{ color:msgT.startsWith("✅")?C.green:msgT.startsWith("⚠")?C.amber:C.red,
+          fontSize:11, marginTop:8 }}>{msgT}</div>}
+
+        {/* Tabela de tarifas atuais */}
+        {tarifas && (
+          <div style={{ marginTop:12, display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))", gap:8 }}>
+            {[
+              ["TE FP", tarifas.te_fp, "R$/MWh", C.sub],
+              ["TE Ponta", tarifas.te_p, "R$/MWh", C.red],
+              ["TUSD FP", tarifas.tusd_fp, "R$/MWh", C.sub],
+              ["TUSD Ponta", tarifas.tusd_p, "R$/MWh", C.red],
+              isAzul?["Dem FP", tarifas.dem_fp, "R$/kW", C.amber]:["Dem Única", tarifas.dem_unico, "R$/kW", C.green],
+              isAzul?["Dem Ponta", tarifas.dem_p, "R$/kW", C.red]:null,
+            ].filter(Boolean).map(([label,val,unit,cor])=>(
+              <div key={label} style={{ background:C.card, borderRadius:7, padding:"8px 10px" }}>
+                <div style={{ color:C.muted, fontSize:9 }}>{label}</div>
+                <div style={{ color:cor, fontFamily:"monospace", fontWeight:700 }}>
+                  {val!=null ? `R$ ${(+val).toFixed(2)}` : "—"} <span style={{ fontSize:9, color:C.muted }}>{unit}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Edição manual de tarifas */}
+        <details style={{ marginTop:12 }}>
+          <summary style={{ color:C.sub, fontSize:11, cursor:"pointer" }}>✏️ Editar tarifas manualmente</summary>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))", gap:8, marginTop:10 }}>
+            {[
+              ["TE FP (R$/MWh)","te_fp"],["TE P (R$/MWh)","te_p"],
+              ["TUSD FP (R$/MWh)","tusd_fp"],["TUSD P (R$/MWh)","tusd_p"],
+              isAzul?["Dem FP (R$/kW)","dem_fp"]:["Dem Única (R$/kW)","dem_unico"],
+              isAzul?["Dem P (R$/kW)","dem_p"]:null,
+            ].filter(Boolean).map(([label,key])=>(
+              <div key={key}>
+                <div style={{ color:C.muted, fontSize:9, marginBottom:3 }}>{label}</div>
+                <input type="number" step="0.01"
+                  value={tarifas?.[key]||""} placeholder="0.00"
+                  onChange={e=>setTarifas(prev=>({...prev,[key]:+e.target.value}))}
+                  style={{ ...fieldStyle, width:"100%" }}/>
+              </div>
+            ))}
+          </div>
+        </details>
+      </div>
+
+      {/* ── PLD CCEE — automático ou manual ─────── */}
+      <div style={{ background:C.surface, border:`1px solid ${C.gold}40`, borderRadius:12, padding:16 }}>
+
+        {/* Header com toggle automático/manual */}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12, flexWrap:"wrap", gap:8 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+            <Tag color={C.gold}>📈 PLD CCEE</Tag>
+            <span style={{ color:C.sub, fontSize:11 }}>
+              {pldModoManual ? "Valores manuais" : "Dados horários reais · últimos 3 meses · automático"}
+            </span>
+          </div>
+          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            {/* Toggle automático / manual */}
+            {[["auto","⚡ Automático"],["manual","✏️ Manual"]].map(([modo,label])=>(
+              <button key={modo} onClick={()=>setPldModoManual(modo==="manual")}
+                style={{ padding:"4px 12px", borderRadius:6, fontSize:11, fontWeight:600,
+                  background: (pldModoManual===(modo==="manual"))?`${C.gold}25`:C.dim,
+                  border:`1px solid ${(pldModoManual===(modo==="manual"))?C.gold:"transparent"}`,
+                  color:(pldModoManual===(modo==="manual"))?C.gold:C.sub }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── MODO AUTOMÁTICO ── */}
+        {!pldModoManual && (
+          <div>
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10, flexWrap:"wrap" }}>
+              <div style={{ color:C.sub, fontSize:10 }}>SUBMERCADO</div>
+              <select value={submercado} onChange={e=>setSubmercado(e.target.value)}
+                style={{...fieldStyle, width:"auto"}}>
+                {["SE","S","NE","N"].map(s=><option key={s} value={s}>{s} — {
+                  {SE:"Sudeste/CO",S:"Sul",NE:"Nordeste",N:"Norte"}[s]}</option>)}
+              </select>
+              {loadingPld && <Spinner color={C.gold}/>}
+              <button onClick={()=>fetchPLD(submercado)} disabled={loadingPld} title="Recarregar"
+                style={{ padding:"4px 10px", borderRadius:6, background:`${C.gold}15`,
+                  border:`1px solid ${C.gold}40`, color:C.gold, fontSize:12, cursor:"pointer" }}>↺</button>
+            </div>
+            {msgP&&<div style={{ color:msgP.startsWith("✅")?C.green:msgP.startsWith("⚠")?C.amber:C.gold,
+              fontSize:11, marginBottom:8 }}>{msgP}</div>}
+          </div>
+        )}
+
+        {/* ── MODO MANUAL ── */}
+        {pldModoManual && (
+          <div>
+            <div style={{ color:C.muted, fontSize:10, marginBottom:10 }}>
+              Informe os valores médios do PLD para o período de análise.
+              Ponta = horas 18–21h dias úteis · Fora Ponta = demais horas DU · FDS = fins de semana.
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))", gap:10 }}>
+              {[
+                ["PLD Ponta (R$/MWh)", "pld_ponta_3m", C.red],
+                ["PLD Fora Ponta DU (R$/MWh)", "pld_fora_ponta_3m", C.green],
+                ["PLD Fim de Semana (R$/MWh)", "pld_fds_3m", C.sub],
+                ["PLD Médio Geral (R$/MWh)", "pld_medio_3m", C.gold],
+              ].map(([label, key, cor])=>(
+                <div key={key}>
+                  <div style={{ color:C.muted, fontSize:9, marginBottom:4 }}>{label}</div>
+                  <input type="number" step="0.01" min="0" max="9999"
+                    value={pldManual[key]||""}
+                    placeholder={key==="pld_fds_3m"?"≈ FP × 0.85":key==="pld_medio_3m"?"calculado auto":"0.00"}
+                    onChange={e=>{
+                      const val = +e.target.value;
+                      setPldManual(prev=>{
+                        const next = {...prev, [key]: val};
+                        // Auto-calcula médio geral como média ponderada se não editado
+                        if (key!=="pld_medio_3m") {
+                          const p = next.pld_ponta_3m||0, fp = next.pld_fora_ponta_3m||0, fds = next.pld_fds_3m||(fp*0.85);
+                          // Ponderação aproximada: ponta 3h×22DU, FP 21h×22DU, FDS 24h×8FDS
+                          const tot = 3*22*p + 21*22*fp + 24*8*fds;
+                          const hrs = 3*22 + 21*22 + 24*8;
+                          next.pld_medio_3m = hrs>0 ? Math.round((tot/hrs)*100)/100 : 0;
+                          next.pld_fds_3m = next.pld_fds_3m || Math.round(fp*0.85*100)/100;
+                          next.spread_ponta_fp_pct = fp>0 ? Math.round(((p/fp)-1)*10000)/100 : 0;
+                        }
+                        return next;
+                      });
+                      // Aplica imediatamente ao pldData
+                      setPldData(prev=>({...(prev||{}), [key]:val,
+                        fonte:"Manual",
+                        submercado: submercado,
+                      }));
+                    }}
+                    style={{ ...fieldStyle, width:"100%",
+                      borderColor: key==="pld_ponta_3m"?`${C.red}60`:key==="pld_fora_ponta_3m"?`${C.green}60`:C.border }}/>
+                </div>
+              ))}
+            </div>
+            {/* Botão aplicar manual */}
+            <button onClick={()=>{
+              const p = pldManual.pld_ponta_3m||0;
+              const fp= pldManual.pld_fora_ponta_3m||0;
+              const fds = pldManual.pld_fds_3m||(fp*0.85);
+              const hrs = 3*22 + 21*22 + 24*8;
+              const medio = hrs>0?(3*22*p + 21*22*fp + 24*8*fds)/hrs : (p+fp)/2;
+              const spread = fp>0 ? ((p/fp)-1)*100 : 0;
+              setPldData({
+                submercado, pld_medio_3m:+medio.toFixed(2),
+                pld_ponta_3m:p, pld_fora_ponta_3m:fp, pld_fds_3m:fds,
+                spread_ponta_fp_pct:+spread.toFixed(1),
+                meses:[], horas_analisadas:0, fonte:"Manual",
+              });
+              setMsgP(`✅ PLD manual aplicado · Ponta: R$${p.toFixed(2)} · FP: R$${fp.toFixed(2)} · Spread: ${spread.toFixed(1)}%`);
+            }} style={{ marginTop:12, padding:"7px 16px", borderRadius:8, fontSize:12, fontWeight:600,
+              background:`${C.gold}20`, border:`1px solid ${C.gold}60`, color:C.gold, cursor:"pointer" }}>
+              ✓ Aplicar valores manuais
+            </button>
+            {msgP&&msgP.startsWith("✅")&&<div style={{ color:C.green, fontSize:11, marginTop:6 }}>{msgP}</div>}
+          </div>
+        )}
+
+        {/* KPIs PLD — visíveis em ambos os modos quando dados disponíveis */}
+        {pldData?.pld_ponta_3m>0 && (
+          <div style={{ marginTop:12 }}>
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:8 }}>
+              <div style={{ background:C.card, borderRadius:8, padding:"10px 14px", flex:1, minWidth:100 }}>
+                <div style={{ color:C.muted, fontSize:9 }}>MÉDIO GERAL</div>
+                <div style={{ color:C.gold, fontSize:18, fontWeight:700, fontFamily:"monospace" }}>
+                  R$ {(pldData.pld_medio_3m||0).toFixed(2)}<span style={{ fontSize:9, color:C.muted }}>/MWh</span>
+                </div>
+              </div>
+              <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}25`, borderRadius:8, padding:"10px 14px", flex:1, minWidth:100 }}>
+                <div style={{ color:C.muted, fontSize:9 }}>PONTA (18–21h DU)</div>
+                <div style={{ color:C.red, fontSize:18, fontWeight:700, fontFamily:"monospace" }}>
+                  R$ {(pldData.pld_ponta_3m||0).toFixed(2)}<span style={{ fontSize:9, color:C.muted }}>/MWh</span>
+                </div>
+              </div>
+              <div style={{ background:`${C.green}10`, border:`1px solid ${C.green}25`, borderRadius:8, padding:"10px 14px", flex:1, minWidth:100 }}>
+                <div style={{ color:C.muted, fontSize:9 }}>FORA PONTA DU</div>
+                <div style={{ color:C.green, fontSize:18, fontWeight:700, fontFamily:"monospace" }}>
+                  R$ {(pldData.pld_fora_ponta_3m||0).toFixed(2)}<span style={{ fontSize:9, color:C.muted }}>/MWh</span>
+                </div>
+              </div>
+              <div style={{ background:`${C.dim}`, borderRadius:8, padding:"10px 14px", minWidth:90 }}>
+                <div style={{ color:C.muted, fontSize:9 }}>FIM DE SEMANA</div>
+                <div style={{ color:C.sub, fontSize:18, fontWeight:700, fontFamily:"monospace" }}>
+                  R$ {(pldData.pld_fds_3m||(pldData.pld_fora_ponta_3m*0.85)||0).toFixed(2)}<span style={{ fontSize:9, color:C.muted }}>/MWh</span>
+                </div>
+              </div>
+              <div style={{ background:`${C.violet}10`, border:`1px solid ${C.violet}25`, borderRadius:8, padding:"10px 14px", minWidth:80 }}>
+                <div style={{ color:C.muted, fontSize:9 }}>SPREAD P/FP</div>
+                <div style={{ color:C.violet, fontSize:18, fontWeight:700, fontFamily:"monospace" }}>
+                  {(pldData.spread_ponta_fp_pct||0).toFixed(1)}%
+                </div>
+              </div>
+            </div>
+            {/* Detalhe mensal — só no modo automático */}
+            {!pldModoManual && pldData.meses?.length>0 && (
+              <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                {pldData.meses.map((m,i)=>(
+                  <div key={i} style={{ background:C.card, borderRadius:8, padding:"8px 12px", flex:1, minWidth:90 }}>
+                    <div style={{ color:C.muted, fontSize:9, marginBottom:4 }}>{m.mes}</div>
+                    {[["Médio",m.medio,C.gold],["Ponta",m.ponta,C.red],["Fora P.",m.fora_ponta,C.green]].map(([l,v,c])=>(
+                      <div key={l} style={{ display:"flex", justifyContent:"space-between", gap:4 }}>
+                        <span style={{ color:C.sub, fontSize:9 }}>{l}</span>
+                        <span style={{ color:c, fontSize:10, fontWeight:700, fontFamily:"monospace" }}>R${(v||0).toFixed(0)}</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{ color:C.muted, fontSize:9, marginTop:6 }}>
+              {pldData.fonte}{pldData.horas_analisadas>0&&` · ${pldData.horas_analisadas.toLocaleString("pt-BR")} observações`}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Dados Mercado Livre ─────────────────────── */}
+      <div style={{ background:C.surface, border:`1px solid ${C.violet}40`, borderRadius:12, padding:16 }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10, flexWrap:"wrap", gap:8 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+            <Tag color={C.violet}>⚡ MERCADO LIVRE</Tag>
+            <span style={{ color:C.sub, fontSize:11 }}>Contrato ACL bilateral</span>
+          </div>
+          {/* Toggle: com ou sem contrato */}
+          <div style={{ display:"flex", gap:6 }}>
+            {[["spot","📊 Spot (PLD)"],["acl","📋 Contrato ACL"]].map(([modo,label])=>(
+              <button key={modo} onClick={()=>setTarifas(prev=>({...prev,
+                temContratoACL: modo==="acl",
+                precoACL: modo==="acl" ? (prev.precoACL||150) : 0,
+              }))} style={{
+                padding:"4px 12px", borderRadius:6, fontSize:11, fontWeight:600,
+                background: (tarifas.temContratoACL===(modo==="acl"))?`${C.violet}25`:C.dim,
+                border:`1px solid ${(tarifas.temContratoACL===(modo==="acl"))?C.violet:"transparent"}`,
+                color:(tarifas.temContratoACL===(modo==="acl"))?C.violet:C.sub,
+              }}>{label}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* MODO SPOT */}
+        {!tarifas.temContratoACL && (
+          <div style={{ background:`${C.gold}10`, border:`1px solid ${C.gold}25`, borderRadius:8, padding:10 }}>
+            <div style={{ color:C.gold, fontSize:11, fontWeight:700, marginBottom:4 }}>
+              📊 Exposição total ao PLD horário
+            </div>
+            <div style={{ color:C.sub, fontSize:10, lineHeight:1.5 }}>
+              TE = PLD de cada posto horário · TUSD conforme modalidade
+            </div>
+            <div style={{ display:"flex", gap:10, marginTop:8, flexWrap:"wrap" }}>
+              {[
+                ["Energia FP DU", `R$ ${((pldData?.pld_fora_ponta_3m||0)+(tarifas.tusd_fp||0)).toFixed(0)}/MWh`, C.green],
+                ["Energia Ponta", `R$ ${((pldData?.pld_ponta_3m||0)+(tarifas.tusd_p||0)).toFixed(0)}/MWh`, C.red],
+                ["Energia FDS",   `R$ ${((pldData?.pld_fds_3m||(pldData?.pld_fora_ponta_3m*0.85)||0)+(tarifas.tusd_fp||0)).toFixed(0)}/MWh`, C.sub],
+              ].map(([l,v,c])=>(
+                <div key={l} style={{ background:C.card, borderRadius:6, padding:"6px 10px" }}>
+                  <div style={{ color:C.muted, fontSize:9 }}>{l}</div>
+                  <div style={{ color:c, fontSize:13, fontWeight:700, fontFamily:"monospace" }}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* MODO CONTRATO ACL */}
+        {tarifas.temContratoACL && (
+          <div>
+            <div style={{ color:C.muted, fontSize:10, marginBottom:10 }}>
+              Preço único do contrato bilateral — substituí a TE em todos os postos.
+              A TUSD continua sendo paga conforme modalidade (FP e Ponta separadas no Azul).
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:10 }}>
+              <div>
+                <div style={{ color:C.sub, fontSize:10, marginBottom:4 }}>PREÇO CONTRATO (R$/MWh)</div>
+                <input type="number" step="0.01" min="0" max="9999"
+                  value={tarifas.precoACL||""}
+                  placeholder="ex: 150.00"
+                  onChange={e=>setTarifas(prev=>({...prev, precoACL:+e.target.value}))}
+                  style={{ ...fieldStyle, width:"100%", borderColor:`${C.violet}60` }}/>
+              </div>
+              <div>
+                <div style={{ color:C.sub, fontSize:10, marginBottom:4 }}>VOLUME CONTRATO (MWh/mês)</div>
+                <input type="number" step="1" min="0"
+                  value={tarifas.volumeACL||""}
+                  placeholder="0 = total da carga"
+                  onChange={e=>setTarifas(prev=>({...prev, volumeACL:+e.target.value}))}
+                  style={{ ...fieldStyle, width:"100%", borderColor:`${C.violet}60` }}/>
+                <div style={{ color:C.muted, fontSize:9, marginTop:3 }}>0 = cobertura total da carga</div>
+              </div>
+            </div>
+            {tarifas.precoACL > 0 && (
+              <div style={{ display:"flex", gap:10, marginTop:10, flexWrap:"wrap" }}>
+                {[
+                  ["Energia FP", `R$ ${((tarifas.precoACL||0)+(tarifas.tusd_fp||0)).toFixed(0)}/MWh`, C.green],
+                  ["Energia Ponta", `R$ ${((tarifas.precoACL||0)+(tarifas.tusd_p||0)).toFixed(0)}/MWh`, C.amber],
+                  ["Vs. PLD Ponta", `${((tarifas.precoACL||0)-(pldData?.pld_ponta_3m||0)).toFixed(0)} R$/MWh`,
+                    (tarifas.precoACL||0)<(pldData?.pld_ponta_3m||0)?C.green:C.red],
+                ].map(([l,v,c])=>(
+                  <div key={l} style={{ background:C.card, borderRadius:6, padding:"6px 10px" }}>
+                    <div style={{ color:C.muted, fontSize:9 }}>{l}</div>
+                    <div style={{ color:c, fontSize:13, fontWeight:700, fontFamily:"monospace" }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONFIG CENÁRIO
+// ═══════════════════════════════════════════════════════════
+function CenarioConfig({ cenario, index, onChange, baseTotal, isAzul, tarifas, cargaMedia=4, fmtK=v=>`R$ ${(v/1000).toFixed(1)}k`, demandaFP=5, demandaP=2, demMedidaMediaP=null, demMedidaMediaFP=null, setDemMedidaMediaP=()=>{}, setDemMedidaMediaFP=()=>{} }) {
+  const cor = CORES[index];
+  const isBase = index===0;
+  const capexG = cenario.tipoGeracao!=="none"
+    ? cenario.potenciaGeracao * (cenario.tipoGeracao==="solar"?3.5:cenario.tipoGeracao==="eolica"?5.0:2.5) * 1e6
+    : 0;
+  const capexB = capexBESS(cenario.bess.nModulos || 0);
+  const capexT = capexG + capexB;
+  const economia = baseTotal&&cenario.sim?(baseTotal-cenario.sim.custos.total)*12:0;
+  const payback = economia>0&&capexT>0?(capexT/economia).toFixed(1):null;
+
+  return (
+    <div style={{ background:C.surface, border:`1px solid ${isBase?C.border:cor+"50"}`, borderRadius:12, padding:16, position:"relative" }}>
+      {!isBase&&<div style={{ position:"absolute", top:0, left:0, right:0, height:2,
+        background:`linear-gradient(90deg,${cor},transparent)`, borderRadius:"12px 12px 0 0" }}/>}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:14 }}>
+        <div>
+          <div style={{ color:cor, fontSize:10, fontWeight:700, letterSpacing:1 }}>{isBase?"◆ BASELINE":`◇ CEN. ${index}`}</div>
+          <input value={cenario.nome} onChange={e=>onChange({...cenario,nome:e.target.value})}
+            style={{ background:"transparent", border:"none", color:C.text, fontSize:14, fontWeight:600, fontFamily:"inherit", padding:0, marginTop:2, width:"100%" }}/>
+        </div>
+        {cenario.sim&&<div style={{ textAlign:"right" }}>
+          <div style={{ color:cor, fontSize:17, fontWeight:700, fontFamily:"monospace" }}>R${(cenario.sim.custos.total/1000).toFixed(1)}k</div>
+          <div style={{ color:C.sub, fontSize:9 }}>/mês</div>
+          {!isBase&&economia>0&&<div style={{ color:C.green, fontSize:10 }}>-R${(economia/1000).toFixed(0)}k/ano</div>}
+        </div>}
+      </div>
+      {/* Geração */}
+      <div style={{ borderTop:`1px solid ${C.dim}`, paddingTop:12, marginBottom:12 }}>
+        <div style={{ color:C.sub, fontSize:10, marginBottom:8 }}>⚡ GERAÇÃO PRÓPRIA</div>
+        <div style={{ display:"flex", gap:5, marginBottom:10, flexWrap:"wrap" }}>
+          {[["none","Nenhuma"],["solar","☀ Solar"],["eolica","💨 Eólica"],["termica","🔥 Térmica"]].map(([tp,lb])=>(
+            <button key={tp} onClick={()=>onChange({...cenario,tipoGeracao:tp})} style={{
+              flex:1,minWidth:55,padding:"4px 2px",fontSize:10,borderRadius:5,
+              background:cenario.tipoGeracao===tp?`${C.gold}20`:C.dim,
+              border:`1px solid ${cenario.tipoGeracao===tp?C.gold:"transparent"}`,
+              color:cenario.tipoGeracao===tp?C.gold:C.sub,
+            }}>{lb}</button>
+          ))}
+        </div>
+        {cenario.tipoGeracao!=="none"&&(
+          <div>
+            <SliderRow label="Potência instalada" value={cenario.potenciaGeracao}
+              min={0.1} max={20} step={0.1} unit="MW" color={C.gold}
+              onChange={v=>onChange({...cenario,potenciaGeracao:v})}/>
+            {cenario.tipoGeracao==="solar"&&(()=>{
+              const horasFP_s = Array.from({length:24},(_,h)=>h).filter(h=>!HORAS_PONTA.includes(h));
+              const mPerfilFP_s = horasFP_s.reduce((s,h)=>s+PERFIL_DU[h],0)/horasFP_s.length;
+              const fFP_s = demMedidaMediaFP&&mPerfilFP_s>0
+                ? demMedidaMediaFP/(cargaMedia*mPerfilFP_s) : 1;
+              const modoAtualS = cenario.modoDespacho || "corte_ultrap";
+
+              // Calcula sugestão conforme modo de despacho do BESS
+              let potSugerida, descricao, nota;
+              if (modoAtualS === "zerar_ponta" && cenario.sim?.eP_mes) {
+                // Modo zerar ponta: solar deve cobrir carga FP + recarga do BESS
+                const energiaPonta  = (cenario.sim?.eP_mes||0) / ((cenario.sim?.cal?.diasUteis)||22);
+                const energiaRecarga = energiaPonta / (cenario.bess?.eficiencia||0.92);
+                potSugerida = dimensionarSolarZerarPonta(cargaMedia, fFP_s, energiaRecarga);
+                descricao = `☀ Sugerido: ${potSugerida.toFixed(1)} MW para cobrir FP + recarga BESS`;
+                nota = "Cobre carga UC + recarga do BESS durante o dia · Picos noturnos: carga natural da UC";
+              } else {
+                // Modo corte_ultrap: solar para zerar ultrapassagem FP diurna
+                potSugerida = dimensionarSolar(cargaMedia, fFP_s, demandaFP);
+                descricao = `☀ Sugerido: ${potSugerida.toFixed(1)} MW para zerar ultrap. FP diurna`;
+                nota = "Elimina ultrapassagem FP nas horas com sol · Picos noturnos cobertos pelo BESS";
+              }
+
+              const jaAdequado = cenario.potenciaGeracao >= potSugerida - 0.05;
+              return potSugerida > 0 ? (
+                <div style={{ background:`${jaAdequado?C.green:C.gold}12`,
+                  border:`1px solid ${jaAdequado?C.green:C.gold}40`,
+                  borderRadius:7, padding:"7px 10px", marginTop:6, fontSize:10 }}>
+                  <div style={{ color:jaAdequado?C.green:C.gold, fontWeight:700, marginBottom:2 }}>
+                    {jaAdequado ? "✅ Solar adequado para o modo configurado" : descricao}
+                  </div>
+                  <div style={{ color:C.sub, fontSize:9, marginBottom: jaAdequado?0:4 }}>{nota}</div>
+                  {!jaAdequado&&(
+                    <button onClick={()=>onChange({...cenario,potenciaGeracao:potSugerida})}
+                      style={{ padding:"2px 10px", borderRadius:4, fontSize:10,
+                        background:`${C.gold}20`, border:`1px solid ${C.gold}60`,
+                        color:C.gold, cursor:"pointer" }}>
+                      ← Aplicar {potSugerida.toFixed(1)} MW
+                    </button>
+                  )}
+                </div>
+              ) : null;
+            })()}
+          </div>
+        )}
+      </div>
+      {/* BESS */}
+      <div style={{ borderTop:`1px solid ${C.dim}`, paddingTop:12, marginBottom:12 }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+          <div style={{ color:C.sub, fontSize:10 }}>🔋 BESS — Módulos de {BESS_MODULO.potencia_kw}kW / {BESS_MODULO.capacidade_kwh}kWh</div>
+          <div style={{ color:C.muted, fontSize:9 }}>R$ {(BESS_MODULO.capex_reais/1000).toFixed(0)}k/módulo</div>
+        </div>
+        {/* Modo de despacho */}
+        {!isBase&&(
+          <div style={{ display:"flex", gap:6, marginBottom:10 }}>
+            {[["corte_ultrap","⚡ Cortar ultrapassagem"],["zerar_ponta","🎯 Zerar ponta (100%)"]].map(([modo,label])=>(
+              <button key={modo} onClick={()=>onChange({...cenario, modoDespacho:modo})}
+                style={{ flex:1, padding:"5px 8px", borderRadius:6, fontSize:10, fontWeight:600,
+                  background:(cenario.modoDespacho||"corte_ultrap")===modo?`${C.violet}25`:C.dim,
+                  border:`1px solid ${(cenario.modoDespacho||"corte_ultrap")===modo?C.violet:"transparent"}`,
+                  color:(cenario.modoDespacho||"corte_ultrap")===modo?C.violet:C.muted }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Seletor de número de módulos */}
+        <div style={{ marginBottom:12 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+            <span style={{ color:C.sub, fontSize:11 }}>Número de módulos</span>
+            <span style={{ color:C.violet, fontSize:13, fontWeight:700, fontFamily:"monospace" }}>
+              {cenario.bess.nModulos} mod
+              {cenario.bess.nModulos>0&&<span style={{ color:C.muted, fontSize:10 }}>
+                {" "}· {(modToMW(cenario.bess.nModulos)*1000).toFixed(0)}kW · {(modToMWh(cenario.bess.nModulos)*1000).toFixed(0)}kWh
+              </span>}
+            </span>
+          </div>
+          <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:6 }}>
+            {[0,1,2,4,6,8,10,12,16,20].map(n=>(
+              <button key={n} onClick={()=>onChange({...cenario, bess:{
+                ...cenario.bess, nModulos:n,
+                potencia:   modToMW(n),
+                capacidade: modToMWh(n),
+              }})} style={{
+                padding:"4px 10px", borderRadius:6, fontSize:11, fontWeight:700,
+                background: cenario.bess.nModulos===n ? `${C.violet}30` : C.dim,
+                border:`1px solid ${cenario.bess.nModulos===n ? C.violet : "transparent"}`,
+                color: cenario.bess.nModulos===n ? C.violet : C.muted,
+              }}>{n===0?"Nenhum":`${n}x`}</button>
+            ))}
+          </div>
+          {/* Input livre para qualquer quantidade */}
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+            <span style={{ color:C.muted, fontSize:10 }}>Outro:</span>
+            <input type="number" min={0} max={200} step={1}
+              value={cenario.bess.nModulos}
+              onChange={e=>{
+                const n = Math.max(0,+e.target.value);
+                onChange({...cenario, bess:{...cenario.bess, nModulos:n,
+                  potencia:modToMW(n), capacidade:modToMWh(n)}});
+              }}
+              style={{ width:70, background:C.card, border:`1px solid ${C.border}`,
+                borderRadius:6, padding:"4px 8px", color:C.text, fontFamily:"monospace", fontSize:12 }}/>
+            <span style={{ color:C.muted, fontSize:10 }}>módulos</span>
+          </div>
+        </div>
+
+        {/* Sugestão automática de dimensionamento */}
+        {cenario.sim && !isBase && (() => {
+          // Calcula dimensionamento ótimo com base na demanda bruta do baseline sem BESS
+          // Fatores de escalonamento
+          const mediaPerfilP_cfg = HORAS_PONTA.reduce((s,h)=>s+PERFIL_DU[h],0)/HORAS_PONTA.length;
+          const horasFP_cfg = Array.from({length:24},(_,h)=>h).filter(h=>!HORAS_PONTA.includes(h));
+          const mediaPerfilFP_cfg = horasFP_cfg.reduce((s,h)=>s+PERFIL_DU[h],0)/horasFP_cfg.length;
+          const fP_cfg  = demMedidaMediaP  && mediaPerfilP_cfg >0 ? demMedidaMediaP /(cargaMedia*mediaPerfilP_cfg)  : 1;
+
+          const modoAtual = cenario.modoDespacho || "corte_ultrap";
+          let dim;
+          if (modoAtual === "zerar_ponta") {
+            // Dimensiona para cobrir 100% da ponta
+            dim = dimensionarBESSZerarPonta(cargaMedia, fP_cfg,
+              cenario.potenciaGeracao||0, cenario.tipoGeracao||"none");
+          } else {
+            // Dimensiona para cortar só ultrapassagem
+            let corteTotal=0, potMax=0;
+            for (const h of HORAS_PONTA) {
+              const cargaH = cargaMedia * PERFIL_DU[h] * fP_cfg;
+              const gerH   = cenario.tipoGeracao==="solar" ? (cenario.potenciaGeracao||0)*PERFIL_SOLAR[h] : 0;
+              const corte  = Math.max(0, (cargaH - gerH) - demandaP);
+              corteTotal  += corte;
+              potMax       = Math.max(potMax, corte);
+            }
+            dim = dimensionarBESS(corteTotal, demandaP, potMax);
+          }
+          if (dim.nModulos === 0) return null;
+          const jaConfigured = cenario.bess.nModulos >= dim.nModulos;
+          return (
+            <div style={{ background:`${jaConfigured?C.green:C.amber}12`,
+              border:`1px solid ${jaConfigured?C.green:C.amber}40`,
+              borderRadius:7, padding:"8px 10px", marginBottom:8, fontSize:10 }}>
+              <div style={{ color:jaConfigured?C.green:C.amber, fontWeight:700, marginBottom:3 }}>
+                {jaConfigured ? (modoAtual==="zerar_ponta"?"✅ BESS suficiente para zerar ponta 100%":"✅ BESS suficiente para zerar ultrapassagem") : `⚠ Mínimo sugerido: ${dim.nModulos} módulos`}
+              </div>
+              <div style={{ color:C.sub }}>
+                {dim.nModulos}x → {(dim.potencia_MW*1000).toFixed(0)}kW / {(dim.capacidade_MWh*1000).toFixed(0)}kWh
+                · CAPEX R$ {(dim.capex/1000).toFixed(0)}k
+                {!jaConfigured&&<button onClick={()=>onChange({...cenario,bess:{...cenario.bess,
+                  nModulos:dim.nModulos, potencia:dim.potencia_MW, capacidade:dim.capacidade_MWh}})}
+                  style={{ marginLeft:8, padding:"2px 8px", borderRadius:4, fontSize:10,
+                    background:`${C.amber}20`, border:`1px solid ${C.amber}60`, color:C.amber, cursor:"pointer" }}>
+                  ← Aplicar
+                </button>}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Eficiência */}
+        {cenario.bess.nModulos>0&&(
+          <SliderRow label="Eficiência round-trip" value={cenario.bess.eficiencia}
+            min={0.7} max={0.98} step={0.01} unit=""
+            fmt={v=>`${(v*100).toFixed(0)}%`} color={C.violet}
+            onChange={v=>onChange({...cenario,bess:{...cenario.bess,eficiencia:v}})}/>
+        )}
+
+        {/* KPIs resultado BESS */}
+        {cenario.bess.nModulos>0&&cenario.sim&&(
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:6, marginTop:4 }}>
+            {[
+              ["Dem. P máx",`${(cenario.sim.maxP||0).toFixed(2)} MW`,
+               (cenario.sim.maxP||0)<=demandaP?C.green:C.red],
+              ["Ultrap. ponta",`${Math.max(0,(cenario.sim.maxP||0)-demandaP).toFixed(2)} MW`,
+               Math.max(0,(cenario.sim.maxP||0)-demandaP)<0.01?C.green:C.red],
+              ["Cobert. dem.",`${(cenario.sim.coberturaContrat||0).toFixed(0)}%`,
+               (cenario.sim.coberturaContrat||0)>=99?C.green:(cenario.sim.coberturaContrat||0)>=90?C.amber:C.red],
+              ["Arb. ponta/mês",`${(cenario.sim.eArb_mes||0).toFixed(1)} MWh`,C.violet],
+              ["Ganho arb. PLD",fmtK(cenario.sim.ganhoArbPLD||0),C.green],
+              ["Ciclos/mês",`${(cenario.sim.ciclosMes||0).toFixed(1)}`,C.sub],
+            ].map(([l,v,c])=>(
+              <div key={l} style={{ background:C.dim, borderRadius:5, padding:"5px 7px" }}>
+                <div style={{ color:C.muted, fontSize:8 }}>{l}</div>
+                <div style={{ color:c, fontSize:11, fontWeight:700, fontFamily:"monospace" }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      {/* Demanda — apenas informativo, parâmetros globais editados no painel UC */}
+      {cenario.sim&&(
+        <div style={{ borderTop:`1px solid ${C.dim}`, paddingTop:12, marginBottom:12 }}>
+          <div style={{ color:C.sub, fontSize:10, marginBottom:8 }}>
+            📊 DEMANDA REGISTRADA
+            <span style={{ color:C.muted, fontSize:9, marginLeft:6 }}>
+              Contratada: FP {demandaFP.toFixed(2)} MW{isAzul?` · P ${demandaP.toFixed(2)} MW`:""}
+            </span>
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:6 }}>
+            <div style={{ background:C.dim, borderRadius:6, padding:"6px 8px" }}>
+              <div style={{ color:C.muted, fontSize:9 }}>Max FP registrada</div>
+              <div style={{ color:(cenario.sim.maxFP||0)>demandaFP?C.red:C.green,
+                fontSize:12, fontWeight:700, fontFamily:"monospace" }}>
+                {(cenario.sim.maxFP||0).toFixed(2)} MW
+              </div>
+            </div>
+            {isAzul&&<div style={{ background:C.dim, borderRadius:6, padding:"6px 8px" }}>
+              <div style={{ color:C.muted, fontSize:9 }}>Max Ponta registrada</div>
+              <div style={{ color:(cenario.sim.maxP||0)>demandaP?C.red:C.green,
+                fontSize:12, fontWeight:700, fontFamily:"monospace" }}>
+                {(cenario.sim.maxP||0).toFixed(2)} MW
+              </div>
+            </div>}
+            <div style={{ background:C.dim, borderRadius:6, padding:"6px 8px" }}>
+              <div style={{ color:C.muted, fontSize:9 }}>Ultrap. FP</div>
+              <div style={{ color:Math.max(0,(cenario.sim.maxFP||0)-demandaFP)<0.01?C.green:C.amber,
+                fontSize:12, fontWeight:700, fontFamily:"monospace" }}>
+                {Math.max(0,(cenario.sim.maxFP||0)-demandaFP).toFixed(2)} MW
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {capexT>0&&<div style={{ borderTop:`1px solid ${C.dim}`, paddingTop:12 }}>
+        <div style={{ color:C.sub, fontSize:10, marginBottom:8 }}>💰 CAPEX & RETORNO</div>
+        <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+          {capexG>0&&<div style={{ background:C.dim, borderRadius:6, padding:"6px 10px" }}>
+            <div style={{ color:C.muted, fontSize:9 }}>Geração</div>
+            <div style={{ color:C.gold, fontSize:13, fontWeight:700 }}>R${(capexG/1e6).toFixed(1)}M</div>
+          </div>}
+          {capexB>0&&<div style={{ background:C.dim, borderRadius:6, padding:"6px 10px" }}>
+            <div style={{ color:C.muted, fontSize:9 }}>BESS ({cenario.bess.nModulos} mod × R${(BESS_MODULO.capex_reais/1000).toFixed(0)}k)</div>
+            <div style={{ color:C.violet, fontSize:13, fontWeight:700 }}>
+              R${capexB>=1e6?(capexB/1e6).toFixed(2)+"M":(capexB/1e3).toFixed(0)+"k"}
+            </div>
+          </div>}
+          {payback&&economia>0&&<div style={{ background:`${C.green}15`, border:`1px solid ${C.green}40`, borderRadius:6, padding:"6px 10px" }}>
+            <div style={{ color:C.muted, fontSize:9 }}>Payback simples</div>
+            <div style={{ color:C.green, fontSize:13, fontWeight:700 }}>{payback} anos</div>
+          </div>}
+        </div>
+      </div>}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// APP
+// ═══════════════════════════════════════════════════════════
+// ─── Especificação do módulo BESS (premissa fixa) ────────────────────────────
+const BESS_MODULO = {
+  potencia_kw:    125,       // kW por módulo
+  capacidade_kwh: 250,       // kWh por módulo (já líquido — sem reserva de segurança)
+  capex_reais:    380_000,   // R$ por módulo
+  eficiencia:     0.92,      // round-trip efficiency
+};
+// Helpers de conversão MW (unidade interna) ↔ módulos
+const modulos = n => Math.round(n);
+const modToMW  = n => n * BESS_MODULO.potencia_kw  / 1000;
+const modToMWh = n => n * BESS_MODULO.capacidade_kwh / 1000;
+const capexBESS = n => n * BESS_MODULO.capex_reais;
+
+// Dimensiona automaticamente quantos módulos são necessários para cortar
+// a ultrapassagem de ponta de um dado cenário de carga.
+// demandaBruta_MW = pico de demanda na ponta sem BESS
+// demandaContratada_MW = demanda contratada de ponta
+// horasPonta = quantas horas de ponta por dia (padrão 3)
+function dimensionarBESS(cargaHorasPonta_MWh, demandaContratada_MW, potMaxCorte_MW, ef=0.92) {
+  // cargaHorasPonta_MWh: energia total de corte necessária nas horas de ponta (somada)
+  // potMaxCorte_MW: pico de potência a cortar (hora mais carregada)
+  // ef: eficiência round-trip do BESS
+  if (cargaHorasPonta_MWh <= 0 || potMaxCorte_MW <= 0)
+    return { nModulos:0, potencia_MW:0, capacidade_MWh:0, capex:0 };
+
+  // Critério 1 — Potência: módulos para atender o pico de corte
+  const nModPot  = Math.ceil(potMaxCorte_MW / modToMW(1));
+
+  // Critério 2 — Energia: módulos para armazenar toda a energia necessária
+  // (a capacidade líquida deve cobrir o corte total, já que é 100% usável por spec)
+  const nModEner = Math.ceil(cargaHorasPonta_MWh / modToMWh(1));
+
+  const nMod = Math.max(nModPot, nModEner);
+  return {
+    nModulos:      nMod,
+    potencia_MW:   modToMW(nMod),
+    capacidade_MWh:modToMWh(nMod),
+    capex:         capexBESS(nMod),
+  };
+}
+
+// Dimensiona BESS para ZERAR todo o consumo de ponta (não só ultrapassagem)
+function dimensionarBESSZerarPonta(cargaMedia, fatorP, potenciaGeracao=0, tipoGeracao="none") {
+  let totalEnergia=0, potMax=0;
+  for (const h of HORAS_PONTA) {
+    const carga  = cargaMedia * PERFIL_DU[h] * fatorP;
+    const gerH   = tipoGeracao==="solar" ? potenciaGeracao*PERFIL_SOLAR[h] : 0;
+    const demLiq = Math.max(0, carga - gerH);
+    totalEnergia += demLiq;
+    potMax = Math.max(potMax, demLiq);
+  }
+  const nModPot  = Math.ceil(potMax / modToMW(1));
+  const nModEner = Math.ceil(totalEnergia / modToMWh(1));
+  const nMod = Math.max(nModPot, nModEner);
+  return { nModulos:nMod, potencia_MW:modToMW(nMod), capacidade_MWh:modToMWh(nMod),
+           capex:capexBESS(nMod), totalEnergia_MWh:totalEnergia, potMax_MW:potMax };
+}
+
+// Dimensiona solar para eliminar ultrapassagem FP diurna após BESS
+// Encontra a potência solar que nivela o maxFP simulado até demContrFP
+// nas horas com geração solar. Picos noturnos precisam de BESS.
+function dimensionarSolar(cargaMedia, fatorFP, demContrFP) {
+  // Para cada hora FP com sol, calcula pot solar necessária
+  // O gargalo é a hora com menor fração solar × maior excedente
+  let potMax = 0;
+  for (let h = 0; h < 24; h++) {
+    if (HORAS_PONTA.includes(h)) continue;
+    const carga = cargaMedia * PERFIL_DU[h] * fatorFP;
+    const exc   = Math.max(0, carga - demContrFP);
+    const frac  = PERFIL_SOLAR[h];
+    if (exc > 0 && frac >= 0.15) { // só horas com sol razoável (≥15% do pico)
+      potMax = Math.max(potMax, exc / frac);
+    }
+  }
+  return +potMax.toFixed(2); // MW
+}
+
+// Dimensiona solar para cobrir carga FP + recarga do BESS no modo zerar_ponta
+function dimensionarSolarZerarPonta(cargaMedia, fatorFP, energiaRecarga_MWh) {
+  const horasSolares = Array.from({length:24},(_,h)=>h)
+    .filter(h => !HORAS_PONTA.includes(h) && PERFIL_SOLAR[h] >= 0.15);
+  const pesoTotal = horasSolares.reduce((s,h) => s + PERFIL_SOLAR[h], 0);
+  if (pesoTotal === 0 || energiaRecarga_MWh <= 0) return 0;
+  let potMax = 0;
+  for (const h of horasSolares) {
+    const carga    = cargaMedia * PERFIL_DU[h] * fatorFP;
+    const pesoH    = PERFIL_SOLAR[h] / pesoTotal;
+    const recargaH = energiaRecarga_MWh * pesoH;
+    const totalH   = carga + recargaH;
+    const potH     = totalH / PERFIL_SOLAR[h];
+    potMax = Math.max(potMax, potH);
+  }
+  return +potMax.toFixed(2);
+}
+
+const BESS0 = { nModulos:0, potencia:0, capacidade:0, eficiencia:BESS_MODULO.eficiencia,
+                socMin:0, socMax:100, socInicial:80 };
+const TARIFAS_DEFAULT = {
+  te_fp:62, te_p:190, tusd_fp:158, tusd_p:460, dem_fp:22, dem_p:45, dem_unico:19.8,
+  // Mercado livre — contrato ACL
+  temContratoACL: false,   // se false, usa PLD como TE no lugar do te_fp/te_p
+  precoACL: 0,             // R$/MWh — preço do contrato bilateral
+  volumeACL: 0,            // MWh/mês — volume contratado (0 = sem contrato)
+};
+const INIT = [
+  { nome:"Cenário Base",  tipoGeracao:"none",  potenciaGeracao:0, bess:{...BESS0},                                            demandaFP:5,   demandaP:2   },
+  { nome:"BESS Corte Ponta",tipoGeracao:"none",  potenciaGeracao:0, bess:{...BESS0,nModulos:4,potencia:0.5, capacidade:1.0},    demandaFP:5,   demandaP:2   },
+  { nome:"Solar + BESS",    tipoGeracao:"solar", potenciaGeracao:3, bess:{...BESS0,nModulos:4,potencia:0.5, capacidade:1.0},    demandaFP:5,   demandaP:2   },
+  { nome:"Solar + BESS+",   tipoGeracao:"solar", potenciaGeracao:5, bess:{...BESS0,nModulos:8,potencia:1.0, capacidade:2.0},    demandaFP:5,   demandaP:2, modoDespacho:"zerar_ponta" },
+];
+
+function App() {
+  const [cargaMedia,    setCargaMedia   ] = useState(4);
+  const [demandaFP,     setDemandaFP    ] = useState(5);    // MW — demanda contratada FP (ou única no Verde)
+  const [demandaP,      setDemandaP     ] = useState(2);    // MW — demanda contratada Ponta (Azul)
+  const [demMedidaMediaP,  setDemMedidaMediaP ] = useState(null); // MW — média histórica medida Ponta
+  const [demMedidaMediaFP, setDemMedidaMediaFP] = useState(null); // MW — média histórica medida FP
+  const [modalidade,    setModalidade   ] = useState("azul");
+  const [distribuidora, setDistribuidora] = useState("CPFL Paulista");
+  const [submercado,    setSubmercado   ] = useState("SE");
+  const [tarifas,       setTarifas      ] = useState(TARIFAS_DEFAULT);
+  const [pldData,       setPldData      ] = useState(null);
+  const [cenarios,      setCenarios     ] = useState(INIT);
+  const [aba,           setAba          ] = useState(0);
+  const [view,          setView         ] = useState("dados");
+  const [faturaRaw,     setFaturaRaw    ] = useState(null);
+  const [tipoDiaView,   setTipoDiaView  ] = useState("du"); // "du" | "fds" 
+
+  const isAzul = modalidade === "azul";
+  const pldAtual = pldData?.pld_medio_3m || 95;
+  const calAtual = useMemo(()=>{ const n=new Date(); return calcularCalendarioMes(n.getFullYear(),n.getMonth()); },[]);
+
+  // ── Auto-fetch PLD real da CCEE ao iniciar e ao trocar submercado ──
+  useEffect(() => {
+    let cancelled = false;
+    buscarPLDCCEE(submercado)
+      .then(dados => { if (!cancelled) setPldData(dados); })
+      .catch(() => {}); // silencioso — PainelIntegracao exibe o erro
+    return () => { cancelled = true; };
+  }, [submercado]);
+
+
+  // A fatura popula tarifas, demandas e consumo — o custo é sempre CALCULADO
+  // pelo simulador com as premissas reais (igual para todos os cenários)
+  // custoBaselineReal removido: não usamos mais o total da fatura como referência
+  const custoBaselineReal = null; // mantido para compatibilidade com UI
+
+
+  const sims = useMemo(()=>cenarios.map((c, idx)=>{
+    // Demanda contratada é global (mesma para todos os cenários) —
+    // o que varia entre cenários é a estratégia (BESS/geração), não o contrato
+    const simResult = simularMes({ cargaMedia, potenciaGeracao:c.potenciaGeracao, tipoGeracao:c.tipoGeracao,
+      bess:c.bess, tarifas, modalidade, demandaFP, demandaP,
+      pldPonta: pldData?.pld_ponta_3m || 95,
+      pldFPDU: pldData?.pld_fora_ponta_3m || 85,
+      pldFDS: pldData?.pld_fds_3m || (pldData?.pld_fora_ponta_3m*0.85) || 72,
+      // Demanda medida histórica: usada no Cenário Base (sem BESS)
+      // Nos cenários com BESS, o motor calcula o pico simulado (já reduzido)
+      // demMedidaMedia é característica da UC — igual em todos os cenários
+      // O perfil horário deve refletir a carga real medida para todos os cenários
+      demMedidaMediaP,
+      demMedidaMediaFP,
+      modoDespacho: c.modoDespacho || "corte_ultrap",
+    });
+    return { ...c, sim: simResult };
+  }), [cenarios,cargaMedia,demandaFP,demandaP,tarifas,modalidade,pldData,demMedidaMediaP,demMedidaMediaFP]);
+
+  const base   = sims[0];
+  const melhor = sims.slice(1).reduce((m,c)=>(c.sim?.custos.total||Infinity)<(m.sim?.custos.total||Infinity)?c:m, sims[1]);
+  const econAnual = base.sim&&melhor.sim?(base.sim.custos.total-melhor.sim.custos.total)*12:0;
+  const sel = sims[aba];
+  const updC = useCallback((i,v)=>setCenarios(p=>p.map((c,j)=>j===i?v:c)),[]);
+  const fmtK = v=>`R$ ${(v/1000).toFixed(1)}k`;
+
+  return (
+    <div style={{ background:C.bg, minHeight:"100vh", color:C.text,
+      fontFamily:"'IBM Plex Sans','DM Sans',sans-serif", padding:"20px 16px" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        input[type=range]{-webkit-appearance:none;width:100%;height:20px;background:transparent;cursor:pointer}
+        input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;background:${C.accent};border-radius:50%;margin-top:-5px;border:2px solid ${C.bg}}
+        input[type=range]::-webkit-slider-runnable-track{height:3px;background:${C.dim};border-radius:2px}
+        select,input[type=number]{background:${C.card};color:${C.text};border:1px solid ${C.border};border-radius:6px;padding:6px 10px;font-family:inherit;font-size:12px}
+        button{transition:all 0.15s;border:none;cursor:pointer}
+        button:hover{filter:brightness(1.15)}
+        details>summary{list-style:none} details>summary::-webkit-details-marker{display:none}
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:${C.dim};border-radius:2px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+      `}</style>
+
+      {/* HEADER */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16, flexWrap:"wrap", gap:10 }}>
+        <div>
+          <div style={{ color:C.sub, fontSize:10, letterSpacing:2, marginBottom:3 }}>SIMULADOR ESTRATÉGICO · MERCADO LIVRE</div>
+          <div style={{ fontSize:20, fontWeight:700, fontFamily:"'IBM Plex Mono',monospace" }}>
+            Energy <span style={{ color:C.accent }}>Arb</span> <span style={{ color:C.dim }}>·</span>{" "}
+            <span style={{ color:C.violet }}>Storage</span> <span style={{ color:C.dim }}>·</span>{" "}
+            <span style={{ color:C.gold }}>Gen</span>
+          </div>
+        </div>
+        <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+          <Tag color={isAzul?C.blue:C.green}>{isAzul?"🔵 AZUL":"🟢 VERDE"}</Tag>
+          <Tag color={C.sub}>{distribuidora}</Tag>
+          <Tag color={C.sub}>{submercado}</Tag>
+          <Tag color={C.amber}>PLD R${pldAtual.toFixed(0)}{pldData?" (CCEE)":""}</Tag>
+          <Tag color={C.dim}>{calAtual.diasUteis}DU · {calAtual.diasFds}FDS · {calAtual.horasPontaMes}h ponta/mês</Tag>
+          {econAnual>0&&<Tag color={C.green}>↓ {fmtK(econAnual)}/ano</Tag>}
+        </div>
+      </div>
+
+      {/* KPIs */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(128px,1fr))", gap:8, marginBottom:14 }}>
+                <KPI label="Cenário Base" value={fmtK(base.sim?.custos.total)} unit="/mês" color={C.muted} icon="📋"/>
+        <KPI label="Melhor Cenário" value={fmtK(melhor.sim?.custos.total)} unit="/mês" color={C.green} icon="✅"
+          delta={base.sim&&melhor.sim?((melhor.sim.custos.total-base.sim.custos.total)/base.sim.custos.total*100):undefined}/>
+        <KPI label="Economia Anual" value={fmtK(econAnual)} unit="/ano" color={C.gold} icon="💰"/>
+        <KPI label={isAzul?"Dem. P Max":"Dem. Global Max"}
+          value={(isAzul?sel.sim?.maxP:sel.sim?.maxGlobal)?.toFixed(1)||"—"} unit="MW" color={C.red} icon="⚡"/>
+        <KPI label="Ganho Arb. PLD" value={fmtK(sel.sim?.ganhoArbPLD||0)} unit="/mês" color={C.green} icon="⚡"/>
+        <KPI label="Arb. energia" value={(sel.sim?.eArb_mes||0).toFixed(0)} unit="MWh/mês" color={C.violet} icon="🔄"/>
+        <KPI label="Multa" value={fmtK(sel.sim?.custos.multa||0)} unit="/mês"
+          color={(sel.sim?.custos.multa||0)>0?C.red:C.green} icon="⚠️"/>
+      </div>
+
+      {/* ABAS */}
+      <div style={{ display:"flex", gap:8, marginBottom:14, overflowX:"auto", paddingBottom:2 }}>
+        {[["dados","🔌 Dados & Integração"],["overview","▦ Overview"],["detalhe","◉ Perfil Horário"],["cenarios","⚙ Cenários"]].map(([k,l])=>(
+          <button key={k} onClick={()=>setView(k)} style={{
+            padding:"7px 16px", borderRadius:8, fontSize:12, fontWeight:600, whiteSpace:"nowrap",
+            background:view===k?C.accent:C.card, border:`1px solid ${view===k?C.accent:C.border}`,
+            color:view===k?C.bg:C.sub,
+          }}>{l}</button>
+        ))}
+      </div>
+
+      {/* ── ABA DADOS ─────────────────────────────── */}
+      {view==="dados"&&(
+        <PainelIntegracao tarifas={tarifas} setTarifas={setTarifas}
+          modalidade={modalidade} setModalidade={setModalidade}
+          submercado={submercado} setSubmercado={setSubmercado}
+          distribuidora={distribuidora} setDistribuidora={setDistribuidora}
+          pldData={pldData} setPldData={setPldData}
+          onFaturaLida={({ cargaEstimada, demFP, demP, demMedidaFP, demMedidaP,
+                             ultrapFP, ultrapP, modalidade: mod, dadosBrutos }) => {
+            if (dadosBrutos) setFaturaRaw(dadosBrutos);
+            if (mod) setModalidade(mod);
+            // Carga média: consumo real ÷ horas do período
+            if (cargaEstimada && cargaEstimada > 0) setCargaMedia(+cargaEstimada.toFixed(3));
+            // Demanda CONTRATADA global
+            if (demFP && demFP > 0) setDemandaFP(+demFP.toFixed(3));
+            if (demP  && demP  > 0) setDemandaP(+demP.toFixed(3));
+            // Demanda MEDIDA histórica — usada para calcular ultrapassagem real no Cenário Base
+            if (demMedidaFP > 0) setDemMedidaMediaFP(+demMedidaFP.toFixed(3));
+            if (demMedidaP  > 0) setDemMedidaMediaP(+demMedidaP.toFixed(3));
+          }}/>
+      )}
+
+      {/* ── ABA OVERVIEW ──────────────────────────── */}
+      {view==="overview"&&(
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:12, padding:16 }}>
+            <div style={{ color:C.sub, fontSize:10, letterSpacing:1.5, marginBottom:12 }}>CUSTO MENSAL — {isAzul?"AZUL":"VERDE"}</div>
+            <BarrasCusto cenarios={sims} isAzul={isAzul}/>
+            <div style={{ display:"flex", gap:8, marginTop:10, flexWrap:"wrap" }}>
+              {[["Energia",C.accent],["Dem FP",C.amber],...(isAzul?[["Dem P",C.blue]]:[]),["Multa",C.red]].map(([l,c])=>(
+                <div key={l} style={{ display:"flex", alignItems:"center", gap:4 }}>
+                  <div style={{ width:10,height:10,background:c,borderRadius:2 }}/><span style={{ color:C.sub,fontSize:9 }}>{l}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:12, padding:16, overflowX:"auto" }}>
+            <div style={{ color:C.sub, fontSize:10, letterSpacing:1.5, marginBottom:12 }}>BREAKDOWN MENSAL</div>
+            <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11, fontFamily:"monospace" }}>
+              <thead><tr>
+                {["Cenário","Energia",isAzul?"Dem FP":"Dem Única",isAzul?"Dem P":"—","Multa","Arb PLD","TOTAL"].map(h=>(
+                  <th key={h} style={{ color:C.muted, textAlign:h==="Cenário"?"left":"right", padding:"3px 4px", fontWeight:500, fontSize:10 }}>{h}</th>
+                ))}
+              </tr></thead>
+              <tbody>{sims.map((c,i)=>(
+                <tr key={i} style={{ borderTop:`1px solid ${C.dim}` }}>
+                    <td style={{ padding:"6px 4px", color:CORES[i], fontWeight:600 }}>{c.nome}</td>
+                    <td style={{ textAlign:"right", padding:"6px 4px" }}>{fmtK(c.sim?.custos.energia)}</td>
+                    <td style={{ textAlign:"right", padding:"6px 4px", color:C.amber }}>{fmtK(c.sim?.custos.demandaFP)}</td>
+                    <td style={{ textAlign:"right", padding:"6px 4px", color:isAzul?C.blue:C.muted }}>{isAzul?fmtK(c.sim?.custos.demandaP):"—"}</td>
+                    <td style={{ textAlign:"right", padding:"6px 4px", color:(c.sim?.custos.multa||0)>0?C.red:C.muted }}>{fmtK(c.sim?.custos.multa)}</td>
+                    <td style={{ textAlign:"right", padding:"6px 4px", color:(c.sim?.ganhoArbPLD||0)>0?C.green:C.muted, fontWeight:600 }}>
+                      {(c.sim?.ganhoArbPLD||0)>0?`-${fmtK(c.sim.ganhoArbPLD)}`:"—"}
+                    </td>
+                    <td style={{ textAlign:"right", padding:"6px 4px", color:CORES[i], fontWeight:700 }}>{fmtK(c.sim?.custos.total)}</td>
+                  </tr>              ))}</tbody>
+            </table>
+            {/* Fonte do preço de energia */}
+            <div style={{ marginTop:8, padding:"6px 10px", background:C.dim, borderRadius:6,
+              display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+              <span style={{ color:C.muted, fontSize:9 }}>💡 PREÇO DE ENERGIA:</span>
+              {tarifas.temContratoACL
+                ? <span style={{ color:C.violet, fontSize:10, fontWeight:600 }}>
+                    Contrato ACL · R${(tarifas.precoACL||0).toFixed(0)}/MWh + TUSD
+                  </span>
+                : pldData?.pld_ponta_3m > 0
+                  ? <span style={{ color:C.gold, fontSize:10, fontWeight:600 }}>
+                      Spot PLD · FP R${((pldData?.pld_fora_ponta_3m||0)).toFixed(0)} · P R${((pldData?.pld_ponta_3m||0)).toFixed(0)}/MWh + TUSD
+                    </span>
+                  : <span style={{ color:C.amber, fontSize:10 }}>
+                      TE regulada (configure PLD ou contrato ACL na aba Dados)
+                    </span>
+              }
+
+            </div>
+          </div>
+          {/* BESS */}
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:12, padding:16 }}>
+            <div style={{ color:C.sub, fontSize:10, letterSpacing:1.5, marginBottom:12 }}>BESS — ARBITRAGEM PONTA/FP</div>
+            {sims.filter(c=>c.bess.capacidade>0).length===0
+              ? <div style={{ color:C.muted, fontSize:12, textAlign:"center", padding:20 }}>Nenhum BESS configurado</div>
+              : sims.filter(c=>c.bess.capacidade>0).map((c,i)=>(
+                <div key={i} style={{ marginBottom:10, padding:10, background:C.card, borderRadius:8 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+                    <span style={{ color:C.violet, fontWeight:600, fontSize:12 }}>{c.nome}</span>
+                    <span style={{ color:C.sub, fontSize:10 }}>
+                      {c.bess.nModulos||0}× módulos · {((c.bess.potencia||0)*1000).toFixed(0)}kW / {((c.bess.capacidade||0)*1000).toFixed(0)}kWh · η{((c.bess.eficiencia||0.92)*100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:6 }}>
+                    {[["Arb/dia",`${(c.sim?.eArb_mes||0).toFixed(1)} MWh/mês`,C.violet],
+                      ["Arb/mês",`${((c.sim?.eArb_mes||0)*22).toFixed(0)} MWh`,C.violet],
+                      ["Valor arb. PLD",fmtK(c.sim?.ganhoArbPLD||0),C.green],
+                      ["PLD ponta",`R$ ${(c.sim?.pldPonta||0).toFixed(0)}/MWh`,C.red],
+                      ["PLD fora P.",`R$ ${(c.sim?.pldFPDU||0).toFixed(0)}/MWh`,C.green],
+                      ["Spread P/FP",`${(c.sim?.pldPonta&&c.sim?.pldFPDU?((c.sim.pldPonta/c.sim.pldFP-1)*100):0).toFixed(0)}%`,C.violet],
+                    ].map(([l,v,cor])=>(
+                      <div key={l}><div style={{ color:C.muted, fontSize:9 }}>{l}</div>
+                        <div style={{ color:cor, fontWeight:700, fontFamily:"monospace", fontSize:12 }}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          {/* Geração */}
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:12, padding:16 }}>
+            <div style={{ color:C.sub, fontSize:10, letterSpacing:1.5, marginBottom:12 }}>GERAÇÃO PRÓPRIA</div>
+            {sims.filter(c=>c.tipoGeracao!=="none").length===0
+              ? <div style={{ color:C.muted, fontSize:12, textAlign:"center", padding:20 }}>Nenhuma geração configurada</div>
+              : sims.filter(c=>c.tipoGeracao!=="none").map((c,i)=>{
+                const ac = c.sim?Math.min(100,(c.sim.eGer_mes/(cargaMedia*(c.sim.cal?.diasNoMes||30)*24))*100):0;
+                const pFP = (tarifas.te_fp||0)+(tarifas.tusd_fp||0);
+                return (
+                  <div key={i} style={{ marginBottom:10, padding:10, background:C.card, borderRadius:8 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+                      <span style={{ color:C.gold, fontWeight:600 }}>{c.nome}</span>
+                      <span style={{ color:C.sub, fontSize:10 }}>{c.tipoGeracao==="solar"?"☀":"💨"} {c.potenciaGeracao}MW</span>
+                    </div>
+                    <div style={{ marginBottom:6 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:3 }}>
+                        <span style={{ color:C.sub, fontSize:10 }}>Autoconsumo</span>
+                        <span style={{ color:C.gold, fontSize:11, fontWeight:700 }}>{ac.toFixed(1)}%</span>
+                      </div>
+                      <div style={{ height:3, background:C.dim, borderRadius:2 }}>
+                        <div style={{ height:"100%", width:`${ac}%`, background:C.gold, borderRadius:2 }}/>
+                      </div>
+                    </div>
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:4 }}>
+                      {[["Ger/dia",`${(c.sim?.eGer_mes||0).toFixed(1)} MWh`],
+                        ["Ger/mês",`${(c.sim?.eGer_mes||0).toFixed(0)} MWh`],
+                        ["Economia",fmtK(((c.sim?.eGer_mes||0)*pFP)/1000)],
+                      ].map(([l,v])=>(
+                        <div key={l}><div style={{ color:C.muted, fontSize:9 }}>{l}</div>
+                          <div style={{ color:C.gold, fontWeight:700, fontFamily:"monospace", fontSize:11 }}>{v}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            }
+          </div>
+        </div>
+      )}
+
+      {/* ── PERFIL HORÁRIO ─────────────────────────── */}
+      {view==="detalhe"&&(
+        <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          <div style={{ display:"flex", gap:8, flexWrap:"wrap", alignItems:"center" }}>
+            {sims.map((c,i)=>(
+              <button key={i} onClick={()=>setAba(i)} style={{
+                padding:"6px 14px", borderRadius:7, fontSize:12, fontWeight:600,
+                background:aba===i?`${CORES[i]}25`:C.card, border:`1px solid ${aba===i?CORES[i]:C.border}`, color:aba===i?CORES[i]:C.sub,
+              }}>{c.nome}</button>
+            ))}
+            <div style={{ marginLeft:"auto", display:"flex", gap:6 }}>
+              {[["du","📅 Dia Útil"],["fds","📆 Fim de Semana"]].map(([k,l])=>(
+                <button key={k} onClick={()=>setTipoDiaView(k)} style={{
+                  padding:"5px 12px", borderRadius:6, fontSize:11, fontWeight:600,
+                  background:tipoDiaView===k?`${C.teal}25`:C.card,
+                  border:`1px solid ${tipoDiaView===k?C.teal:C.border}`,
+                  color:tipoDiaView===k?C.teal:C.sub,
+                }}>{l}</button>
+              ))}
+            </div>
+          </div>
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:12, padding:16 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", flexWrap:"wrap", gap:8, marginBottom:10 }}>
+              <div style={{ color:C.sub, fontSize:10, letterSpacing:1.5 }}>PERFIL 24H — {sel.nome.toUpperCase()}</div>
+              <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
+                {[["Carga",C.accent],["Geração",C.gold],["Dem. Líquida",C.green],["SOC BESS",C.violet]].map(([l,c])=>(
+                  <div key={l} style={{ display:"flex", alignItems:"center", gap:4 }}>
+                    <div style={{ width:16,height:2,background:c }}/><span style={{ color:C.sub,fontSize:9 }}>{l}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <PerfilChart horas={tipoDiaView==='fds'?sel.sim?.horasFDS:sel.sim?.horasDU} pFP={sel.sim?.pFP} pP={sel.sim?.pP} isFDS={tipoDiaView==='fds'}/>
+          </div>
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:12, padding:16, overflowX:"auto" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11, fontFamily:"monospace", minWidth:560 }}>
+              <thead><tr style={{ borderBottom:`1px solid ${C.border}` }}>
+                {["H","Período","Carga","Geração","↑BESS","↓BESS","Rede","SOC%","R$/MWh"].map(h=>(
+                  <th key={h} style={{ color:C.muted, textAlign:h==="H"||h==="Período"?"left":"right", padding:"4px 6px", fontWeight:500, fontSize:10 }}>{h}</th>
+                ))}
+              </tr></thead>
+              <tbody>
+                {(tipoDiaView==='fds'?sel.sim?.horasFDS:sel.sim?.horasDU)?.map(h=>(
+                  <tr key={h.h} style={{ borderTop:`1px solid ${C.dim}`, background:h.ehP?`${C.red}06`:"transparent" }}>
+                    <td style={{ padding:"5px 6px", color:h.ehP?C.red:C.muted }}>{String(h.h).padStart(2,"0")}h</td>
+                    <td style={{ padding:"5px 6px" }}>{h.ehFDS?<Tag color={C.amber}>FDS-FP</Tag>:h.ehP?<Tag color={C.red}>PONTA</Tag>:<Tag color={C.muted}>FP-DU</Tag>}</td>
+                    <td style={{ textAlign:"right", padding:"5px 6px", color:C.accent }}>{(h.cargaH||0).toFixed(2)}</td>
+                    <td style={{ textAlign:"right", padding:"5px 6px", color:h.geracaoH>0?C.gold:C.muted }}>{(h.gerH||0).toFixed(2)}</td>
+                    <td style={{ textAlign:"right", padding:"5px 6px", color:h.cB>0?C.violet:C.muted }}>{(h.cB||0).toFixed(2)}</td>
+                    <td style={{ textAlign:"right", padding:"5px 6px", color:h.dB>0?C.green:C.muted }}>{(h.dB||0).toFixed(2)}</td>
+                    <td style={{ textAlign:"right", padding:"5px 6px", color:C.text, fontWeight:600 }}>{(h.dRede||0).toFixed(2)}</td>
+                    <td style={{ textAlign:"right", padding:"5px 6px" }}>
+                      <span style={{ color:h.socPct>50?C.green:h.socPct>20?C.amber:C.red }}>{h.socPct.toFixed(0)}%</span>
+                    </td>
+                    <td style={{ textAlign:"right", padding:"5px 6px", color:h.ehP?C.red:C.sub }}>
+                      {h.ehP
+                        ? (sel.sim?.pP||0).toFixed(0)
+                        : (sel.sim?.pFP||0).toFixed(0)}
+                    </td>
+                    <td style={{ textAlign:"right", padding:"5px 6px" }}>
+                      {(h.ultrapassagem||0)>0.01
+                        ? <span style={{ color:C.red, fontWeight:700 }}>+{(h.ultrapassagem||0).toFixed(2)}</span>
+                        : <span style={{ color:C.green }}>✓</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ── CENÁRIOS ──────────────────────────────── */}
+      {view==="cenarios"&&(
+        <div>
+          {/* Parâmetros globais da UC — iguais em todos os cenários */}
+      <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:10, padding:14, marginBottom:12 }}>
+        <div style={{ color:C.sub, fontSize:10, letterSpacing:1.5, marginBottom:12 }}>PARÂMETROS GLOBAIS DA UC — iguais em todos os cenários</div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:16 }}>
+          <SliderRow label="Carga média" value={cargaMedia} min={0.5} max={30} step={0.1} unit="MW" color={C.accent} onChange={setCargaMedia}/>
+          <SliderRow label={isAzul?"Dem. contratada FP":"Dem. contratada (única)"} value={demandaFP} min={0.1} max={30} step={0.1} unit="MW" color={C.amber} onChange={setDemandaFP}/>
+          {isAzul&&<SliderRow label="Dem. contratada Ponta" value={demandaP} min={0.1} max={20} step={0.1} unit="MW" color={C.red} onChange={setDemandaP}/>}
+          {isAzul&&<SliderRow label="Dem. medida média FP (histórico)" value={demMedidaMediaFP||demandaFP} min={0.1} max={30} step={0.01} unit="MW" color={C.amber}
+            fmt={v=>`${v.toFixed(2)}`}
+            onChange={v=>setDemMedidaMediaFP(v)}/>}
+          {isAzul&&<SliderRow label="Dem. medida média Ponta (histórico)" value={demMedidaMediaP||demandaP} min={0.1} max={20} step={0.01} unit="MW" color={C.red}
+            fmt={v=>`${v.toFixed(2)}`}
+            onChange={v=>setDemMedidaMediaP(v)}/>}
+        </div>
+      </div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(270px,1fr))", gap:12, marginTop:8 }}>
+            {sims.map((c,i)=>(
+              <CenarioConfig key={i} cenario={sims[i]} index={i}
+                onChange={v=>updC(i,v)} baseTotal={i===0?null:sims[0].sim?.custos.total}
+                isAzul={isAzul} tarifas={tarifas} cargaMedia={cargaMedia} fmtK={fmtK}
+                demandaFP={demandaFP} demandaP={demandaP}
+                demMedidaMediaP={demMedidaMediaP} demMedidaMediaFP={demMedidaMediaFP}
+                setDemMedidaMediaP={setDemMedidaMediaP} setDemMedidaMediaFP={setDemMedidaMediaFP}/>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
+</script>
+</body>
+</html>
