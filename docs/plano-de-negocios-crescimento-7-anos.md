@@ -1,6 +1,6 @@
 # Plano de Negócios — Crescimento e Venda da Empresa
 ## Modelo BOT (Build-Operate-Transfer) — Ativos de Energia
-### Horizonte: 7 Anos | Meta: R$ 3M → R$ 360M ARR | Valuation de Saída: **R$ 1 BILHÃO**
+### Horizonte: 7 Anos | Meta: R$ 3M → R$ 267M ARR | Valuation de Saída: **R$ 1 BILHÃO**
 
 ---
 
@@ -17,7 +17,8 @@ Todas as projeções partem destas premissas unitárias, revisadas para refletir
 | Margem EPC da empresa | **15%** | Sobre o ticket do projeto |
 | Custo de capital de referência | **CDI + 3% = 16,25% a.a.** | Banco privado — BNDES excluído¹ |
 | Participação em projetos com investidor | **10% do EBITDA do projeto** | Após dedução de O&M |
-| Prazo dos contratos BOT | **10 anos** | Mínimo para TIR atraente ao investidor |
+| Prazo dos contratos BOT | **10 anos** | Mínimo para retorno atraente ao investidor |
+| Taxa de saída ao final do contrato | **R$ 800.000** | Custo operacional de retirada + reinstalação |
 
 > ¹ **Por que BNDES não é a rota principal**: o BNDES exige fabricação nacional de equipamentos,
 > o que eleva o CAPEX em 20–30% para a mesma capacidade geradora. Com o ticket subindo para
@@ -38,7 +39,7 @@ Valor mensal integral (sem desconto):
 | 12,5% | R$ 357,88/MWh | R$ 107.007 | R$ 1.284.084 | R$ 15.284 |
 | 15% | R$ 347,65/MWh | R$ 103.997 | R$ 1.247.964 | R$ 18.294 |
 
-**Argumento ao cliente**: *"Você paga menos do que paga hoje, sem nenhum investimento inicial, e no final do contrato a planta é sua."*
+**Argumento ao cliente**: *"Você paga menos do que paga hoje, sem nenhum investimento inicial, e ao final o equipamento é retirado sem custo adicional além da taxa de saída — que ainda assim cabe dentro da sua economia acumulada."*
 
 ---
 
@@ -47,9 +48,10 @@ Valor mensal integral (sem desconto):
 ### 3.1 Nível do Projeto — Custos de O&M (por projeto, por mês)
 
 Estes custos saem da receita BOT **antes** de qualquer distribuição ao investidor ou à empresa.
+O O&M é custo do projeto — não da empresa nem do investidor.
 
 | Item de Custo | Escala Inicial (1–30 proj.) | Escala Madura (100+ proj.) | Natureza |
-|--------------|----------------------------|---------------------------|---------|
+|--------------|----------------------------|---------------------------|----------|
 | Manutenção técnica de campo (limpeza, inspeção, reparos) | R$ 6.500 | R$ 3.500 | Variável |
 | Seguro patrimonial (all-risk sobre equipamentos) | R$ 2.200 | R$ 1.500 | Fixo por projeto |
 | SCADA / monitoramento remoto | R$ 1.500 | R$ 500 | Plataforma compartilhada |
@@ -107,32 +109,34 @@ Custos da estrutura corporativa, independentes do número de projetos ativos.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   RECEITA BOT (cliente paga, desconto 10%)   R$ 110.062/mês
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  (-) O&M — Escala Inicial                  -R$  12.500/mês
-  (-) O&M — Escala Madura (100+ proj.)      -R$   7.100/mês
+  (-) O&M — custo do projeto (antes do split)
+      Escala Inicial (1–30 proj.)            -R$  12.500/mês  [11,4% da receita]
+      Escala Madura  (100+ proj.)            -R$   7.100/mês  [ 6,5% da receita]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  EBITDA DO PROJETO — Escala Inicial        R$  97.562/mês   = R$ 1.170.744/ano
-  EBITDA DO PROJETO — Escala Madura         R$ 102.962/mês   = R$ 1.235.544/ano
+  EBITDA PARA DISTRIBUIÇÃO
+      Escala Inicial                         R$  97.562/mês   = R$ 1.170.744/ano
+      Escala Madura                          R$ 102.962/mês   = R$ 1.235.544/ano
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  MODALIDADE INVESTIDOR (após O&M):
-    Investidor recebe 90%:
-      Escala Inicial   = R$  87.806/mês = R$ 1.053.672/ano
-      Escala Madura    = R$  92.666/mês = R$ 1.111.990/ano
-    Empresa recebe 10%:
-      Escala Inicial   = R$   9.756/mês = R$   117.074/ano
-      Escala Madura    = R$  10.296/mês = R$   123.554/ano
+  DISTRIBUIÇÃO — INVESTIDOR 90% / EMPRESA 10%
+
+  INVESTIDOR (90% do EBITDA):
+      Escala Inicial   R$  87.806/mês = R$ 1.053.672/ano  [yield 17,00%]
+      Escala Madura    R$  92.666/mês = R$ 1.111.992/ano  [yield 17,93%]
+
+  EMPRESA (10% do EBITDA — fee de administração líquido):
+      Escala Inicial   R$   9.756/mês = R$   117.072/ano
+      Escala Madura    R$  10.296/mês = R$   123.552/ano
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  MODALIDADE FUNDING CDI+3% (16,25% a.a.):
-    PMT mensal (R$ 6,2M, 10 anos, 16,25%)   -R$ 104.817/mês
-    NOI Escala Inicial  = R$97.562 - R$104.817 = -R$7.255/mês  ✗ INVIÁVEL
-    NOI Escala Madura   = R$102.962 - R$104.817 = -R$1.855/mês ✗ INVIÁVEL
-    DSCR (madura):      R$1.235.544 / R$1.257.804 = 0,98×      ✗ < 1,25
+  MODALIDADE FUNDING CDI+3% (16,25% a.a.) — para referência:
+      PMT mensal (R$ 6,2M, 10 anos, 16,25%)  -R$ 104.817/mês
+      NOI Escala Madura = R$102.962 - R$104.817 = -R$1.855/mês  ✗ INVIÁVEL
+      DSCR (madura): R$1.235.544 / R$1.257.804 = 0,98×           ✗ < 1,25
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-> **Conclusão crítica**: A modalidade Funding a CDI+3% **não é viável** com estes parâmetros.
-> A taxa necessária para DSCR ≥ 1,25 seria ≤ 9,5% a.a. — inacessível no mercado privado
-> sem subsídio (e BNDES está descartado pelo encarecimento do CAPEX com fabricação nacional).
-> **O modelo escala exclusivamente via Modalidade Investidor.**
+> **Conclusão crítica**: O O&M é custo do projeto — deduzido antes de qualquer split.
+> A empresa recebe 10% líquido (sem responsabilidade de O&M sobre sua cota).
+> A modalidade Funding a CDI+3% **não é viável**. O modelo escala via **Modalidade Investidor**.
 
 ---
 
@@ -144,52 +148,120 @@ Custo de capital de referência: **CDI+3% = 16,25% a.a.**
 
 | Desconto | EBITDA Projeto/ano | Investidor (90%) | **Yield Bruto** | **vs CDI+3%** |
 |---------|-------------------|-----------------|-----------------|---------------|
-| 10% — escala inicial | R$ 1.170.744 | R$ 1.053.672 | **16,99%** | **+0,74 p.p.** |
-| 10% — escala madura | R$ 1.235.544 | R$ 1.111.990 | **17,93%** | **+1,68 p.p.** |
+| 10% — escala inicial | R$ 1.170.744 | R$ 1.053.672 | **17,00%** | **+0,75 p.p.** |
+| 10% — escala madura | R$ 1.235.544 | R$ 1.111.992 | **17,93%** | **+1,68 p.p.** |
 | 12,5% — escala madura | R$ 1.200.284 | R$ 1.080.256 | **17,42%** | **+1,17 p.p.** |
 | 15% — escala madura | R$ 1.163.964 | R$ 1.047.568 | **16,90%** | **+0,65 p.p.** |
 
 ### 5.2 TIR do Investidor — Contrato de 10 Anos
 
-Com base no EBITDA do projeto na escala madura (desconto 10%):
+Com base no EBITDA do projeto na escala madura (desconto 10%),
+taxa de saída = R$ 800k (custo operacional — não retorna ao investidor):
 
-| Cenário | TIR | CDI+3% | Spread | Avaliação |
-|---------|-----|--------|--------|-----------|
-| 10 anos, sem valor residual | **13,8%** | 16,25% | -2,45 p.p. | ✗ Abaixo |
-| 10 anos, residual 30% (cliente compra ativo) | **15,7%** | 16,25% | -0,55 p.p. | ~ Próximo |
-| 10 anos, residual 50% | **17,1%** | 16,25% | **+0,85 p.p.** | ✓ Supera |
-| 10 anos, residual 30% + cessão recebíveis (Ano 5) | **16,8%** | 16,25% | **+0,55 p.p.** | ✓ Supera |
+| Cenário | TIR | CDI+3% | Avaliação |
+|---------|-----|--------|-----------|
+| 10 anos, yield only (taxa de saída = custo op.) | **~13,8%** | 16,25% | ✗ Abaixo do CDI+3% |
+| CDI como referência | **~13,8%** | 13,25% | ~ Próximo do CDI |
 
-> **O que isso significa**: para o investidor superar CDI+3% na TIR, o contrato precisa incluir
-> uma cláusula de **valor residual de 30–50%** ao final (cliente paga para adquirir o ativo)
-> ou a estratégia de **cessão de recebíveis no Ano 5** para antecipar capital e melhorar a TIR.
+> **O que isso significa**: a TIR de 10 anos fica abaixo do CDI+3% porque o investidor
+> não recupera o principal via yield. O produto correto para esse investidor é **renda**,
+> não TIR. O yield anual de 17,93% supera CDI+3% todos os anos — esse é o argumento central.
 
-### 5.3 O que justifica o investimento além da TIR
-
-Mesmo com spread modesto sobre CDI+3%, o investidor BOT recebe:
+### 5.3 Posicionamento do Produto para o Investidor
 
 ```
-  CDI+3% (renda fixa)          CDI+3% = 16,25%      Liquido, sem ativo
-  ─────────────────────────────────────────────────────────────────────
-  BOT com residual 50%:        TIR ~17,1%            + Ativo físico lastreado
-                                                      + Proteção inflação (tarifa ANEEL)
-                                                      + Contrato 10 anos (previsibilidade)
-                                                      + Possível upside (cessão recebíveis)
+  CDI+3% (renda fixa banco privado)    16,25%/ano    Liquidez imediata
+  ────────────────────────────────────────────────────────────────────────
+  BOT Investidor — escala inicial:     17,00%/ano    + ativo físico lastreado
+  BOT Investidor — escala madura:      17,93%/ano    + contrato 10 anos fixo
+                                                     + proteção inflação (ANEEL)
+                                                     + sem gestão pelo investidor
 ```
+
+Perfil de investidor adequado: **family offices e HNWIs com foco em renda recorrente**,
+não investidores com hurdle rate de TIR acima de CDI+3%.
 
 ### 5.4 Retorno Mensal sobre o Capital Investido
 
 | Cenário | Recebe/mês (Investidor 90%) | **% Mensal** | % Anual | vs CDI+3% mensal (1,264%) |
-|---------|---------------------------|-------------|---------|--------------------------|
-| Desconto 10%, escala inicial | R$ 87.806 | **1,416%** | 16,99% | +0,152 p.p./mês |
+|---------|---------------------------|-------------|---------|---------------------------|
+| Desconto 10%, escala inicial | R$ 87.806 | **1,416%** | 17,00% | +0,152 p.p./mês |
 | Desconto 10%, escala madura | R$ 92.666 | **1,494%** | 17,93% | +0,230 p.p./mês |
 | Desconto 15%, escala madura | R$ 87.297 | **1,408%** | 16,90% | +0,144 p.p./mês |
 
 ---
 
-## 6. CESSÃO DE RECEBÍVEIS — MECANISMO DE RECICLAGEM
+## 6. PERSPECTIVA DE RECEBÍVEIS — INVESTIDOR vs EMPRESA
 
-### 6.1 Cessão de Direitos vs Empréstimo com Garantia
+### Por Projeto | Horizonte 10 Anos | Desconto 10%
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CLIENTE PAGA:                 R$ 110.062/mês
+  (-) O&M (custo do projeto):   -R$  12.500/mês (inicial)  →  -R$  7.100/mês (maduro)
+                                ─────────────────────────────────────────────────────
+  EBITDA PARA DISTRIBUIÇÃO:     R$  97.562/mês (inicial)   →  R$ 102.962/mês (maduro)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌──────────────────────────────────────┬────────────────────────────────────────┐
+│         INVESTIDOR (90%)             │           EMPRESA (10%)                │
+├──────────────────────────────────────┼────────────────────────────────────────┤
+│  Capital aportado:  R$ 6.200.000     │  EPC margin (upfront): R$ 930.000      │
+│                                      │                                        │
+│  Anos 1–5 (inicial):                 │  Anos 1–5 (inicial):                   │
+│    R$ 87.806/mês × 60               │    R$ 9.756/mês × 60                   │
+│    = R$ 5.268.360                    │    = R$ 585.360                        │
+│                                      │                                        │
+│  Anos 6–10 (maduro):                 │  Anos 6–10 (maduro):                   │
+│    R$ 92.666/mês × 60               │    R$ 10.296/mês × 60                  │
+│    = R$ 5.559.960                    │    = R$ 617.760                        │
+│                                      │                                        │
+│  TOTAL 10 ANOS:  R$ 10.828.320       │  Fee total 10 anos:  R$ 1.203.120      │
+│  = 1,75× o capital investido         │  + EPC:              R$   930.000      │
+│                                      │  TOTAL CICLO 1:      R$ 2.133.120      │
+│  Yield médio: 17,50%/ano ✓           │                                        │
+│  TIR 10 anos: ~13,8% (yield-only)    │  Fee 10% = receita líquida             │
+│  Produto: RENDA, não TIR             │  (O&M já deduzido antes do split)      │
+├──────────────────────────────────────┴────────────────────────────────────────┤
+│  AO FINAL DO CONTRATO (MÊS 120) — CLIENTE NÃO QUER FICAR COM O ATIVO:        │
+│                                                                                │
+│  Cliente paga taxa de saída operacional:          R$ 800.000                  │
+│  → Empresa cobre retirada + transporte + reinstal: -R$ 800.000                │
+│  → Empresa retoma o ativo físico (custo líquido = R$ 0)                       │
+│  → Investidor: recebeu 1,75× o capital em yield. Relacionamento encerrado.    │
+├────────────────────────────────────────────────────────────────────────────────┤
+│  POSIÇÃO LÍQUIDA DO CLIENTE (vs pagar tarifa de mercado):                     │
+│                                                                                │
+│  Tarifa mercado acumulada 10 anos (crescendo 5%/ano):    R$ 18.439.000        │
+│  BOT pago 10 anos:                          R$ 13.207.440                     │
+│  Taxa de saída:                             +R$    800.000                    │
+│  Total pago com BOT:                        R$ 14.007.440                     │
+│  ECONOMIA LÍQUIDA DO CLIENTE:               R$  4.431.560  ✓                  │
+└────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Segundo Ciclo — Empresa (ativo retornado)
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Capital adicional da empresa:              R$ 0  (taxa de saída cobre tudo)
+  Tarifa MWh em 10 anos (5%/ano):            R$ 666/MWh
+  BOT second life (10% desconto):            R$ 599/MWh × 299 MWh
+  Receita mensal second life:                R$ 179.201/mês
+  (-) O&M maduro:                           -R$   7.100/mês
+  EBITDA second life (100% empresa):         R$ 172.101/mês = R$ 2.065.212/ano
+  ROI sobre capital adicional (= R$0):       INFINITO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+> O segundo ciclo é financiado integralmente pela taxa de saída do cliente anterior.
+> A empresa captura 100% do EBITDA sem novo investimento de capital.
+
+---
+
+## 7. CESSÃO DE RECEBÍVEIS — MECANISMO DE RECICLAGEM
+
+### 7.1 Cessão de Direitos vs Empréstimo com Garantia
 
 | Aspecto | **Cessão de Direitos** | **Empréstimo c/ Garantia (Cessão Fiduciária)** |
 |---------|----------------------|------------------------------------------------|
@@ -202,7 +274,7 @@ Mesmo com spread modesto sobre CDI+3%, o investidor BOT recebe:
 | Instrumento BR | FIDC / CRA de energia | Cessão fiduciária bancária |
 | Melhor para | Limpar balanço (pré-venda empresa) | Alavancagem pontual sem perder o ativo |
 
-### 6.2 Por que 5 Anos é o Gatilho Ideal (não 3 anos)
+### 7.2 Por que 5 Anos é o Gatilho Ideal (não 3 anos)
 
 Com custo de capital a CDI+3%:
 
@@ -210,47 +282,48 @@ Com custo de capital a CDI+3%:
 ```
   Recebíveis restantes (84 meses × R$ 110.062):     R$ 9.245.208 (nominal)
   PV ao CDI+3% (16,25%):                            R$ 5.501.000
-  Saldo devedor (se houvesse funding a CDI+3%):     R$ 5.240.000  (alto)
-  Capital líquido gerado:                           R$   261.000  ← muito pouco
+  Capital líquido gerado:                           R$ 5.501.000  → reinveste em novo projeto
 ```
 
 **Cessão após 5 anos** (5 anos de recebíveis restantes):
 ```
   Recebíveis restantes (60 meses × R$ 110.062):     R$ 6.603.720 (nominal)
   PV ao CDI+3% (16,25%):                            R$ 4.704.000
-  Saldo devedor (se houvesse funding):              R$ 3.850.000  (menor)
-  Capital líquido gerado:                           R$   854.000  ← mais razoável
+  Capital já recebido pelo investidor (60 × R$87.806): R$ 5.268.360
+  Investidor já recuperou 85% do capital em yield + cessão parcial
 ```
-
-> No modelo **sem dívida (investidor)**, a cessão de recebíveis do Ano 5 devolve ao investidor
-> ~R$ 4,7M dos R$ 6,2M investidos — ele já recebeu R$ 5,6M em 5 anos de yield (90%).
-> O investidor recupera ~168% do capital em 5 anos, podendo reinvestir em novo projeto.
 
 ---
 
-## 7. NOSSA RECEITA POR PROJETO — VISÃO COMPLETA 10 ANOS
+## 8. NOSSA RECEITA POR PROJETO — VISÃO COMPLETA 10 ANOS
 
 ### Modalidade Investidor (escala madura, desconto 10%)
 
 | Fonte | Momento | Valor |
 |-------|---------|-------|
 | Margem EPC | Ano 0 (construção) | **R$ 930.000** |
-| Fee 10% (Anos 1–5, escala inicial) | Anual × 5 | R$ 585.370 |
-| Fee 10% (Anos 6–10, escala madura) | Anual × 5 | R$ 617.770 |
-| **Total 10 anos** | | **R$ 2.133.140** |
-| **Receita média anual por projeto** | | **R$ 213.314** |
-| **Overhead alocado por projeto** (~R$ 42M ÷ 225) | | -R$ 186.667/ano |
-| **Margem líquida por projeto (ano 7+)** | | **R$ 26.647/ano** |
+| Fee 10% (Anos 1–5, escala inicial) | Mensal × 60 | R$ 585.360 |
+| Fee 10% (Anos 6–10, escala madura) | Mensal × 60 | R$ 617.760 |
+| **Total Ciclo 1 (10 anos)** | | **R$ 2.133.120** |
+| Taxa de saída cobrada (custo operacional) | Mês 120 | R$ 800.000 |
+| Taxa de saída gasta (retirada + reinstalação) | Mês 120 | -R$ 800.000 |
+| **Custo líquido da taxa de saída** | | **R$ 0** |
+| **Receita média anual por projeto (ciclo 1)** | | **R$ 213.312** |
 
-> A margem líquida por projeto na fase de maturidade é pequena porque o overhead cresce com a empresa.
-> O valor real está na **escala**: 225 projetos × R$ 26.647 = R$ 5,9M de lucro líquido recorrente
-> + R$ 51M/ano de EPC + R$ 100M+/ano de reciclagem de ativos = EBITDA total de ~R$ 100M.
+### Segundo Ciclo — Sem investidor, empresa opera diretamente
+
+| Fonte | Valor |
+|-------|-------|
+| Capital adicional necessário | R$ 0 |
+| EBITDA mensal (100% empresa) | R$ 172.101/mês |
+| EBITDA anual | R$ 2.065.212 |
+| Total 10 anos second life | **R$ 20.652.120** |
 
 ---
 
-## 8. P&L CONSOLIDADO — ANO A ANO
+## 9. P&L CONSOLIDADO — ANO A ANO
 
-### 8.1 Receita por Fonte
+### 9.1 Receita por Fonte
 
 | Fonte de Receita | Ano 1 | Ano 3 | Ano 5 | Ano 7 |
 |-----------------|-------|-------|-------|-------|
@@ -262,19 +335,15 @@ Com custo de capital a CDI+3%:
 | Outros (digital, assessoria) | R$ 0,4M | R$ 1,9M | R$ 1,6M | R$ 8,0M |
 | **Receita Total** | **R$ 6,0M** | **R$ 47,0M** | **R$ 159,9M** | **R$ 267,0M** |
 
-> *Nota: a diferença em relação à meta de R$ 360M pode ser compensada com desconto de 12-15% ao
-> cliente (gerando mais volume de projetos por menor ticket), BESS premium, ou ciclos de
-> reciclagem mais rápidos. O R$ 267M é o cenário base conservador.*
-
-### 8.2 Custos Totais por Nível
+### 9.2 Custos Totais por Nível
 
 | Custo | Ano 1 | Ano 3 | Ano 5 | Ano 7 |
 |-------|-------|-------|-------|-------|
-| **O&M dos ativos (projeto-nível)** | R$ 0,8M | R$ 5,9M | R$ 14,8M | R$ 19,2M |
+| **O&M dos ativos (custo de projeto)** | R$ 0,8M | R$ 5,9M | R$ 14,8M | R$ 19,2M |
 | **Overhead da empresa** | R$ 2,6M | R$ 8,7M | R$ 26,4M | R$ 42,7M |
 | **Total Custos Operacionais** | **R$ 3,4M** | **R$ 14,6M** | **R$ 41,2M** | **R$ 61,9M** |
 
-### 8.3 EBITDA e Valuation Implícito
+### 9.3 EBITDA e Valuation Implícito
 
 | Métrica | Ano 1 | Ano 3 | Ano 5 | Ano 7 |
 |---------|-------|-------|-------|-------|
@@ -285,16 +354,12 @@ Com custo de capital a CDI+3%:
 | **Valuation (10× EBITDA)** | — | R$ 324M | R$ 1.187M | R$ 2.051M |
 | **Valuation (EV–Dívida, 0 dívida)** | — | R$ 324M | **R$ 1.187M** | **R$ 2.051M** |
 
-> **Revelação importante**: sem dívida no modelo (100% investidor), o EBITDA reflete
-> quase totalmente o equity value. Com 225 projetos e sem alavancagem corporativa,
-> o valuation de saída pode **superar R$ 1B já no Ano 5**.
-
-> *O EBITDA alto (77% de margem) se deve ao modelo asset-light: nós não investimos CAPEX,
-> apenas gerenciamos. Custos são sobretudo pessoal e overhead — não ativos físicos.*
+> **Sem dívida no modelo (100% investidor), o EBITDA reflete quase totalmente o equity value.**
+> O valuation de saída pode superar R$ 1B já no Ano 5.
 
 ---
 
-## 9. PROJEÇÃO DE PROJETOS E PORTFÓLIO
+## 10. PROJEÇÃO DE PROJETOS E PORTFÓLIO
 
 | Ano | Novos Projetos | Portfólio Ativo | AUM Total | Headcount |
 |-----|---------------|-----------------|----------|-----------|
@@ -309,15 +374,15 @@ Com custo de capital a CDI+3%:
 
 ---
 
-## 10. PLANO OPERACIONAL — 7 ANOS
+## 11. PLANO OPERACIONAL — 7 ANOS
 
 ### ANO 1 (2026) — Fundação | 5 projetos | R$ 6M
 
 ```
 □ Constituir holding + modelo de SPE (1 SPE por projeto)
-□ Contrato BOT padrão: 10 anos, desconto 10%, cláusula residual 50% ao final
+□ Contrato BOT padrão: 10 anos, desconto 10%, taxa de saída = R$ 800k (custo operacional)
 □ Fechar 3–5 projetos com clientes âncora (C&I, agroindústria)
-□ Prospectar 10–15 investidores iniciais (HNWIs, family offices)
+□ Prospectar 10–15 investidores iniciais (HNWIs, family offices — perfil renda)
 □ Implantar SCADA + plataforma de monitoramento
 □ Contratar: 2 engenheiros, 1 comercial sênior, 1 advogado de energia
 □ Capital de giro: linha bancária R$ 3M (para pré-financiar projetos em desenvolvimento)
@@ -403,9 +468,9 @@ Com custo de capital a CDI+3%:
 
 ---
 
-## 11. TESE DE SAÍDA
+## 12. TESE DE SAÍDA
 
-### 11.1 Valuation — Três Abordagens Convergentes
+### 12.1 Valuation — Três Abordagens Convergentes
 
 | Método | Base (Ano 7) | Múltiplo | Valuation |
 |--------|-------------|----------|-----------|
@@ -414,12 +479,7 @@ Com custo de capital a CDI+3%:
 | EV/Receita Recorrente | R$ 48M (recorrente) | 20× | R$ 960M |
 | **Consenso conservador** | | | **R$ 950M – R$ 1,2B** |
 
-> O múltiplo EV/EBITDA de 10× aplicado ao EBITDA de R$ 205M sugere valuation acima de R$ 2B —
-> porém a referência prática para o comprador será o **AUM e a receita recorrente de longo prazo**,
-> que converge para R$ 1–1,2B em equity value sem dívida corporativa. Múltiplos mais altos
-> são possíveis com comprador estratégico (utility) que captura sinergias adicionais.
-
-### 11.2 Perfil de Compradores
+### 12.2 Perfil de Compradores
 
 | Tipo | Exemplos | Múltiplo | Motivação |
 |------|----------|----------|-----------|
@@ -430,22 +490,23 @@ Com custo de capital a CDI+3%:
 
 ---
 
-## 12. RISCOS E MITIGAÇÕES
+## 13. RISCOS E MITIGAÇÕES
 
 | Risco | Prob. | Impacto | Mitigação |
-|-------|-------|---------|-----------|
-| Spread vs CDI+3% muito fino para atrair investidor | Alta | Crítico | Cláusula residual 50% no contrato BOT; cessão de recebíveis Ano 5 |
-| Funding model inviável — crescimento travado | Alta | Alto | Modelo 100% investidor; FIDC estruturado para institucionalizar captação |
-| O&M subestimado (escala inicial) | Média | Médio | Contingência de 10% no orçamento de O&M; fundo de reserva provisionado |
-| Overhead cresce mais rápido que receita | Média | Alto | Contratação em função de projetos assinados (não antecipada) |
-| Reciclagem de ativos não se materializa | Média | Alto | Iniciar programa piloto (5 vendas no Ano 3); contratar advisor M&A especializado |
+|-------|-------|---------|----------|
+| Yield vs CDI+3% com spread fino | Alta | Crítico | Pitch yield-based (17,93%/ano > CDI+3%) para family offices e HNWIs |
+| Funding model inviável — crescimento travado | Alta | Alto | Modelo 100% investidor; FIDC para institucionalizar captação |
+| O&M subestimado (escala inicial) | Média | Médio | Contingência 10% no orçamento; fundo de reserva provisionado por projeto |
+| Overhead cresce mais rápido que receita | Média | Alto | Contratação vinculada a projetos assinados (não antecipada) |
+| Reciclagem de ativos não se materializa | Média | Alto | Piloto com 5 ativos no Ano 3; advisor M&A especializado |
 | Inadimplência do cliente BOT | Baixa | Alto | Score mínimo de contraparte; seguro de crédito; garantias reais |
-| Custo de capital sobe acima de CDI+3% | Média | Alto | Modelo asset-light não é afetado — risco fica no investidor |
+| Custo de capital sobe acima de CDI+3% | Média | Médio | Risco fica no investidor — empresa é asset-light sem dívida |
 | Comprador não aparece no Ano 7 | Baixa | Crítico | 3 formatos de saída simultâneos; processo com 15+ compradores |
+| Second life não se viabiliza comercialmente | Baixa | Médio | Tarifa cresce 5%/ano — even com menor crescimento o second life é atrativo |
 
 ---
 
-## 13. KPIs — REVISÃO TRIMESTRAL
+## 14. KPIs — REVISÃO TRIMESTRAL
 
 | KPI | Ano 2 | Ano 4 | Ano 5 | Ano 7 |
 |-----|-------|-------|-------|-------|
@@ -456,7 +517,7 @@ Com custo de capital a CDI+3%:
 | AUM (ativos sob gestão) | R$ 136M | R$ 508M | R$ 787M | R$ 1,41B |
 | Projetos novos/ano | 15 | 35 | 45 | 50 |
 | Ativos reciclados/ano | 0 | 10 | 25 | 35 |
-| Retorno investidor (yield) | 17,0% | 17,5% | 17,9% | 17,9% |
+| Yield médio ao investidor | 17,0% | 17,5% | 17,9% | 17,9% |
 | Spread vs CDI+3% | +0,75 p.p. | +1,25 p.p. | +1,65 p.p. | +1,65 p.p. |
 | O&M como % receita BOT | 11,4% | 8,5% | 7,2% | 6,5% |
 | WALE médio dos contratos | 9,5 anos | 11 anos | 12 anos | 13 anos |
@@ -465,49 +526,52 @@ Com custo de capital a CDI+3%:
 
 ---
 
-## 14. PRÓXIMOS 90 DIAS
+## 15. PRÓXIMOS 90 DIAS
 
 ### Sprint 1 (Semanas 1–4): Jurídico e Modelagem
 - [ ] Constituir holding + modelo SPE com advogado especialista
-- [ ] Redigir contrato BOT padrão: 10 anos, cláusula residual 50%, correção IPCA
-- [ ] Construir modelo financeiro por projeto (TIR investidor com e sem residual, O&M explícito)
+- [ ] Redigir contrato BOT padrão: 10 anos, taxa de saída = R$ 800k (custo operacional de retirada)
+- [ ] Construir modelo financeiro por projeto (yield investidor × O&M explícito × fee empresa)
 
 ### Sprint 2 (Semanas 3–8): Captação Inicial
 - [ ] Pitch deck para investidores com retorno mensal explícito (1,49%/mês vs CDI+3%)
-- [ ] Prospectar 10–15 investidores iniciais (family offices, HNWIs)
+- [ ] Segmentar investidores: family offices e HNWIs com foco em renda, não TIR
 - [ ] Estruturar SPE piloto para o 1º projeto com investidor real
 
 ### Sprint 3 (Semanas 5–12): Pipeline e Operações
 - [ ] Qualificar 15–20 oportunidades de projeto (viabilidade técnica básica)
-- [ ] Calculadora BOT: simula desconto ao cliente + retorno ao investidor em tempo real
+- [ ] Calculadora BOT: simula desconto ao cliente + yield ao investidor em tempo real
 - [ ] Selecionar parceiro SCADA e definir stack tecnológico de monitoramento
 
 ---
 
-## 15. GLOSSÁRIO
+## 16. GLOSSÁRIO
 
 | Termo | Definição |
-|-------|-----------|
-| **BOT** | Build-Operate-Transfer: construir, operar por contrato, transferir o ativo |
-| **O&M** | Operations & Maintenance: operação e manutenção do ativo |
-| **EBITDA do Projeto** | Receita BOT menos O&M — antes da distribuição ao investidor/empresa |
-| **EBITDA da Empresa** | Receita total da empresa menos todos os custos operacionais (O&M + overhead) |
+|-------|----------|
+| **BOT** | Build-Operate-Transfer: construir, operar por contrato, transferir ou retirar o ativo |
+| **O&M** | Operations & Maintenance: operação e manutenção — custo do projeto, deduzido antes do split |
+| **EBITDA do Projeto** | Receita BOT menos O&M — base para distribuição ao investidor e à empresa |
+| **EBITDA da Empresa** | Receita total da empresa menos todos os custos (O&M + overhead) |
 | **EPC** | Engineering, Procurement and Construction: construção chave na mão |
 | **SPE** | Sociedade de Propósito Específico: empresa criada por projeto |
 | **AUM** | Assets Under Management: valor total dos ativos gerenciados |
 | **DSCR** | Debt Service Coverage Ratio: EBITDA / serviço da dívida (mín. 1,25×) |
 | **WALE** | Weighted Average Lease Expiry: prazo médio ponderado dos contratos |
 | **TIR / IRR** | Taxa Interna de Retorno |
-| **Yield Simples** | Retorno anual / capital investido (sem considerar reinvestimento) |
+| **Yield Simples** | Retorno anual / capital investido — métrica principal para o investidor neste modelo |
 | **Cessão Fiduciária** | Empréstimo com recebíveis como garantia — você mantém a titularidade |
 | **Cessão de Direitos** | Venda definitiva dos recebíveis a terceiro (off-balance) |
 | **FIDC** | Fundo de Investimento em Direitos Creditórios — securitização de recebíveis |
-| **Motor Transfer** | Reciclagem ativa de ativos ou recebíveis maduros para gerar novo capital |
-| **Residual 50%** | Cláusula contratual: cliente compra o ativo pelo equivalente a 50% do ticket original ao final do BOT |
+| **Motor Transfer** | Reciclagem ativa de ativos maduros: retirada + reinstalação em novo cliente |
+| **Taxa de Saída Operacional** | R$ 800k cobrado do cliente ao final do contrato para cobrir custo de retirada + reinstalação |
+| **Second Life BOT** | Segundo ciclo do ativo após retirada: custo zero para empresa, EBITDA 100% próprio |
 | **CDI+3%** | Taxa de referência de custo de capital: CDI (13,25%) + 3% = 16,25% a.a. |
 
 ---
 
-*Versão 4.0 — Maio/2026 | Confidencial — uso interno e captação*
+*Versão 5.0 — Maio/2026 | Confidencial — uso interno e captação*
 *Custo de capital referência: CDI+3% = 16,25% a.a. | BNDES excluído como rota de funding*
 *Modelo: 100% Modalidade Investidor | Asset-light | Meta de saída: R$ 1B+ equity value*
+*O&M é custo do projeto (deduzido antes do split) | Taxa de saída = custo operacional R$ 800k*
+*Investidor: produto de RENDA (yield 17,93%/ano > CDI+3%) — não produto de TIR*
