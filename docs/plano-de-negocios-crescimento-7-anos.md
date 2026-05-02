@@ -6,508 +6,572 @@
 
 ## 1. SUMÁRIO EXECUTIVO
 
-Este plano de negócios estrutura a trajetória de crescimento de uma empresa de energia do estágio atual (R$ 3M de faturamento anual) até atingir R$ 100M em 7 anos, culminando em um evento de saída (venda da empresa ou IPO). A estratégia central é a expansão do portfólio de ativos de energia sob o modelo **BOT — Build-Operate-Transfer**, com foco em:
+Este plano estrutura a trajetória de uma empresa de energia do estágio atual (R$ 3M/ano) até R$ 100M em 7 anos, com evento de saída (venda estratégica ou para fundo de infraestrutura). A estratégia é construir um portfólio escalável de ativos de energia no modelo **BOT — Build-Operate-Transfer**, onde a empresa:
 
-- **Geração Distribuída e Centralizada** (solar, eólico, BESS)
-- **Armazenamento de Energia (BESS — Battery Energy Storage Systems)**
-- **Projetos C&I e Utilitários**
-- **Contratos de Longo Prazo (PPA — Power Purchase Agreement)**
+1. **Constrói** o ativo (solar/BESS) com margem EPC de 15%
+2. **Opera** o ativo por 7–10 anos, recebendo mensalidade do cliente com 10–15% de desconto sobre a tarifa atual
+3. **Transfere** o ativo ao cliente ao final do contrato
 
-A tese de valor para o evento de saída é construída sobre **receita recorrente previsível**, **portfólio de ativos lastreados**, e **múltiplo de EBITDA** compatível com compradores estratégicos (utilities, fundos de infraestrutura, family offices).
+O modelo resolve dois problemas centrais: **para o cliente**, entrega energia mais barata sem investimento inicial; **para o investidor/financiador**, gera retorno superior ao CDI lastreado em ativo físico com contrato de longo prazo.
 
----
-
-## 2. MODELO DE NEGÓCIO — BOT ENERGIA
-
-### 2.1 Conceito BOT
-
-| Fase | Descrição | Geração de Valor |
-|------|-----------|-----------------|
-| **Build** | Desenvolvimento, financiamento e construção do ativo energético | Receita de EPC, margem de desenvolvimento |
-| **Operate** | Operação e manutenção do ativo por prazo contratual (10–25 anos) | Receita recorrente (O&M + geração) |
-| **Transfer** | Transferência do ativo ao cliente ou venda no mercado secundário | Ganho de capital, reciclagem de portfólio |
-
-### 2.2 Fontes de Receita
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  RECEITAS BOT                                                   │
-│                                                                 │
-│  1. Desenvolvimento & EPC       → Receita pontual (projeto)     │
-│  2. O&M (Operação & Manutenção) → Receita recorrente (mensal)   │
-│  3. PPA / Geração de Energia    → Receita recorrente (anual)    │
-│  4. Venda de Ativos (Secondaries)→ Ganho de capital             │
-│  5. Serviços Auxiliares (BESS)  → Receita de ancilares/CCEE     │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### 2.3 Vantagens Competitivas do Modelo BOT
-
-- **Capital Reciclável**: após estabilização operacional, o ativo é vendido ou refinanciado, liberando capital para novos projetos
-- **Alavancagem de Project Finance**: até 80% de dívida sobre o ativo, reduzindo capital próprio necessário
-- **Receita Previsível**: PPAs de 15–25 anos garantem fluxo de caixa para múltiplos de valuation
-- **Scalability**: cada ativo construído gera O&M recorrente e histórico operacional para atrair novos financiadores
+> **Tese de saída**: portfólio de 120+ projetos operacionais, R$ 100M ARR, EBITDA de R$ 25M, valuation estimado de **R$ 200M–R$ 300M** (8–12× EBITDA).
 
 ---
 
-## 3. DIAGNÓSTICO ATUAL (Ano 0 — 2025)
+## 2. PREMISSAS FINANCEIRAS DO MODELO
 
-| Indicador | Situação Atual |
-|-----------|---------------|
-| Faturamento Anual | R$ 3.000.000 |
-| Modelo Predominante | Projetos/EPC pontuais |
-| Receita Recorrente (O&M/PPA) | < 20% do faturamento |
-| Portfólio de Ativos Operacionais | Em desenvolvimento |
-| Headcount | Pequeno/médio (estimado 10–30 pessoas) |
-| Capacidade Instalada Gerenciada | < 5 MWp |
+Todas as projeções deste plano são derivadas das seguintes premissas unitárias por projeto:
 
-### Gaps Críticos a Resolver (Ano 1–2)
-
-1. Estruturação de **SPE (Sociedade de Propósito Específico)** por projeto
-2. Acesso a linhas de **Project Finance** (BNDES, Banco do Brasil, bancos privados)
-3. Desenvolvimento de **pipeline de projetos** (12–24 meses de antecedência)
-4. Formalização de **contratos PPA de longo prazo**
-5. Implantação de **sistema de monitoramento e O&M** escalável
+| Premissa | Valor |
+|---------|-------|
+| Ticket médio por projeto (investimento total) | **R$ 6.200.000** |
+| Geração mensal do ativo | **299 MWh/mês** |
+| Tarifa base de energia (custo atual do cliente) | **R$ 409,00/MWh** |
+| Margem EPC da empresa (sobre o ticket) | **15%** |
+| Desconto ofertado ao cliente sobre a tarifa base | **10% a 15%** |
+| Prazo dos contratos BOT | **7 a 10 anos** |
+| Participação da empresa nos rendimentos (modalidade investidor) | **10%** |
 
 ---
 
-## 4. ESTRATÉGIA DE CRESCIMENTO — 7 ANOS
+## 3. ECONOMICS UNITÁRIOS POR PROJETO
 
-### 4.1 Mapa de Crescimento por Fase
+### 3.1 Valor da Energia e Precificação da Mensalidade BOT
 
 ```
-ANO 1–2: FUNDAÇÃO          ANO 3–4: ACELERAÇÃO        ANO 5–7: ESCALA + SAÍDA
-────────────────────        ────────────────────        ──────────────────────
-• Estrutura societária      • Pipeline > 50 MW          • Portfólio > 200 MW
-• Primeiros PPAs            • Project Finance ativo      • M&A / consolidação
-• Pipeline 10–15 MW         • Equipe especializada       • Preparação para venda
-• Certificações             • 1ª venda de ativo (BOT)    • Data Room completo
-• R$ 3M → R$ 12M ARR       • R$ 12M → R$ 40M ARR        • R$ 40M → R$ 100M ARR
+Valor Mensal Integral (sem desconto):
+  299 MWh/mês × R$ 409,00/MWh = R$ 122.291/mês
+  Anualizado: R$ 1.467.492/ano
 ```
 
-### 4.2 Projeção Financeira Anual
+**Precificação da Mensalidade BOT por Faixa de Desconto:**
 
-| Ano | Faturamento Meta | EBITDA Estimado | Capacidade Gerenciada | Marco Principal |
-|-----|-----------------|-----------------|----------------------|-----------------|
-| 2025 (Base) | R$ 3M | ~R$ 0,5M | 5 MW | Diagnóstico e estruturação |
-| 2026 (Ano 1) | R$ 6M | ~R$ 1,2M | 15 MW | Primeiros PPAs / SPEs |
-| 2027 (Ano 2) | R$ 12M | ~R$ 2,5M | 35 MW | Project Finance operacional |
-| 2028 (Ano 3) | R$ 22M | ~R$ 5M | 70 MW | 1ª saída de ativo (BOT) |
-| 2029 (Ano 4) | R$ 40M | ~R$ 9M | 120 MW | Consolidação regional |
-| 2030 (Ano 5) | R$ 60M | ~R$ 14M | 180 MW | Expansão multi-estado |
-| 2031 (Ano 6) | R$ 80M | ~R$ 19M | 250 MW | Preparação para venda |
-| 2032 (Ano 7) | R$ 100M | ~R$ 25M | 350+ MW | Evento de saída |
+| Desconto | Tarifa BOT (R$/MWh) | Mensalidade (R$/mês) | Receita Anual BOT | Economia Mensal do Cliente |
+|---------|---------------------|----------------------|-------------------|---------------------------|
+| 10% | R$ 368,10 | R$ 110.062 | R$ 1.320.744 | R$ 12.229/mês |
+| 12,5% | R$ 357,88 | R$ 107.007 | R$ 1.284.084 | R$ 15.284/mês |
+| **15%** | **R$ 347,65** | **R$ 103.997** | **R$ 1.247.964** | **R$ 18.294/mês** |
 
-> **Múltiplo de Saída Estimado**: 8–12x EBITDA para empresas de infraestrutura energética com receita recorrente
-> **Valuation Estimado no Ano 7**: R$ 200M – R$ 300M
+> **Argumento comercial**: o cliente economiza entre **R$ 12 mil e R$ 18 mil por mês** sem desembolsar o investimento de R$ 6,2M. A mensalidade substitui a conta de energia, com desconto garantido em contrato.
+
+### 3.2 Margem EPC — Receita na Fase Build
+
+| Item | Valor |
+|------|-------|
+| Contrato EPC (ticket do projeto) | R$ 6.200.000 |
+| Margem EPC (15%) | **R$ 930.000** |
+| Custo de construção (nosso CAPEX efetivo) | R$ 5.270.000 |
+
+A margem EPC de R$ 930.000 é receita **imediata e pontual** no momento da entrega do ativo, independente da modalidade de estruturação financeira escolhida.
 
 ---
 
-## 5. PLANO OPERACIONAL POR ANO
+## 4. MODALIDADES DE ESTRUTURAÇÃO FINANCEIRA
 
-### ANO 1 (2026) — Fundação Jurídica e Comercial
-
-**Objetivos:**
-- Estruturar holding e SPEs para os primeiros projetos
-- Fechar os primeiros 3–5 contratos PPA (C&I, 1–5 MW cada)
-- Contratar time de desenvolvimento de projetos (2–3 engenheiros sênior)
-- Estabelecer parceria com financiadores (BNDES, BNB, bancos privados)
-- Implantar plataforma de monitoramento e O&M remoto
-
-**Ações Prioritárias:**
-```
-□ Constituição de SPEs (uma por projeto de ≥ 1 MW)
-□ Elaboração de contratos PPA padronizados (revisão jurídica especializada)
-□ Cadastro e homologação em distribuidoras (GD)
-□ Credenciamento como agente no ambiente de contratação livre (ACL)
-□ Certificação ISO 9001 / NBR 16690 (GD)
-□ Abertura de linha de crédito para capital de giro (R$ 2–5M)
-```
-
-**Meta de Faturamento:** R$ 6M (+100%)
-
----
-
-### ANO 2 (2027) — Pipeline e Project Finance
-
-**Objetivos:**
-- Ter pipeline qualificado de 30–40 MW em desenvolvimento
-- Fechar primeiro project finance (R$ 20–50M em dívida de projeto)
-- Lançar produto BESS em projetos C&I de alta demanda
-- Expandir equipe para 40–60 colaboradores
-
-**Ações Prioritárias:**
-```
-□ Contratação de estruturador financeiro (project finance)
-□ Desenvolvimento de 5–8 projetos em paralelo (EPC + PPA)
-□ Parceria com fabricante/distribuidor de BESS
-□ Certificação de medição e verificação (M&V) dos projetos
-□ Implantação de ERP + sistema de gestão de ativos (SCADA)
-□ Captação de investidor minoritário (seed/series A) ou FIDC
-```
-
-**Meta de Faturamento:** R$ 12M (+100%)
-
----
-
-### ANO 3 (2028) — Primeira Saída de Ativo e Aceleração
-
-**Objetivos:**
-- Realizar a primeira venda de ativo operacional (projeto maduro, 12+ meses de operação)
-- Usar o ganho de capital para alavancar novos projetos
-- Ter 70 MW sob gestão (operação + construção + desenvolvimento)
-- Lançar serviços de ancilares de BESS (regulação de frequência, reserva de potência)
-
-**Ações Prioritárias:**
-```
-□ Processo de venda do 1º ativo (advisor financeiro + data room)
-□ Reinvestimento do capital reciclado em 3–4 novos projetos
-□ Habilitação como agente de BESS na CCEE (serviços ancilares)
-□ Desenvolvimento de parceria com fundo de infraestrutura
-□ Expansão para outros estados (mínimo 2 novas UFs)
-□ Contratação de CFO sênior
-```
-
-**Meta de Faturamento:** R$ 22M (+83%)
-
----
-
-### ANO 4 (2029) — Consolidação Regional
-
-**Objetivos:**
-- Portfólio de 120 MW sob gestão
-- Receita recorrente (O&M + PPA) > 60% do faturamento total
-- Consolidar posição como desenvolvedor relevante em 3–4 estados
-- Avaliar oportunidades de M&A (aquisição de concorrentes menores)
-
-**Ações Prioritárias:**
-```
-□ M&A: aquisição de 1–2 empresas de GD com carteira de clientes
-□ Refinanciamento de ativos maduros (recycling de equity)
-□ Lançamento de produto de energia como serviço (EaaS)
-□ Implementação de plataforma de gestão de energia (SaaS auxiliar)
-□ Expansão da equipe comercial (key accounts)
-□ Auditoria externa de valuation (preparação para saída)
-```
-
-**Meta de Faturamento:** R$ 40M (+82%)
-
----
-
-### ANO 5 (2030) — Expansão Nacional
-
-**Objetivos:**
-- Presença em pelo menos 5 estados
-- Portfólio de 180 MW
-- Iniciar conversas exploratórias com potenciais compradores estratégicos
-- Estruturar governança corporativa compatível com buyer due diligence
-
-**Ações Prioritárias:**
-```
-□ Implantação de governança corporativa (conselho de administração)
-□ Auditorias financeiras independentes (Big 4)
-□ Padronização de contratos e processos operacionais
-□ Desenvolvimento de tese de saída (strategic buyer vs. financial buyer)
-□ Contratação de investment bank para mandato de M&A (sell-side)
-□ Implantação de compliance e ESG reporting
-```
-
-**Meta de Faturamento:** R$ 60M (+50%)
-
----
-
-### ANO 6 (2031) — Preparação para Saída
-
-**Objetivos:**
-- Atingir 250 MW sob gestão
-- Ter EBITDA > R$ 19M e margem EBITDA > 23%
-- Finalizar data room completo
-- Iniciar processo formal de venda (processo competitivo)
-
-**Ações Prioritárias:**
-```
-□ Elaboração do Information Memorandum (IM) com advisor
-□ Processo de due diligence preparatória (vendor due diligence)
-□ Identificação e qualificação de 10–15 potenciais compradores
-□ Renovação/extensão de contratos PPA (aumentar WALE — Weighted Average Lease Expiry)
-□ Resolução de passivos contingentes (trabalhistas, ambientais, fiscais)
-□ Estruturação de equity plan para retenção de time-chave
-```
-
-**Meta de Faturamento:** R$ 80M (+33%)
-
----
-
-### ANO 7 (2032) — Evento de Saída
-
-**Objetivos:**
-- Faturamento de R$ 100M
-- EBITDA > R$ 25M
-- Concluir evento de saída: venda estratégica, venda para fundo de infraestrutura, ou IPO
-- Valuation alvo: R$ 200M – R$ 300M (8–12x EBITDA)
-
-**Formatos de Saída Possíveis:**
-
-| Formato | Comprador Típico | Múltiplo Esperado | Prazo |
-|---------|-----------------|-------------------|-------|
-| Venda Estratégica | Utility, EPC global, grupo energético | 10–14x EBITDA | 6–12 meses |
-| Venda para Fundo | Fundo de Infraestrutura, PE | 8–10x EBITDA | 4–8 meses |
-| IPO (B3) | Mercado de capitais | 10–15x EBITDA | 12–18 meses |
-| Partial Sale | Fundo minoritário + gestão continuada | 6–9x EBITDA | 3–6 meses |
-
----
-
-## 6. ESTRUTURA DO PORTFÓLIO BOT
-
-### 6.1 Segmentos de Atuação
+Cada projeto pode ser estruturado em duas modalidades:
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│  SEGMENTO        │  TAMANHO TÍPICO  │  PRAZO PPA  │  MARGEM EBITDA │
-├─────────────────────────────────────────────────────────────────────┤
-│  GD C&I (solar)  │  0,5 – 5 MW      │  10–15 anos │  25–35%        │
-│  GD Agro         │  1 – 10 MW       │  10–20 anos │  28–38%        │
-│  BESS C&I        │  0,5 – 5 MWh     │  10–15 anos │  30–40%        │
-│  Utilitário Solar│  10 – 100 MW     │  15–25 anos │  40–55%        │
-│  Utilitário BESS │  10 – 100 MWh    │  15–20 anos │  35–50%        │
-│  Híbrido (Sol+BESS)│  5 – 50 MW     │  15–25 anos │  38–52%        │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-### 6.2 Critérios de Seleção de Projetos
-
-**Go / No-Go por Projeto:**
-- TIR do Projeto (alavancada) ≥ 18% a.a.
-- DSCR ≥ 1,25x (cobertura do serviço da dívida)
-- Prazo de contrato PPA ≥ 10 anos
-- Contraparte com rating mínimo (investment grade ou equivalente)
-- Licença ambiental viável em < 12 meses
-- Conexão na rede viável em < 18 meses
-
-### 6.3 Modelo de Financiamento
-
-```
-ESTRUTURA DE CAPITAL POR PROJETO
-
-  Equity (20%)  ──→  SPE do Projeto  ←──  Dívida (80%)
-      |                    |                     |
-  Holding          Ativo Energético         Project Finance
-  Empresa          (Planta Solar/BESS)      (BNDES/Privado)
-      |                    |
-  Dividendos         Receita PPA/O&M
-  + Ganho BOT        por 15–25 anos
+┌─────────────────────────────────────────────────────────────────────────┐
+│  MODALIDADE A — COM INVESTIDOR                                          │
+│  Investidor aporta R$ 6,2M → Nós construímos e operamos                │
+│  Receita BOT: Investidor recebe 90% | Nós recebemos 10%                 │
+├─────────────────────────────────────────────────────────────────────────┤
+│  MODALIDADE B — COM FUNDING (CRÉDITO)                                   │
+│  Nós captamos R$ 6,2M como tomadores do crédito                        │
+│  Receita BOT: Nós ficamos com 100% → pagamos o serviço da dívida       │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 7. PLANO FINANCEIRO CONSOLIDADO
+## 5. MODALIDADE A — COM INVESTIDOR
 
-### 7.1 Composição da Receita (Ano 7 — Meta R$ 100M)
+### 5.1 Fluxo do Modelo
 
-| Linha de Receita | Valor | % do Total |
-|-----------------|-------|------------|
-| Receita de PPA (geração própria) | R$ 45M | 45% |
-| Receita de O&M (terceiros + próprios) | R$ 20M | 20% |
-| Receita de EPC/Desenvolvimento | R$ 18M | 18% |
-| Receita de Serviços BESS (ancilares) | R$ 10M | 10% |
-| Receita de Gestão de Energia (SaaS/EaaS) | R$ 7M | 7% |
+```
+  INVESTIDOR                    EMPRESA (nós)                    CLIENTE
+      │                              │                               │
+      │  Aporta R$ 6,2M              │                               │
+      ├─────────────────────────────>│                               │
+      │                              │  Constrói ativo (EPC)         │
+      │                              ├──────────────────────────────>│
+      │                              │  Margem EPC: R$ 930k          │
+      │                              │<──────────────────────────────│
+      │                              │                               │
+      │          ← Fase OPERATE →   │                               │
+      │                              │  Cliente paga mensalidade     │
+      │                              │<──────────────────────────────│
+      │  90% do rendimento/mês       │                               │
+      │<─────────────────────────────│                               │
+      │                              │  Nós ficamos com 10%          │
+      │                              │                               │
+```
+
+### 5.2 Distribuição da Receita por Projeto (Modalidade Investidor)
+
+**Cenário base: desconto de 10% ao cliente**
+
+| Destinatário | Participação | Valor Mensal | Valor Anual |
+|-------------|-------------|--------------|-------------|
+| Investidor | 90% | R$ 99.056 | R$ 1.188.670 |
+| Empresa (nós) | 10% | R$ 11.006 | R$ 132.074 |
+| **Total BOT** | **100%** | **R$ 110.062** | **R$ 1.320.744** |
+
+**+ Margem EPC (receita nossa na construção): R$ 930.000** *(pontual, Ano 0)*
+
+### 5.3 Retorno do Investidor — Análise vs CDI
+
+> **Premissa CDI**: 13,25% a.a. (referência Selic/CDI, Mai/2026 — verificar taxa vigente na data de captação)
+
+#### A) Yield Simples (Cash-on-Cash Annual)
+
+| Desconto ao Cliente | Retorno Anual Investidor | Yield Bruto/Ano | Spread vs CDI |
+|--------------------|--------------------------|-----------------|---------------|
+| 10% | R$ 1.188.670 | **19,17%** | **+5,92 p.p.** |
+| 12,5% | R$ 1.155.676 | **18,64%** | **+5,39 p.p.** |
+| 15% | R$ 1.122.682 | **18,11%** | **+4,86 p.p.** |
+
+O **yield simples** representa o retorno anual como percentual do capital investido (R$ 6,2M), assumindo que o investidor recebe o rendimento anualmente e detém o ativo durante todo o contrato.
+
+#### B) TIR (Taxa Interna de Retorno) — Análise por Prazo de Contrato
+
+A TIR leva em conta o prazo do contrato e se há valor residual do ativo ao final (transferência do ativo ao cliente pode incluir um valor de compra pré-acordado).
+
+**Cenário: Desconto 10% ao cliente | Sem valor residual ao final do contrato:**
+
+| Prazo do Contrato | TIR do Investidor | CDI (13,25%) | Spread | Avaliação |
+|------------------|------------------|--------------|--------|-----------|
+| 7 anos | 8,0% | 13,25% | -5,25 p.p. | ✗ Não compete |
+| 8 anos | 10,6% | 13,25% | -2,65 p.p. | ✗ Abaixo do CDI |
+| 9 anos | 12,6% | 13,25% | -0,65 p.p. | ~ Próximo ao CDI |
+| **10 anos** | **14,0%** | 13,25% | **+0,75 p.p.** | **✓ Supera CDI** |
+
+**Cenário: Desconto 10% ao cliente | Com valor residual de 30% ao final (cliente compra ativo):**
+
+| Prazo do Contrato | TIR do Investidor | Spread vs CDI | Avaliação |
+|------------------|------------------|---------------|-----------|
+| 7 anos | 11,2% | -2,05 p.p. | ✗ Abaixo do CDI |
+| 8 anos | 13,1% | -0,15 p.p. | ~ No CDI |
+| 9 anos | 15,0% | +1,75 p.p. | **✓ Atraente** |
+| **10 anos** | **15,9%** | **+2,65 p.p.** | **✓✓ Muito atraente** |
+
+> **Valor Residual de 30%**: planta solar/BESS com vida útil de 25–30 anos; após 10 anos, ainda tem ~60% da vida operacional restante. Assumindo compra pelo cliente no fim do BOT por 30% do investimento original = R$ 1,86M.
+
+#### C) Ponto de Equilíbrio — Qual desconto zera o spread vs CDI?
+
+Para que o investidor obtenha exatamente a TIR = CDI (13,25%) em um contrato de 10 anos sem residual:
+
+```
+Retorno anual necessário: R$ 6.200.000 × 13,25% = R$ 821.500/ano
+Participação investidor (90%): R$ 821.500 / 0,90 = R$ 912.778/ano (receita BOT total)
+Mensalidade necessária: R$ 912.778 / 12 = R$ 76.065/mês
+Tarifa implícita: R$ 76.065 / 299 MWh = R$ 254,40/MWh
+Desconto implicado: (R$ 409 - R$ 254,40) / R$ 409 = 37,8%
+```
+
+**Conclusão**: qualquer desconto abaixo de ~38% ao cliente em contrato de 10 anos gera TIR > CDI para o investidor. O desconto de 10–15% está muito longe desse limite — o investidor tem retorno confortavelmente superior ao CDI.
+
+#### D) Resumo do Posicionamento vs CDI
+
+```
+  RETORNO INVESTIDOR (10% desconto, 10 anos, sem residual)
+  ─────────────────────────────────────────────────────────
+  Yield Simples:   19,17%  ██████████████████████████████  (+5,92 p.p. vs CDI)
+  TIR 10 anos:     14,00%  █████████████████████          (+0,75 p.p. vs CDI)
+  CDI Referência:  13,25%  ████████████████████
+
+  COM RESIDUAL 30% (10 anos):
+  TIR:             15,90%  ██████████████████████████      (+2,65 p.p. vs CDI)
+
+  VANTAGENS vs RENDA FIXA CDI:
+  ✓ Ativo físico (solar/BESS) como lastro — proteção real
+  ✓ Hedge natural contra inflação energética (tarifa cresce com ANEEL)
+  ✓ Contrato de longo prazo com cliente corporativo = risco baixo
+  ✓ Potencial upside: venda antecipada do ativo no mercado secundário
+```
+
+### 5.4 Nossa Receita Total por Projeto (Modalidade Investidor)
+
+| Fonte | Momento | Valor |
+|-------|---------|-------|
+| Margem EPC | Construção (Ano 0) | R$ 930.000 |
+| Fee de 10% (10 anos) | Operação (Ano 1–10) | R$ 1.320.740 |
+| **Total 10 anos** | | **R$ 2.250.740** |
+| **Receita média/ano** | | **~R$ 225.000/projeto/ano** |
+
+---
+
+## 6. MODALIDADE B — COM FUNDING (CRÉDITO)
+
+### 6.1 Estrutura
+
+Nós captamos o crédito de R$ 6,2M (como tomadores), construímos o ativo, e ficamos com **100% da receita BOT**. O serviço da dívida é pago com a própria receita gerada.
+
+### 6.2 Análise de Viabilidade por Taxa de Captação
+
+**Base: desconto de 10% ao cliente | Receita BOT = R$ 1.320.744/ano | Prazo: 10 anos**
+
+| Taxa de Captação | PMT Mensal | Serviço Dívida/Ano | NOI Anual | DSCR | Viável? |
+|-----------------|-----------|---------------------|-----------|------|---------|
+| **10% a.a. (BNDES/FGI Verde)** | R$ 81.976 | R$ 983.712 | **R$ 337.032** | **1,34×** | **✓ Excelente** |
+| **11% a.a. (FIDC Verde)** | R$ 85.364 | R$ 1.024.368 | **R$ 296.376** | **1,29×** | **✓ Bom** |
+| 12% a.a. (banco privado) | R$ 88.892 | R$ 1.066.704 | R$ 254.040 | 1,24× | ~ Marginal |
+| 13% a.a. (CDI+) | R$ 92.555 | R$ 1.110.660 | R$ 210.084 | 1,19× | ✗ Insuficiente |
+| 14% a.a. (CDI+ spread) | R$ 96.353 | R$ 1.156.236 | R$ 164.508 | 1,14× | ✗ Reprovado |
+
+> **DSCR mínimo aceitável por bancos**: 1,25×. A modalidade funding é viável com captação ≤ 11% a.a.
+> **Fontes indicadas**: BNDES FGI, BNDES PSI Eficiência Energética, BNB FNE Verde, FIDCs de energia, debêntures incentivadas (Lei 12.431).
+
+### 6.3 Nossa Receita Total por Projeto (Modalidade Funding, taxa 10%)
+
+| Fonte | Momento | Valor |
+|-------|---------|-------|
+| Margem EPC | Construção (Ano 0) | R$ 930.000 |
+| NOI líquido (10 anos) | Operação (Ano 1–10) | R$ 3.370.320 |
+| Valor residual do ativo (Ano 10, conservador 30%) | Saída | R$ 1.860.000 |
+| **Total 10 anos** | | **R$ 6.160.320** |
+| **Receita média/ano** | | **~R$ 616.000/projeto/ano** |
+
+### 6.4 Fluxo de Caixa do Projeto (Funding, taxa 10% a.a.)
+
+```
+  ANO    RECEITA BOT    DÍVIDA      NOI      FLUXO ACUM.
+  ─────────────────────────────────────────────────────
+   0     EPC margin  +R$930.000             +R$930.000
+   1    R$1.320.744  -R$983.712  +R$337.032  +R$1.267.032
+   2    R$1.320.744  -R$983.712  +R$337.032  +R$1.604.064
+   3    R$1.320.744  -R$983.712  +R$337.032  +R$1.941.096
+   4    R$1.320.744  -R$983.712  +R$337.032  +R$2.278.128
+   5    R$1.320.744  -R$983.712  +R$337.032  +R$2.615.160
+   6    R$1.320.744  -R$983.712  +R$337.032  +R$2.952.192
+   7    R$1.320.744  -R$983.712  +R$337.032  +R$3.289.224
+   8    R$1.320.744  -R$983.712  +R$337.032  +R$3.626.256
+   9    R$1.320.744  -R$983.712  +R$337.032  +R$3.963.288
+  10    R$1.320.744  -R$983.712  +R$337.032  +R$4.300.320
+  10+   Ativo próprio (dívida zerada) → venda no mercado secundário
+```
+
+---
+
+## 7. COMPARATIVO DAS MODALIDADES
+
+| Critério | Modalidade Investidor | Modalidade Funding |
+|----------|----------------------|-------------------|
+| Capital próprio necessário (por projeto) | **R$ 0** | R$ 0 (100% financiado) |
+| Margem EPC (Ano 0) | R$ 930.000 | R$ 930.000 |
+| Receita recorrente anual (por projeto) | R$ 132.074 | R$ 337.032 |
+| Receita acumulada 10 anos (por projeto) | R$ 2.250.740 | R$ 6.160.320 |
+| Risco financeiro | **Nenhum** | Alto (dívida R$ 6,2M/projeto) |
+| Escalabilidade | **Ilimitada** | Limitada pelo crédito disponível |
+| Exige track record / relacionamento bancário | Não | **Sim** |
+| Ideal para fase | **Crescimento inicial (Anos 1–4)** | Maturidade (Anos 4–7) |
+
+**Estratégia recomendada:**
+- **Anos 1–3**: predominantemente Modalidade Investidor (capital-light, foco em escala)
+- **Anos 4–7**: migrar gradualmente para Modalidade Funding à medida que track record e crédito se consolidam
+
+---
+
+## 8. PROPOSTA DE VALOR AO CLIENTE
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│  CLIENTE ATUAL (sem BOT)                                         │
+│  Paga: 299 MWh × R$ 409,00 = R$ 122.291/mês à distribuidora    │
+│  Investimento: R$ 0 (mas custo alto e sem atualização)           │
+├──────────────────────────────────────────────────────────────────┤
+│  CLIENTE COM BOT (desconto 10%)                                  │
+│  Paga: 299 MWh × R$ 368,10 = R$ 110.062/mês (mensalidade BOT)  │
+│  Investimento: R$ 0                                              │
+│  Economia mensal: R$ 12.229                                      │
+│  Economia em 10 anos: R$ 1.466.880                               │
+│  Ao final: recebe o ativo (planta própria)                       │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**Argumento de venda em 1 frase**: *"Você paga menos do que paga hoje pela energia, sem desembolsar nenhum investimento, e ao final do contrato a planta é sua."*
+
+---
+
+## 9. MODELO DE ESCALA — R$ 3M PARA R$ 100M EM 7 ANOS
+
+### 9.1 Lógica de Escala por Projeto
+
+Para atingir R$ 100M em receita anual no Ano 7, precisamos de um portfólio ativo de projetos, conforme decomposição abaixo.
+
+**Composição alvo de receita (Ano 7):**
+
+| Fonte | Qtd projetos / volume | Receita Anual |
+|-------|----------------------|---------------|
+| BOT Revenue — Funding (projetos próprios) | 30 projetos operando | R$ 39,6M |
+| BOT Fee 10% — Investidor | 70 projetos | R$ 9,2M |
+| EPC (novos projetos construídos no ano) | 25 projetos/ano × R$ 930k | R$ 23,3M |
+| Venda/reciclagem de ativos maduros | ~5 ativos/ano | R$ 18,0M |
+| Serviços O&M e monitoramento (terceiros) | Carteira + 100 proj | R$ 9,9M |
+| **Total** | | **~R$ 100M** |
+
+> Pipeline total construído em 7 anos: **~120 projetos** = R$ 744M em valor total de ativos gerenciados.
+
+### 9.2 Meta de Projetos por Ano
+
+| Ano | Novos Projetos | Portfólio Ativo | Receita Anual | Crescimento |
+|-----|---------------|-----------------|---------------|-------------|
+| 2025 (base) | — | 0–2 | R$ 3M | — |
+| 2026 | 3–5 projetos | 5 | R$ 7M | +133% |
+| 2027 | 8–10 projetos | 15 | R$ 15M | +114% |
+| 2028 | 12–15 projetos | 28 | R$ 26M | +73% |
+| 2029 | 18–20 projetos | 46 | R$ 42M | +62% |
+| 2030 | 22–25 projetos | 68 | R$ 62M | +48% |
+| 2031 | 25–28 projetos | 93 | R$ 80M | +29% |
+| 2032 | 25–30 projetos | 120+ | R$ 100M | +25% |
+
+### 9.3 Capital Gerado pela Operação
+
+A modalidade investidor permite escala sem capital próprio. A receita de EPC (R$ 930k/projeto) financia toda a operação da empresa:
+
+| Ano | Projetos novos | Receita EPC (margem 15%) | Custo operacional est. | Saldo para reinvestimento |
+|-----|---------------|-------------------------|----------------------|--------------------------|
+| 2026 | 4 | R$ 3,72M | R$ 2,5M | R$ 1,22M |
+| 2027 | 9 | R$ 8,37M | R$ 4,0M | R$ 4,37M |
+| 2028 | 14 | R$ 13,02M | R$ 6,0M | R$ 7,02M |
+| 2029 | 19 | R$ 17,67M | R$ 8,5M | R$ 9,17M |
+| 2030 | 23 | R$ 21,39M | R$ 11M | R$ 10,39M |
+
+---
+
+## 10. PLANO OPERACIONAL — 7 ANOS
+
+### ANO 1 (2026) — Fundação e Primeiros Projetos
+
+**Meta**: 3–5 projetos fechados | Receita R$ 7M | Portfólio 5 projetos
+
+```
+□ Estruturar holding + modelo de SPE por projeto
+□ Desenvolver contrato BOT padrão (revisão jurídica especializada)
+□ Fechar 3 projetos pilotos com clientes âncora (C&I, agroindústria)
+□ Prospectar e qualificar primeiros investidores (HNWIs, family offices)
+□ Implantar plataforma de monitoramento/SCADA remoto
+□ Contratar engenheiro sênior + advogado especialista energia
+□ Abrir linha de crédito de capital de giro (R$ 2–3M)
+```
+
+---
+
+### ANO 2 (2027) — Pipeline e Estruturação Financeira
+
+**Meta**: 8–10 projetos | Receita R$ 15M | Portfólio 15 projetos
+
+```
+□ Estruturar FIDC ou SPE de captação com investidores institucionais
+□ Iniciar conversas com BNDES / BNB para linha de funding
+□ Desenvolver modelo de proposta comercial padronizado (calculadora BOT)
+□ Expandir equipe comercial (2–3 key account managers)
+□ Implantar ERP + CRM + sistema de gestão de ativos
+□ Contratar estruturador de project finance
+```
+
+---
+
+### ANO 3 (2028) — Aceleração e Primeira Reciclagem de Ativo
+
+**Meta**: 12–15 projetos novos | Receita R$ 26M | 1ª venda de ativo
+
+```
+□ Vender primeiro ativo maduro (12+ meses de operação) no mercado secundário
+□ Reinvestir o ganho de capital em novos projetos
+□ Ativar linha de funding para projetos selecionados (BNDES)
+□ Expandir para 2+ novos estados
+□ Contratar CFO sênior com experiência em infraestrutura
+□ Iniciar auditorias externas independentes
+```
+
+---
+
+### ANO 4–5 (2029–2030) — Escala Nacional
+
+**Meta**: 46–68 projetos no portfólio | Receita R$ 42M → R$ 62M
+
+```
+□ Presença em 4–5 estados
+□ Avaliar aquisição de 1–2 concorrentes menores (M&A)
+□ Lançar produto Energy-as-a-Service (EaaS) digital
+□ Constituir Conselho de Administração com membros externos
+□ Implementar compliance + ESG reporting (preparação para comprador)
+□ Auditorias Big 4 (3 anos consecutivos obrigatórios antes da venda)
+```
+
+---
+
+### ANO 6–7 (2031–2032) — Preparação e Execução da Saída
+
+**Meta**: 93–120+ projetos | Receita R$ 80M → R$ 100M | Evento de saída
+
+```
+□ Contratar investment bank para mandato sell-side
+□ Elaborar Information Memorandum (IM) + Data Room completo
+□ Resolver contingências (trabalhistas, ambientais, fiscais)
+□ Renovar/estender contratos BOT para aumentar WALE > 14 anos
+□ Estruturar equity plan para retenção de time-chave pós-venda
+□ Conduzir processo competitivo: 10–15 compradores qualificados
+```
+
+---
+
+## 11. MODELO FINANCEIRO CONSOLIDADO — ANO 7
+
+### 11.1 Composição da Receita (Meta R$ 100M)
+
+| Linha de Receita | Valor | % |
+|-----------------|-------|---|
+| Receita BOT — projetos próprios (funding, 30 proj.) | R$ 39,6M | 39,6% |
+| Margem EPC — novos projetos (25/ano × R$ 930k) | R$ 23,3M | 23,3% |
+| Receita de venda/reciclagem de ativos | R$ 18,0M | 18,0% |
+| Fee 10% — projetos com investidor (70 proj.) | R$ 9,2M | 9,2% |
+| Serviços O&M, SCADA e gestão de energia | R$ 9,9M | 9,9% |
 | **Total** | **R$ 100M** | **100%** |
 
-### 7.2 Estrutura de Custos (Ano 7)
+### 11.2 DRE Simplificado (Ano 7)
 
-| Linha de Custo | Valor | % da Receita |
-|---------------|-------|--------------|
-| CPV (O&M, energia, locação) | R$ 35M | 35% |
-| Despesas Comerciais | R$ 8M | 8% |
-| Despesas Administrativas | R$ 12M | 12% |
-| P&D / Tecnologia | R$ 5M | 5% |
-| Depreciação e Amortização | R$ 15M | 15% |
-| **EBITDA** | **R$ 25M** | **25%** |
+| Item | Valor | % Receita |
+|------|-------|-----------|
+| Receita Bruta | R$ 100M | 100% |
+| Deduções (impostos s/ serviço ~8%) | -R$ 8M | -8% |
+| **Receita Líquida** | **R$ 92M** | 92% |
+| CPV + O&M dos ativos | -R$ 28M | -28% |
+| Serviço da dívida (funding projects) | -R$ 14,8M | -14,8% |
+| **Lucro Bruto** | **R$ 49,2M** | 49,2% |
+| Despesas Comerciais + Administrativas | -R$ 18M | -18% |
+| P&D / Tecnologia / Plataforma | -R$ 4M | -4% |
+| **EBITDA** | **~R$ 27M** | **~27%** |
+| Depreciação / Amortização | -R$ 12M | |
+| **EBIT** | **~R$ 15M** | |
 
-### 7.3 Necessidades de Investimento (CAPEX Total — 7 Anos)
+### 11.3 Valuation Estimado para Saída
 
-| Fonte | Volume Estimado | Observações |
-|-------|----------------|-------------|
-| Equity Próprio | R$ 20–30M | Reinvestimento de lucros + aporte dos sócios |
-| Project Finance (dívida) | R$ 150–250M | Alavancagem 4:1 sobre equity |
-| Investidor Minoritário (PE/VC) | R$ 15–30M | Series A ou FIDC Energético |
-| Reciclagem de Capital (BOT) | R$ 40–80M | Vendas de ativos maduros |
-| **Total Capex Viabilizado** | **R$ 225–390M** | Portfólio de 350+ MW |
+| Métrica | Valor | Múltiplo | Valuation Implícito |
+|---------|-------|----------|---------------------|
+| EBITDA (Ano 7) | R$ 27M | 8× | R$ 216M |
+| EBITDA (Ano 7) | R$ 27M | 10× | R$ 270M |
+| EBITDA (Ano 7) | R$ 27M | 12× | R$ 324M |
+| Receita Recorrente (R$ 48,8M) | R$ 48,8M | 4× | R$ 195M |
 
----
-
-## 8. RISCOS E MITIGAÇÃO
-
-| Risco | Probabilidade | Impacto | Mitigação |
-|-------|--------------|---------|-----------|
-| Atraso em licenciamento | Média | Alto | Pipeline antecipado, mapeamento ambiental prévio |
-| Variação do custo de equipamentos | Alta | Médio | Contratos de fornecimento antecipado, hedge cambial |
-| Inadimplência de contraparte PPA | Baixa | Alto | Seleção rigorosa, seguro de crédito, garantias |
-| Mudança regulatória (ANEEL) | Média | Alto | Diversificação de mercados (ACR + ACL + GD) |
-| Elevação de taxa de juros | Alta | Médio | Dívida prefixada, hedge de taxa, refinanciamento |
-| Dificuldade de acesso à rede | Alta | Alto | Estudos de conexão antecipados, múltiplas subestações |
-| Falha no processo de saída | Baixa | Muito Alto | Múltiplos compradores, diferentes formatos de saída |
-| Saída de sócios/key people | Média | Alto | Vesting, equity plan, acordos de sócios |
+> **Range de valuation alvo: R$ 220M – R$ 300M**
 
 ---
 
-## 9. ESTRUTURA ORGANIZACIONAL
+## 12. TESE DE SAÍDA
 
-### 9.1 Organograma — Ano 7
+### 12.1 Narrativa de Venda
+
+> *"Plataforma brasileira de energia renovável com portfólio de 120+ projetos operacionais (R$ 744M em ativos gerenciados), receita anual de R$ 100M, EBITDA de R$ 27M, WALE de 14+ anos, operação em 5 estados, modelo BOT proprietário com 7 anos de track record, base de 100+ clientes corporativos sem concentração relevante."*
+
+### 12.2 Perfil de Compradores
+
+| Tipo | Exemplos | Múltiplo Esperado | Motivação |
+|------|----------|-------------------|-----------|
+| Utility estratégica | Engie, EDP, CPFL, Equatorial | 10–14× EBITDA | Plataforma de GD/BESS pronta |
+| Fundo de infraestrutura | Brookfield, Pátria, Vinci | 8–10× EBITDA | Fluxo de caixa previsível |
+| Fundo de PE energético | BTG Energia, Kinea, Itaúsa | 9–11× EBITDA | Crescimento + saída em 5 anos |
+| EPC global | Grupo ACS, Enel X, Iberdrola | 10–13× EBITDA | Entrada no mercado BR |
+
+### 12.3 Processo M&A Sell-Side (Linha do Tempo)
 
 ```
-                    CEO / Fundador
-                         |
-        ┌────────────────┼────────────────┐
-        |                |                |
-       CFO             COO             CCO
-   (Financeiro)     (Operações)    (Comercial)
-        |                |                |
-   ┌────┴────┐      ┌────┴────┐     ┌────┴────┐
- Controll. Project  O&M    Eng.  Vendas  Gestão
- Tesour.   Finance  Remoto Civil  B2B   Contratos
- Captação         SCADA  Elétric  Key   PPA/EPC
-                         Projetos Accounts
-```
-
-### 9.2 Contratações Críticas por Fase
-
-| Fase | Contratação Crítica | Motivo |
-|------|--------------------|---------| 
-| Ano 1 | Engenheiro de Projetos Sênior | Desenvolvimento técnico |
-| Ano 1 | Advogado Especialista em Energia | PPA, SPE, contratos |
-| Ano 2 | Estruturador de Project Finance | Acesso a dívida |
-| Ano 3 | CFO Sênior (ex-banco/infraestrutura) | Preparação para escala |
-| Ano 4 | Head de M&A / Desenvolvimento | Aquisições e pipeline |
-| Ano 5 | Conselho de Administração | Governança para saída |
-| Ano 6 | Investment Banker (sell-side) | Processo de venda |
-
----
-
-## 10. ROADMAP TECNOLÓGICO
-
-### Plataformas e Sistemas Necessários
-
-| Sistema | Função | Fase de Implantação |
-|---------|--------|---------------------|
-| SCADA / Monitoramento | Supervisão remota dos ativos | Ano 1 |
-| ERP (SAP/TOTVS) | Financeiro, RH, Compras | Ano 1–2 |
-| CRM (Salesforce/HubSpot) | Pipeline comercial | Ano 1 |
-| Sistema de Simulação BESS | Dimensionamento e proposta | Ano 1–2 |
-| Plataforma de Gestão de Energia | EaaS para clientes | Ano 3–4 |
-| BI / Dashboard Executivo | KPIs para investidores | Ano 2 |
-| Data Room Virtual | Preparação para venda | Ano 5–6 |
-
----
-
-## 11. CRITÉRIOS DE SUCESSO E KPIs
-
-### KPIs Primários (revisão trimestral)
-
-| KPI | Meta Ano 3 | Meta Ano 5 | Meta Ano 7 |
-|-----|-----------|-----------|-----------|
-| Faturamento (R$M) | 22M | 60M | 100M |
-| EBITDA Margin | 22% | 23% | 25% |
-| Capacidade Sob Gestão (MW) | 70 MW | 180 MW | 350 MW |
-| Receita Recorrente (%) | 50% | 60% | 75% |
-| Número de Ativos Operacionais | 15 | 40 | 80+ |
-| WALE (anos) | 12 | 14 | 16 |
-| NPS Clientes | 60 | 70 | 75 |
-| Índice de Disponibilidade (uptime) | 97% | 98% | 99% |
-
-### KPIs de Preparação para Saída (Ano 5–7)
-
-- Auditorias Big 4 em dia (3+ anos consecutivos)
-- Zero passivos trabalhistas / ambientais relevantes
-- Contratos PPA sem cláusulas de change-of-control negativas
-- Governança: conselho ativo, compliance, ESG reporting
-- WALE (Weighted Average Lease Expiry) > 14 anos
-- Concentração: nenhum cliente > 15% da receita
-
----
-
-## 12. TESE DE SAÍDA DETALHADA
-
-### 12.1 Perfil de Compradores Ideais
-
-**Compradores Estratégicos:**
-- Utilities brasileiras (Engie, AES, EDP, CPFL, Equatorial)
-- Grupos energéticos internacionais em expansão no Brasil
-- EPCs internacionais buscando plataforma de O&M no Brasil
-
-**Compradores Financeiros:**
-- Fundos de infraestrutura (Vinci, Pátria, Brookfield)
-- Fundos de PE com tese de energia (BTG Pactual Energia, Kinea)
-- Fundos soberanos internacionais (GIC, Mubadala, CDPQ)
-
-### 12.2 Narrativa de Venda
-
-> *"Plataforma de energia renovável com portfólio de 350+ MW, receita recorrente de R$ 75M/ano (75% do total), EBITDA de R$ 25M, contratos de longo prazo com WALE de 16 anos, operação em 5+ estados, track record de execução BOT, time especializado de 150+ pessoas e pipeline de crescimento de 500 MW em desenvolvimento."*
-
-### 12.3 Processo de Venda (M&A Sell-Side)
-
-```
-Fase 1 (2 meses):   Preparação → Data Room, VDD, Teaser
-Fase 2 (2 meses):   Sondagem → NDA, Process Letter, IM
-Fase 3 (2 meses):   Indicative Bids → IOI, shortlist de 3–5
-Fase 4 (3 meses):   Due Diligence → Management Presentation
-Fase 5 (2 meses):   Binding Bids → SPA, negociação, signing
-Fase 6 (2 meses):   Closing → CADE (se necessário), transferência
-─────────────────────────────────────────────────────
-Total estimado:      13–18 meses
+Mês 1–2:   Preparação    → Data Room, VDD, Teaser anônimo
+Mês 3–4:   Sondagem      → NDA + Process Letter + IM enviado
+Mês 5–6:   IOIs          → Indicative Bids, shortlist 3–5 compradores
+Mês 7–9:   Due Diligence → Site visits, Management Presentations
+Mês 10–11: Binding Bids  → Negociação SPA, condições precedentes
+Mês 12–13: Closing       → CADE (se aplicável), transferência
+─────────────────────────────────────────────────────────────
+Total: 12–15 meses | Custo advisor: 1,5–3% do enterprise value
 ```
 
 ---
 
-## 13. PRÓXIMOS PASSOS IMEDIATOS (90 dias)
+## 13. RISCOS E MITIGAÇÃO
 
-### Prioridade 1 — Estrutura Jurídica e Societária
-- [ ] Contratar advogado especialista em direito de energia e societário
-- [ ] Constituir holding controladora e modelo de SPEs
-- [ ] Revisar acordo de sócios (tag-along, drag-along, vesting)
-
-### Prioridade 2 — Financeiro e Captação
-- [ ] Mapear e contatar bancos parceiros (BNDES, BNB, Banco do Brasil)
-- [ ] Elaborar modelo financeiro consolidado (DCF + WACC por projeto)
-- [ ] Avaliar estruturação de FIDC ou FIP para captação
-
-### Prioridade 3 — Pipeline Comercial
-- [ ] Qualificar 10+ oportunidades de projeto (sizing, viabilidade técnica)
-- [ ] Fechar primeiros 2–3 contratos PPA com empresas âncora
-- [ ] Desenvolver proposta padrão de valor para cliente C&I e Agro
-
-### Prioridade 4 — Tecnologia e Operações
-- [ ] Implantar plataforma de monitoramento e O&M remoto
-- [ ] Definir parceiros de fornecimento BESS (Tesla Megapack, BYD, CATL)
-- [ ] Padronizar processos operacionais (ISO/NBR)
+| Risco | Prob. | Impacto | Mitigação |
+|-------|-------|---------|-----------|
+| Retorno investidor abaixo do CDI (contratos curtos) | Alta | Alto | Priorizar contratos de 10 anos + cláusula de valor residual |
+| DSCR insuficiente no funding | Média | Alto | Usar apenas linhas BNDES/FGI (≤11%) — nunca CDI puro |
+| Inadimplência do cliente BOT | Baixa | Alto | Seguro de crédito, garantias reais, score mínimo de contraparte |
+| Custo de equipamento (câmbio) | Alta | Médio | Contratos de fornecimento antecipado; hedge cambial em PPAs longos |
+| Mudança tarifária ANEEL | Média | Médio | Contrato BOT referenciado à tarifa vigente (cliente protegido; nós também) |
+| Atraso de conexão à rede | Alta | Alto | Múltiplos estudos de conexão simultâneos; buffers de prazo no contrato |
+| Falha no processo de venda | Baixa | Muito Alto | Múltiplos formatos de saída; não depender de um único comprador |
 
 ---
 
-## 14. GLOSSÁRIO
+## 14. KPIs E CRITÉRIOS DE SUCESSO
+
+| KPI | Ano 3 | Ano 5 | Ano 7 |
+|-----|-------|-------|-------|
+| Faturamento Anual | R$ 26M | R$ 62M | R$ 100M |
+| Projetos no Portfólio | 28 | 68 | 120+ |
+| Receita Recorrente (%) | 45% | 55% | 65% |
+| EBITDA Margin | 20% | 24% | 27% |
+| WALE (prazo médio contratos) | 9 anos | 11 anos | 14 anos |
+| Disponibilidade operacional (uptime) | 97% | 98% | 99% |
+| Valor total de ativos gerenciados | R$ 173M | R$ 421M | R$ 744M |
+| NPS clientes | 60 | 70 | 75 |
+
+**Critérios mandatórios para saída (Ano 6–7):**
+- 3+ anos de auditoria Big 4 consecutiva
+- Nenhum cliente > 15% da receita
+- WALE > 14 anos
+- Zero passivos contingentes relevantes abertos
+- Contratos BOT sem cláusula restritiva de change-of-control
+
+---
+
+## 15. PRÓXIMOS PASSOS IMEDIATOS (90 DIAS)
+
+### Sprint 1 — Estrutura Jurídica (semanas 1–4)
+- [ ] Contratar advogado especialista em direito de energia + societário
+- [ ] Desenhar modelo de SPE + holding + acordo de sócios (tag/drag-along, vesting)
+- [ ] Criar minuta do contrato BOT padrão (10 anos, 10% desconto, cláusula de valor residual)
+
+### Sprint 2 — Modelo Financeiro e Captação (semanas 3–8)
+- [ ] Desenvolver modelo financeiro por projeto (DCF + TIR investidor + DSCR)
+- [ ] Mapear e contatar 5–10 investidores potenciais (family offices, HNWIs, FIIs)
+- [ ] Abrir cadastro no BNDES e BNB para linhas de green finance
+
+### Sprint 3 — Pipeline Comercial (semanas 5–12)
+- [ ] Qualificar 10–15 oportunidades de projeto com levantamento técnico básico
+- [ ] Desenvolver calculadora de proposta BOT (mostra economia do cliente em segundos)
+- [ ] Fechar primeiros 2–3 contratos LOI (Letter of Intent) com clientes
+
+### Sprint 4 — Tecnologia e Operações (semanas 8–12)
+- [ ] Selecionar e implantar plataforma de monitoramento remoto (SCADA)
+- [ ] Definir parceiros de EPC, fornecedores de equipamento (solar + BESS)
+- [ ] Padronizar processos operacionais de O&M
+
+---
+
+## 16. GLOSSÁRIO
 
 | Termo | Definição |
 |-------|-----------|
-| **BOT** | Build-Operate-Transfer: construir, operar por período determinado, transferir |
+| **BOT** | Build-Operate-Transfer: construir, operar por contrato e transferir o ativo |
 | **BESS** | Battery Energy Storage System: sistema de armazenamento de energia em baterias |
-| **PPA** | Power Purchase Agreement: contrato de compra e venda de energia de longo prazo |
 | **EPC** | Engineering, Procurement and Construction: contrato de construção chave na mão |
 | **SPE** | Sociedade de Propósito Específico: empresa criada para um projeto específico |
-| **O&M** | Operations & Maintenance: operação e manutenção de ativos |
-| **EBITDA** | Earnings Before Interest, Taxes, Depreciation and Amortization |
-| **DSCR** | Debt Service Coverage Ratio: índice de cobertura do serviço da dívida |
-| **WALE** | Weighted Average Lease Expiry: prazo médio ponderado dos contratos |
-| **ACL** | Ambiente de Contratação Livre: mercado livre de energia elétrica |
-| **ACR** | Ambiente de Contratação Regulada: mercado regulado de energia |
-| **GD** | Geração Distribuída |
+| **DSCR** | Debt Service Coverage Ratio: índice de cobertura do serviço da dívida (receita/parcela) |
+| **NOI** | Net Operating Income: receita menos custo operacional e serviço da dívida |
 | **TIR** | Taxa Interna de Retorno |
-| **WACC** | Weighted Average Cost of Capital: custo médio ponderado de capital |
-| **EaaS** | Energy as a Service: energia como serviço |
-| **VDD** | Vendor Due Diligence: due diligence preparada pelo vendedor |
-| **IOI** | Indication of Interest: indicação de interesse não vinculante |
-| **SPA** | Share Purchase Agreement: contrato de compra e venda de participação societária |
+| **Yield Simples** | Retorno anual / capital investido, sem considerar prazo ou valor do dinheiro no tempo |
+| **WALE** | Weighted Average Lease Expiry: prazo médio ponderado dos contratos |
+| **CDI** | Certificado de Depósito Interbancário — benchmark de renda fixa no Brasil |
+| **BNDES FGI** | Fundo de Garantia para Investimentos do BNDES — linha com taxas abaixo do mercado |
+| **FIDC** | Fundo de Investimento em Direitos Creditórios — veículo de captação por recebíveis |
+| **HNWIs** | High Net Worth Individuals — investidores pessoa física com alto patrimônio |
+| **EBITDA** | Earnings Before Interest, Taxes, Depreciation and Amortization |
+| **VDD** | Vendor Due Diligence — due diligence preparada pelo vendedor antes da venda |
+| **SPA** | Share Purchase Agreement — contrato de compra e venda de participação societária |
+| **CADE** | Conselho Administrativo de Defesa Econômica — aprovação antitruste em M&A |
 
 ---
 
-*Documento elaborado em: Maio de 2026*
-*Revisão recomendada: semestral*
-*Confidencial — uso interno e para fins de captação/venda*
+*Versão 2.0 — Maio/2026 | Confidencial — uso interno e para fins de captação*
+*Revisão recomendada: semestral ou a cada mudança de premissa relevante (CDI, tarifas ANEEL)*
