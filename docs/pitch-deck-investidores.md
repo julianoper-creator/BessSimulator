@@ -1,7 +1,7 @@
 # PITCH DECK — INVESTIDORES
 ## Plataforma de Energia Solar + BESS | Modelo BOT
 
-**Versão:** 2.0 — Maio 2026
+**Versão:** 3.0 — Maio 2026
 **Confidencial — Uso Restrito**
 
 ---
@@ -13,11 +13,11 @@
 │                                                                 │
 │       ☀️  SOLAR + BESS PLATFORM                                 │
 │                                                                 │
-│    Geração Solar + Armazenamento de Energia                     │
-│    Modelo Build-Operate-Transfer | 15 anos por contrato         │
+│    A infraestrutura que o Brasil precisa agora:                 │
+│    ACL + Data Centers estão reescrevendo o preço da energia     │
 │                                                                 │
-│    R$ 387M captados até Ano 7                                   │
-│    Valuation-alvo: R$ 1,2B – 1,8B                              │
+│    Modelo Build-Operate-Transfer | 15 anos por contrato         │
+│    R$ 387M captados até Ano 7 | Valuation-alvo: R$ 1,2B–1,8B   │
 │    IRR Equity: 22,6% a.a. | DSCR Sênior: 1,33×                │
 │                                                                 │
 │    Rodada: Série A — Equity Tranche                             │
@@ -26,157 +26,269 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-> **Missão:** Financiar, implantar e operar usinas solares com armazenamento (BESS)
-> para a indústria brasileira via modelo BOT, criando retornos previsíveis e protegidos
-> para investidores institucionais — sem que o cliente precise de CAPEX.
+> **Missão:** Ser a infraestrutura energética que protege empresas brasileiras do novo
+> cenário de preços — via Solar + BESS em modelo BOT, sem CAPEX para o cliente,
+> com retornos previsíveis e protegidos para investidores institucionais.
 
 ---
 
-## SLIDE 2 — O PROBLEMA
+## SLIDE 2 — O CONTEXTO: DOIS CHOQUES SIMULTÂNEOS
 
-### A indústria brasileira tem energia solar disponível e não consegue aproveitá-la
+### O mercado de energia brasileiro está sendo reescrito agora
 
-**3 dores críticas que Solar + BESS resolve de forma integrada:**
+```
+                     CHOQUE 1                        CHOQUE 2
+           ┌──────────────────────┐    ┌──────────────────────┐
+           │  EXPANSÃO DO ACL           │    │  BOOM DE DATA CENTERS   │
+           │                           │    │                        │
+           │  Empresas antes no         │    │  IA global atrai        │
+           │  mercado regulado (ACR)    │    │  R$ 150B+ em data       │
+           │  serão obrigadas a         │    │  centers para o Brasil  │
+           │  migrar para o mercado     │    │  até 2030               │
+           │  livre (ACL) a partir      │    │                        │
+           │  de 2028                   │    │  Demanda de rede sobe   │
+           │                           │    │  15–25 TWh extras        │
+           │  Exposição à volatilidade  │    │                        │
+           │  de preço — sem hedge       │    │  Rede não acompanha —   │
+           │                           │    │  preços sobem           │
+           └────────────┬──────────┘    └────────────┬─────────┘
+                    │                              │
+                    └──────────────┬─────────────┘
+                                   │
+                          ┌───────────┐
+                          │ RESULTADO  │
+                          │            │
+                          │ Preço da   │
+                          │ energia    │
+                          │ sobe para  │
+                          │ todos      │
+                          └───────────┘
+```
 
-| Dor | Impacto | Por que solar puro não resolve |
-|-----|---------|--------------------------------|
-| Tarifa de ponta 40–60% mais cara (18h–21h) | OPEX inflado, margens comprimidas | Solar não gera à noite — precisa de BESS |
-| Multas por demanda fora do contrato (ultrapassagem) | Exposição imprevisível, sem hedge | Pico de demanda pode ocorrer sem sol |
-| CAPEX elevado para instalar solar + storage | Imobiliza caixa, payback longo | Modelo BOT elimina o CAPEX do cliente |
-
-**O mercado C&I brasileiro tem 3 problemas simultâneos: conta alta, pico de demanda e falta de capital para investir.**
-
-> **Solar gera de dia. BESS armazena. A combinação entrega energia limpa quando o cliente mais precisa — e mais paga.**
+> **A empresa que trava seu preço de energia hoje, com Solar + BESS BOT,
+> ganha uma vantagem competitiva estrutural sobre os concorrentes que não agiram.**
 
 ---
 
-## SLIDE 3 — A SOLUÇÃO
+## SLIDE 3 — CHOQUE 1: A EXPANSÃO DO ACL
 
-### Sistema integrado Solar + BESS via modelo BOT
+### O maior realinhamento de preços de energia da história do Brasil
+
+**O que está acontecendo:**
+O Brasil tem dois mercados de energia: o regulado (ACR, tarifas controladas) e o livre (ACL, preços de mercado). Até recentemente, o ACL era restrito a grandes consumidores. A ANEEL vem expandindo o acesso progressivamente:
 
 ```
-  ☀️  GERAÇÃO SOLAR (1,5–2,5 MWp FV)
-       │ geração diurna
-       ├──────────────────────────┐
-       │                          ▼
-       │              ┌──────────────────────┐
-       │              │  BESS (bateria Li-ion) │
-       │              │  Armazena excedente    │
-       │              │  Descarrega no pico    │
-       │              └──────────────┬─────────┘
-       │                             │
-       ▼                             ▼
-  CONSUMO IMEDIATO              CONSUMO NO PICO
-  (substitui energia cara        (18h–21h — tarifa
-   da distribuidora)              mais cara do dia)
-       └─────────────────────────────┘
-                      │
-              IA PLATAFORMA PRÓPRIA
-              (otimiza despacho em
-               tempo real 24/7)
+  CRONOGRAMA DE ABERTURA DO ACL
+  ────────────────────────────────────────────────────────────────────
+  Antes de 2024:  Apenas consumidores acima de 1,5 MW
+  2024:           Abertura para consumidores acima de 1,0 MW
+  2026:           Abertura para consumidores acima de 500 kW
+  2028:           Abertura para TODOS os consumidores em média tensão
+
+  Impacto: 300.000+ empresas passarão do ACR para o ACL até 2028
 ```
 
-**Modelo BOT — como funciona:**
-1. **Build:** Projetamos e instalamos solar + BESS (R$ 6,2M por sistema)
-2. **Operate:** Operamos por 15 anos — cliente paga mensalidade fixa com desconto de 10% sobre a tarifa atual
-3. **Transfer:** Ao maturar (36 meses), a SPE pode ser vendida a 10× EBITDA = R$ 12,5M
+**O que muda para o cliente industrial:**
 
-**O cliente recebe:**
-- Energia solar + storage **sem CAPEX**
-- Economia imediata de 10%+ na conta de energia
-- Proteção de pico de demanda (sem ultrapassagem)
-- Tarifa indexada ao IPCA — previsibilidade total de custo
+| Situação | No ACR (antes) | No ACL (após abertura) |
+|----------|---------------|------------------------|
+| Preço da energia | Tarifa regulada (previsível) | Preço de mercado (variável) |
+| Exposição ao pico | Limitada pela reguladora | Total: paga o PLD do dia |
+| Impacto de seca/escassez | Amortecido pela ANEEL | Direto no bolso |
+| Risco de preço | Baixo | **Alto — sem hedge = risco operacional** |
+
+**O Solar + BESS BOT é o hedge natural:**
+- Contrato de 15 anos com tarifa fixada + IPCA → **imune à volatilidade do ACL**
+- O cliente sai do ACL com proteção contratual da própria geração local
+- Desconto de 10% imediato sobre a tarifa atual, travado por 15 anos
+
+> **A migração compulsória para o ACL cria uma janela de 2–4 anos em que
+> 300.000 empresas precisam de uma decisão energética. Nossa proposta chega na hora certa.**
 
 ---
 
-## SLIDE 4 — COMO O SISTEMA GERA VALOR
+## SLIDE 4 — CHOQUE 2: O BOOM DE DATA CENTERS
 
-### Solar + BESS: sinergia que multiplica o retorno
+### A IA global está consumindo a rede elétrica brasileira
+
+**O Brasil como hub global de data centers:**
+
+| Empresa | Investimento anunciado | Prazo |
+|---------|----------------------|-------|
+| Microsoft | R$ 11B (USD 2,1B) | 2024–2026 |
+| Google | R$ 5B+ | 2024–2026 |
+| Amazon AWS | R$ 4B+ | 2025–2027 |
+| Meta | R$ 3B+ | 2025–2028 |
+| Oracle, IBM, outros | R$ 8B+ | 2025–2030 |
+| **Total estimado** | **R$ 150B+** | **Até 2030** |
+
+**Por que o Brasil?** Fibra ótica subatlântica, fuso horário central, energia renovável abundante, estabilidade jurídica e mercado de 215M de usuários.
+
+**O impacto na rede elétrica:**
 
 ```
-  SISTEMA SOLAR PURO (sem BESS)          SISTEMA SOLAR + BESS
-  ─────────────────────────────          ────────────────────────────────
-  ✓ Gera de dia                          ✓ Gera de dia
-  ✗ Não armazena excedente               ✓ Armazena excedente solar
-  ✗ Não opera no horário de ponta        ✓ Descarrega no pico (18–21h)
-  ✗ Não gerencia demanda                 ✓ Limita pico de demanda
-  ✗ Payback lento (ROI < 15%)            ✓ ROI acelerado via arbitragem
-  Desconto oferecível: ~5–8%             Desconto oferecível: 10%+
+  1 data center de médio porte   =  50–200 MW de consumo contínuo
+  Plano de expansão 2024–2030   =  +15 a 25 TWh/ano de demanda nova
+  Capacidade atual instalada BR  =  ~170 GW
+  Nova demanda de data centers   =  +5–12% da capacidade total
+
+  A rede de distribuição NÃO acompanha esse ritmo de crescimento.
+  Resultado: escassez localizada, filas de conexão, preços mais altos.
 ```
 
-**Por projeto (2,2 MWp solar + 1 MWh BESS):**
+**Data centers como clientes BOT:**
+- Precisam de energia 24/7 com alta confiabilidade (uptime 99,99%)  
+- ESG: metas de 100% energia renovável até 2030 (Microsoft, Google, Amazon)
+- Solar + BESS = geração local + backup + garantia de capacidade
+- Ticket BOT maior: data centers consomem 3–10× mais que uma fábrica média
+- **Pipeline: data centers são clientes naturais do nosso modelo**
 
-| Métrica | Valor |
-|---------|-------|
-| Geração solar mensal | ~180 MWh |
-| Capacidade de armazenamento BESS | ~1 MWh (descarga 2h pico) |
-| Energia entregue ao cliente/mês | **299 MWh total** |
-| Tarifa de referência cliente | R$ 409/MWh |
-| Mensalidade BOT (10% desconto) | **R$ 110.062/mês** |
-| Economia anual do cliente | **R$ 146.748/ano** |
-
-> A IA da plataforma otimiza em tempo real: decide quando carregar o BESS (solar barato),
-> quando descarregar (horário de ponta) e quando injetar ancilares na CCEE — maximizando
-> o valor do sistema para o cliente e para o portfólio.
+> **Cada gig watt de data center instalado no Brasil aumenta o preço da energia
+> para todos os outros consumidores — e aumenta o valor do nosso produto.**
 
 ---
 
-## SLIDE 5 — MERCADO
+## SLIDE 5 — A CONVERGÊNCIA: UMA JANELA ÚNICA
 
-### O maior mercado de solar + storage industrial da América Latina
+### ACL + Data Centers = tempestade perfeita para Solar + BESS
+
+```
+       2024             2026             2028             2030
+        │                │                │                │
+  ACL   │ >1MW no livre  │ >500kW no livre │ TODOS no ACL   │
+        │                │                │ Preço de mercado│
+        │                │                │ para todos      │
+        ├────────────────────────────────────────────────────┤
+  DCs   │ Anúncios R$50B │ Obras em curso  │ Operação plena  │
+        │                │                │ +15–25 TWh/ano  │
+        │                │                │ na rede         │
+        ├────────────────────────────────────────────────────┤
+  Preço │ Tarifa estável  │  Subindo        │ ALTA VOLATILIDDE│
+  ener. │                │                │ PLD pressionado │
+        ├────────────────────────────────────────────────────┤
+  Nosso │ Instalando      │  Portfólio em   │ ESCALA PLENA    │
+  BOT   │ primeiros 3     │  crescimento    │ Motor Transfer  │
+        │ projetos        │  acelerado      │ + FIDC rotativo │
+```
+
+**Por que agir em 2026, não em 2028:**
+- Empresas que assinam BOT **hoje** travam o preço **antes** da onda de alta do ACL
+- Nossa vantagem comercial cresce a cada mês: o argumento fica mais forte conforme os preços sobem
+- Instalamos projetos hoje com custo BESS ainda em queda (–15%/ano)
+- Cada projeto assinado antes de 2028 captura o melhor spread entre custo de instalação e tarifa futura
+
+> **Não vendemos eficiência energética. Vendemos certeza de preço num mercado que vai perder essa certeza.**
+
+---
+
+## SLIDE 6 — A SOLUÇÃO
+
+### Solar + BESS BOT: a resposta estrutural aos dois choques
+
+```
+  CLIENTE NO ACL (após abertura)         CLIENTE COM BOT SOLAR + BESS
+  ────────────────────────────    ─────────────────────────────────
+  Preço varia com PLD (0 a R$2.000/MWh)  Preço fixo + IPCA por 15 anos
+  Exposto a picos de demanda             BESS nivela pico = sem multa
+  Sem geração própria                   Solar gera 180 MWh/mês no local
+  CAPEX necessário para instalar         Zero CAPEX — paga mensalidade
+  Risco de crédito com fornecedor de E   Contrato com SPE dedicada
+```
+
+**Como funciona o sistema integrado:**
+
+```
+  ☀️ Solar (2 MWp)                        ⚡ BESS (1 MWh)
+  Gera 180 MWh/mês                      Armazena excedente solar
+  das 06h às 18h                        Descarrega 18h–21h (pico)
+       │                                      │
+       └─────────────┬──────────────┘
+                       │
+               PLATAFORMA IA
+               Despacho inteligente 24/7
+               Limita pico de demanda
+               Serviços ancilares CCEE
+                       │
+               CLIENTE: 299 MWh/mês
+               com 10% de desconto
+               sobre tarifa atual
+               TRAVADO POR 15 ANOS
+```
+
+**Modelo BOT:**
+1. **Build:** Instalamos solar + BESS (R$ 6,2M por sistema — sem CAPEX do cliente)
+2. **Operate:** Operamos por 15 anos com IA; cliente paga R$ 110.062/mês (10% abaixo da distribuidora)
+3. **Transfer:** Após maturidade (3 anos), SPE pode ser vendida a 10× EBITDA = R$ 12,5M
+
+---
+
+## SLIDE 7 — MERCADO
+
+### Dois segmentos, uma solução
+
+**Segmento 1 — C&I Traditional (ACL driver)**
+
+```
+  300.000 empresas migrando para ACL até 2028
+  Foco: industrial, logística, varejo, agro, saúde
+  Perfil: conta de energia R$ 150k–R$ 1M/mês
+  Dor: volatilidade de preço + custo de pico
+  Janela: 2026–2028 (decisão energética urgente)
+```
+
+**Segmento 2 — Data Centers (demanda driver)**
+
+```
+  R$ 150B+ em investimentos anunciados até 2030
+  Consumo: 5–50 MW por instalação
+  Dor: escassez de conexão na rede + metas ESG renováveis
+  Oportunidade: Solar + BESS como fonte primária + backup integrado
+  Ticket BOT: 3–10× maior por instalação
+```
+
+**TAM / SAM / SOM combinados:**
 
 ```
          TAM
-    R$ 340 Bilhões
-   Mercado C&I que pode
-   usar Solar + BESS
-   no Brasil (50.000 empresas)
+    R$ 420 Bilhões
+  C&I tradicional (ACL)
+  + data centers em operação
+  até 2030
         │
         ▼
        SAM
-   R$ 78 Bilhões
-  Clientes com perfil
-  BOT: >500 kW, espaço
-  para painel, contrato >5a
+   R$ 95 Bilhões
+  C&I com perfil BOT
+  (>500 kW, espaço solar,
+  contrato >5 anos)
+  + data centers tier III/IV
         │
         ▼
        SOM
    R$ 2,3 Bilhões
   Alvo 7 anos:
-  52 projetos,
-  R$ 322M implantados
+  52 projetos C&I
+  + pipeline data center Ano 5+
 ```
 
-**Por que Brasil é o melhor mercado do mundo para Solar + BESS BOT:**
-
-| Fator | Brasil | Benchmark global |
-|-------|--------|------------------|
-| Irradiação solar média | **5,5 kWh/m²/dia** | 4,0 kWh/m²/dia (Europa) |
-| Diferencial tarifa ponta/fora-ponta | **40–60%** | 20–30% (EUA) |
-| Penetração atual de solar C&I | **< 5%** | 20–35% (Austrália) |
-| Custo BESS (queda anual) | **–15%/ano** | –12%/ano (global) |
-| Incentivos fiscais (ICMS GD) | Ativos | Variáveis |
-
 **Drivers de crescimento:**
-- Marco Legal da GD (Lei 14.300/2022): estabilidade regulatória para 25 anos
-- ANEEL regulamentação BESS evoluindo (Res. 1.000/2021+)
-- Queda de custo solar: –85% desde 2010; BESS: –70% desde 2015
-- Pressão ESG: metas de descarbonização industrial
-- BNDES Finem: financiamento para eficiência energética e renováveis
-
-**Janela:** 3–5 anos antes de consolidação do setor.
+- ACL: 300.000 empresas buscando hedge de preço (janela 2026–2028)
+- Data centers: R$ 150B+ de investimento → demanda adicional de 15–25 TWh
+- Marco Legal GD (Lei 14.300/2022): estabilidade jurídica de 25 anos
+- Custo BESS em queda: –15%/ano — instalar hoje = melhor spread histórico
+- ESG: metas corporativas de energia 100% renovável até 2030
 
 ---
 
-## SLIDE 6 — MODELO DE RECEITA
+## SLIDE 8 — MODELO DE RECEITA
 
 ### Receita recorrente de longo prazo + Motor Transfer
 
-#### Por projeto maduro (mês 37+)
+#### Por projeto maduro (mês 37+ com IA plena)
 
 ```
   Receita BOT (mensalidade cliente)             R$ 110.062/mês
-  O&M — Solar + BESS (IA plena, mês 37+)        –R$   5.750/mês
+  O&M — Solar + BESS (IA plena)                 –R$   5.750/mês
   ─────────────────────────────────────────────────────────────
   EBITDA por projeto (maduro)                   R$ 104.312/mês
   ─────────────────────────────────────────────────────────────
@@ -184,30 +296,22 @@
   Investidores recebem (90%)                    R$  93.881/mês
 ```
 
-**O&M do sistema combinado (mês 37+ com IA):**
-
-| Item | Valor |
-|------|-------|
-| Manutenção painéis + inversores | R$ 1.500 |
-| Manutenção BESS (preditiva via IA) | R$ 1.300 |
-| Limpeza + inspeção termográfica | R$ 800 |
-| SCADA / plataforma IA | R$ 150 |
-| Seguro patrimonial (solar + BESS) | R$ 1.500 |
-| Contingência | R$ 500 |
-| **Total O&M maduro** | **R$ 5.750/mês** |
+**Upside do ACL sobre o modelo base:**
+- Modelo base usa tarifa flat (conservador)
+- Com IPCA +5%/ano + pressão do ACL + data centers, tarifa real tende a subir mais
+- Cada +1pp de alta real de tarifa = +R$ 13.200/projeto/ano de EBITDA adicional
+- **Todo upside de preço vai para o Equity (tranche residual)** — é a tranche de performance do cenário ACL
 
 #### Motor Transfer (reciclagem do ativo)
-
-- Venda do SPE maduro (solar + BESS) a 10× EBITDA = **R$ 12,5M**
-- Recompra de investidores ao NPV = **R$ 5,6M**
-- **Receita líquida por deal: R$ 6,7M**
-- 20 deals no Ano 7 = **R$ 134,5M de receita transacional**
+- Venda da SPE matura a 10× EBITDA = **R$ 12,5M**
+- Buyout de investidores = **R$ 5,6M**
+- **Líquido por deal: R$ 6,7M** | Ano 7: 20 deals = **R$ 134,5M**
 
 ---
 
-## SLIDE 7 — CRESCIMENTO & PORTFÓLIO
+## SLIDE 9 — CRESCIMENTO & PORTFÓLIO
 
-### Ramp-up de projetos Solar + BESS: 7 anos
+### Ramp-up de projetos: 7 anos
 
 ```
 Ano  Proj.Novos  Total   Rec. Recorrente   Motor Transfer  EBITDA Total
@@ -222,19 +326,17 @@ Ano  Proj.Novos  Total   Rec. Recorrente   Motor Transfer  EBITDA Total
 ────────────────────────────────────────────────────────────────────────
 ```
 
-**Curva de maturidade O&M (Solar + BESS):**
-- Meses 1–36: R$ 12.500/mês (equipe de campo + monitoramento manual)
-- Mês 37+: R$ 5.750/mês (IA preditiva — manutenção preventiva, sem reativa)
-- **Economia: 54% em O&M a partir do mês 37**
+**Acelerador ACL (a partir do Ano 3):**
+Com 300.000 empresas buscando hedge de preço simultaneamente (abertura total 2028),
+nosso ciclo de vendas cai de 75 para 45 dias — o cliente já tem urgência criada pelo mercado.
 
-**Tecnologia de degradação mitigada:**
-- Solar FV: –0,5%/ano (lento, garantia de fábrica 25 anos)
-- BESS Li-ion: –2,0%/ano (indexação IPCA +5% compensa com folga)
-- Saldo real: **+2,9%/ano** de crescimento de receita — modelo base é conservador
+**Curva O&M — eficiência via IA:**
+- Meses 1–36: R$ 12.500/mês (fase inicial)
+- Mês 37+: R$ 5.750/mês (IA preditiva) → **economia de 54% em O&M**
 
 ---
 
-## SLIDE 8 — ESTRUTURA DE INVESTIMENTO
+## SLIDE 10 — ESTRUTURA DE INVESTIMENTO
 
 ### 3 Tranches com Waterfall protegido
 
@@ -245,56 +347,55 @@ Ano  Proj.Novos  Total   Rec. Recorrente   Motor Transfer  EBITDA Total
 ├─────────────────────────────────────────────────────────────────┤
 │  1º PRIORIDADE — TRANCHE SÊNIOR                                 │
 │  Capital: R$ 4.650.000 (75%)  |  Yield: 17% a.a. fixo          │
-│  Pagamento: R$ 65.875/mês  |  DSCR: 1,33× (inicial)            │
-│  Garantia: recebíveis do contrato BOT + penhor da SPE           │
+│  Pagamento: R$ 65.875/mês  |  DSCR: 1,33×                      │
+│  Garantia: recebíveis BOT + penhor SPE + conta reserva          │
 ├─────────────────────────────────────────────────────────────────┤
 │  2º PRIORIDADE — TRANCHE MEZANINO                               │
 │  Capital: R$ 930.000 (15%)   |  Yield: 18% a.a. fixo           │
-│  Pagamento: R$ 13.950/mês  |  DSCR S+M: 1,10× (inicial)        │
+│  Pagamento: R$ 13.950/mês  |  DSCR S+M: 1,10×                  │
 ├─────────────────────────────────────────────────────────────────┤
-│  3º PRIORIDADE — TRANCHE EQUITY (Performance / Residual)        │
-│  Capital: R$ 620.000 (10%)   |  Yield: residual — captura IA    │
-│  Inicial (meses 1–36):  R$ 7.981/mês → 15,4% a.a.              │
-│  Maduro (mês 37–180):   R$ 14.056/mês → 27,2% a.a.             │
-│  IRR 15 anos: 22,6% | Múltiplo: 3,73× | Yield médio: 24,9%     │
+│  3º PRIORIDADE — TRANCHE EQUITY (Performance / ACL upside)      │
+│  Capital: R$ 620.000 (10%)   |  Yield: residual                 │
+│  Inicial (mês 1–36):  R$ 7.981/mês → 15,4% a.a.               │
+│  Maduro (mês 37–180):  R$ 14.056/mês → 27,2% a.a.              │
+│  IRR base 22,6% | Múltiplo 3,73× | Upside ACL não precificado  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Por que o Equity captura mais no período maduro?**
-A eficiência via IA (O&M –54%) e a geração solar crescente (IPCA +5% vs. degradação –0,5% FV, –2% BESS) convertem-se integralmente em yield Equity. As tranches Sênior e Mezanino têm yield fixo — é a tranche de performance que captura a excelência operacional.
+> **O Equity é a tranche do cenário ACL:** toda alta de tarifa acima do IPCA vai
+> diretamente para o residual. É a tranche de performance que captura o upside
+> da disrupção do mercado — e os modelos de retorno acima são o piso conservador.
 
 ---
 
-## SLIDE 9 — RETORNOS POR TRANCHE
+## SLIDE 11 — RETORNOS POR TRANCHE
 
-### Comparativo vs. benchmarks de mercado
+### Piso conservador (tarifa flat) vs. upside real (ACL + data centers)
 
 | Métrica | Sênior | Mezanino | Equity |
 |---------|--------|----------|--------|
-| Capital investido | R$ 4.650.000 | R$ 930.000 | R$ 620.000 |
-| Yield (fase inicial) | 17,0% a.a. | 18,0% a.a. | 15,4% a.a. |
-| Yield (fase madura) | 17,0% a.a. | 18,0% a.a. | 27,2% a.a. |
-| IRR 15 anos | ~16,8% | ~17,8% | **22,6%** |
-| Múltiplo retorno | 2,55× | 2,70× | **3,73×** |
-| Yield médio (15 anos) | 17,0% | 18,0% | **24,9%** |
-| Prioridade waterfall | 1ª | 2ª | 3ª |
+| Capital | R$ 4.650.000 | R$ 930.000 | R$ 620.000 |
+| Yield inicial | 17,0% a.a. | 18,0% a.a. | 15,4% a.a. |
+| Yield maduro | 17,0% a.a. | 18,0% a.a. | 27,2% a.a. |
+| IRR 15 anos (base) | ~16,8% | ~17,8% | **22,6%** |
+| Múltiplo (base) | 2,55× | 2,70× | **3,73×** |
+| Yield médio 15 anos | 17,0% | 18,0% | **24,9%** |
+| Upside ACL (+1pp tarifa/ano) | Nenhum (fixo) | Nenhum (fixo) | **+R$ 13,2k/proj/ano** |
 
-**Benchmark:** CDI atual ~13,25% | CDI + 3% = 16,25%
+**Benchmark:** CDI ~13,25% | CDI + 3% = 16,25%
 
-| Tranche | vs. CDI+3% | Perfil de risco |
-|---------|------------|----------------|
-| Sênior | **+0,55pp** | Renda fixa lastreada em recebível |
-| Mezanino | **+1,55pp** | Crédito subordinado |
-| Equity | **+6,35pp** | Performance — captura eficiência operacional |
+| Tranche | vs. CDI+3% | Perfil |
+|---------|------------|--------|
+| Sênior | **+0,55pp** | Renda fixa — imune à volatilidade |
+| Mezanino | **+1,55pp** | Crédito infraestrutura |
+| Equity | **+6,35pp base** | Performance — captura ACL + IA |
 
-**Todas as tranches superam o benchmark CDI+3% com ampla margem.**
-
-> **Upside IPCA (+24,9%):** Com indexação da tarifa ao IPCA (+5%/ano) vs. degradação combinada
-> solar+BESS (líquido –0,9%/ano), o retorno total ao Equity é **+24,9% superior** ao modelo base conservador.
+**Todas as tranches superam CDI+3% no cenário conservador.**
+O Equity captura todo o upside do cenário ACL sem teto.
 
 ---
 
-## SLIDE 10 — ESTRUTURA FIDC
+## SLIDE 12 — ESTRUTURA FIDC
 
 ### Veículo de captação: FIDC de Infraestrutura Renovável
 
@@ -304,154 +405,116 @@ A eficiência via IA (O&M –54%) e a geração solar crescente (IPCA +5% vs. de
                         ▼
          ┌──────────────────────────────────┐
          │    FIDC SOLAR + BESS INFRA       │
-         │  (CVM 175 — Infraestrutura)      │
+         │  CVM 175 — Infraestrutura        │
          │  Lastro: recebíveis BOT (15 anos) │
          ├───────────────┬──────────────────┤
          │  Cota Sênior  │  Cota Mezanino   │
-         │  17% a.a.     │  18% a.a.        │
+         │  17% fixo     │  18% fixo        │
          │  Rating A–AA  │  Rating BBB–A    │
          └───────┬───────┴────────┬─────────┘
-                 │                │
-                 ▼                ▼
+                │                │
+                ▼                ▼
          ┌──────────────────────────────────┐
          │    SPEs (um por projeto)          │
-         │  Recebíveis BOT — R$110k/mês      │
-         │  Ativo: painéis FV + BESS + obra  │
+         │  Recebíveis BOT 15 anos          │
+         │  Ativo: Solar (2MWp) + BESS (1MWh)│
          └──────────────────────────────────┘
                          │
                          ▼
          ┌──────────────────────────────────┐
-         │      Cota Subordinada (Equity)    │
+         │  Cota Subordinada (Equity)        │
          │  Retida pela empresa — First-loss │
-         │  27,2% maduro | IRR 22,6%         │
          └──────────────────────────────────┘
 ```
 
-**Timeline de emissão:**
-
 | FIDC | Ano | Projetos | Captação |
 |------|-----|----------|---------|
-| FIDC I | Ano 2 | 7 projetos | R$ 43,4M |
-| FIDC II | Ano 3 | 10 projetos | R$ 62,0M |
-| FIDC III | Ano 4 | 10 projetos | R$ 62,0M |
-| FIDC IV | Ano 5+ | Rotativo trimestral | Conforme demanda |
+| FIDC I | Ano 2 | 7 | R$ 43,4M |
+| FIDC II | Ano 3 | 10 | R$ 62,0M |
+| FIDC III | Ano 4 | 10 | R$ 62,0M |
+| FIDC IV+ | Ano 5+ | Rotativo | Trimestral |
 
-**Proteções estruturais:**
-- Cota Subordinada (First-loss) retida pela empresa: alinhamento total de incentivos
-- Conta reserva: 3 meses de serviço de dívida por FIDC
-- Auditoria independente semestral dos SPEs
-- Seguro patrimonial solar + BESS (cobertura total)
+Cota Subordinada retida pela empresa (first-loss) — alinhamento total de incentivos.
 
 ---
 
-## SLIDE 11 — MOTOR TRANSFER
+## SLIDE 13 — MOTOR TRANSFER
 
-### Reciclagem do ativo Solar + BESS
+### Reciclagem de ativos Solar + BESS
 
-**O que é?** Após 36 meses de operação, o sistema solar + BESS está maduro e com track record comprovado. A empresa vende a SPE a um comprador estratégico (utility, fundo de infraestrutura) e recicla o capital para novos projetos.
-
-**Por que compradores pagam 10× EBITDA por Solar + BESS?**
-- **12 anos de contrato residual** (WALE portfólio ≈ 12 anos no Ano 7)
-- **Ativo físico** (painéis + BESS) com vida útil de 25 anos
-- **Receita indexada ao IPCA** — proteção inflacionária
-- **O&M previsível e baixo** — IA preditiva instalada
-- **Comparável:** ativos de geração distribuída solar negociam a 8–14× EBITDA no mercado
-
-**Mecânica por deal:**
+Após 36 meses de operação, o sistema tem track record comprovado e é vendido a um comprador estratégico (utility, fundo de infraestrutura) que valoriza o ativo pelo fluxo contratado de longo prazo.
 
 ```
   Preço de venda (10× EBITDA anual):           R$ 12.517.440
   (-) Buyout investidores ao NPV:              –R$  5.592.952
-      Sênior:   R$ 4.069.840
-      Mezanino: R$   827.601
-      Equity:   R$   695.511
+      Sênior: R$4.069.840 | Mez: R$827.601 | Eq: R$695.511
   (-) Custos de transação:                     –R$    200.000
   ──────────────────────────────────────────────────────────
   RECEITA LÍQUIDA / DEAL:                       R$  6.724.488
 ```
 
-**Volume:** Ano 7 → 20 deals × R$ 6,7M = **R$ 134,5M de receita líquida**
+**Por que compradores pagam 10× EBITDA num cenário de alta de preços ACL?**
+- Ativo com 12 anos de contrato residual e tarifa travada = prêmio de proteção
+- O comprador adquire um portfólio de clientes que não estão expostos ao ACL
+- No cenário de volatilidade crescente, WALE de 12 anos vira ativo estratégico
+- Comparativo: ativos de GD solar negociam a 8–14× EBITDA no mercado
+
+**Volume:** Ano 7 → 20 deals = **R$ 134,5M líquido**
 
 ---
 
-## SLIDE 12 — PLATAFORMA TECNOLÓGICA
+## SLIDE 14 — VANTAGENS COMPETITIVAS
 
-### IA que otimiza Solar + BESS em tempo real
+### Por que somos a infra do cenário ACL — e não apenas mais um integrador solar
 
-```
-  INPUTS (tempo real)                    OUTPUTS (automáticos)
-  ─────────────────────────              ────────────────────────────
-  Irradiação solar (satélite)   ──▶      Despacho solar → consumo
-  Previsão de nuvens (48h)      ──▶      Carga do BESS (horário)
-  Tarifa atual (distribuidora)  ──▶      Descarga BESS no pico
-  Demanda real do cliente       ──▶      Limitação de pico de demanda
-  Estado do BESS (SoC, temp.)   ──▶      Alerta preditivo de falha
-  Preço CCEE (spot)             ──▶      Despacho ancilares CCEE
-```
+**1. Produto feito para a era do ACL**
+- Contratos BOT de 15 anos com tarifa fixada + IPCA = o único produto que imuniza o cliente da volatilidade do mercado livre
+- Solar puro não resolve: sem BESS, o cliente ainda depende da rede no pico — e no ACL, o pico é o momento mais caro
+- BESS sozinho não resolve: sem geração solar, o custo de carga do BESS é a própria tarifa volatíl
+- **Solar + BESS + BOT = hedge completo, sem CAPEX, por 15 anos**
 
-**Resultados da plataforma IA:**
-
-| Métrica | Fase inicial (manual) | Fase madura (IA) | Ganho |
-|---------|----------------------|------------------|-------|
-| O&M mensal | R$ 12.500 | R$ 5.750 | **–54%** |
-| Uptime do sistema | ~97% | **>99%** | +2pp |
-| Visitas técnicas de campo | 4×/mês | 1×/mês | –75% |
-| MTTR (tempo médio de reparo) | 48h | **< 8h** | –83% |
-| Projetos por técnico | 5 | **15** | +3× |
-
-**A plataforma IA é a chave do modelo de negócio:** ela transforma custo operacional em yield para o Equity — e cria um moat que concorrentes não replicam sem anos de dados reais de Solar + BESS C&I brasileiro.
-
----
-
-## SLIDE 13 — VANTAGENS COMPETITIVAS
-
-### 5 Moats estruturais — Solar + BESS BOT
-
-**1. Plataforma IA treinada em Solar + BESS combinado**
-- Dados de irradiação + consumo + despacho de 50+ projetos (Ano 7)
-- Modelos preditivos específicos para C&I brasileiro (ciclo de carga industrial)
-- Redução O&M de 54% — concorrentes chegam sem dados históricos
-
-**2. Único FIDC de infraestrutura Solar + BESS no Brasil**
-- Estrutura aprovada CVM com lastro em recebíveis BOT de 15 anos
+**2. FIDC — o único veículo estruturado de Solar + BESS no Brasil**
 - Custo de capital 200–300 bps abaixo de concorrentes sem veículo estruturado
-- Escala: capta R$100–200M/trimestre sem negociação individual por projeto
+- Escala: capta R$ 100–200M/trimestre sem negociação individual por projeto
+- Track record + rating = acesso a capital institucional que concorrentes não têm
 
-**3. Solução integrada — diferencial do mercado**
-- Solar puro: 40+ players no Brasil
-- BESS puro: 5–10 players
-- **Solar + BESS + BOT + Financiamento estruturado: <3 players**
-- Proposta de valor completa: geração + armazenamento + zero CAPEX + gestão IA
+**3. Plataforma IA proprietária — dados que concorrentes não têm**
+- Telemetria de 50+ sistemas solar + BESS após Ano 7
+- Modelos preditivos específicos para C&I brasileiro (carga industrial + irradiação regional)
+- O&M: R$ 12.500 → R$ 5.750 (–54%) a partir do mês 37 — vantagem que concorrentes não replicam sem anos de dados
 
-**4. WALE de 12 anos no portfólio**
-- Contratos BOT de 15 anos = barreira de saída para clientes
-- Duration longa = ativo atrativo para fundos de pensão e seguradoras
-- Concorrentes com contratos curtos (<5 anos) não competem no mesmo segmento
+**4. WALE de 12 anos — ativo estratégico no cenário de saída**
+- Utilities que não conseguiram entrar no C&I Solar+BESS preferem **comprar** o portfólio
+- Duration longa = ativo ideal para fundos de pensão e seguradoras
 
-**5. First-mover em C&I Solar + BESS BOT no Brasil**
-- Regulação ainda em consolidação = janela de 3–5 anos antes de massa crítica
-- 50+ clientes fidelizados = referências e indicações que concorrentes não têm
-- Utilities são **compradores** (Motor Transfer), não competidores no C&I
+**5. Pipeline data center (Ano 4+)**
+- Data centers em construção precisam de solar + BESS garantido antes de ligar
+- Ticket 3–10× maior; ESG exige renovável; confiabilidade exige storage
+- Entramos como fornecedor de infra energética, não como vendedor de equipamento
 
 ---
 
-## SLIDE 14 — FUNIL COMERCIAL & UNIT ECONOMICS
+## SLIDE 15 — FUNIL COMERCIAL & UNIT ECONOMICS
 
-### Métricas de aquisição de clientes (Ano 5)
+### Métricas de aquisição (Ano 5) — ACL como acelerador de vendas
 
 ```
   600 Leads/ano
-  (empresas com conta de energia > R$ 150k/mês + telhado/área disponível)
-      │ (qualificação 20%)
-      ▼
+  (empresas migrando para ACL + data centers em construção)
+       │ qualificação 20%
+       ▼
   120 Qualificados
-      │ (proposta 50%)
-      ▼
+       │ proposta 50%
+       ▼
    60 Propostas
-      │ (fechamento 75%)
-      ▼
-   45 Contratos assinados    ←   Ciclo médio: 75 dias
+       │ fechamento 75%
+       ▼
+   45 Contratos assinados    Ciclo: 75 dias (cai para 45 após 2028)
 ```
+
+**A abertura do ACL em 2028 cria urgência de compra orgânica:**
+- Cliente que antes precisava ser convencido agora já chegou com a dor
+- Nosso ROI de convencimento cai — o mercado faz o trabalho de qualificação
 
 **Unit Economics por cliente:**
 
@@ -461,19 +524,16 @@ A eficiência via IA (O&M –54%) e a geração solar crescente (IPCA +5% vs. de
 | LTV (15 anos, fee empresa) | R$ 2.783.280 |
 | **LTV / CAC** | **114×** |
 | Payback do CAC | < 3 meses |
-| Margem bruta por contrato | 94,8% |
 
 **Canais de aquisição:**
-- Consultoras de eficiência energética (35% dos leads)
+- Consultoras de migração ACL (40% dos leads — já chegam com a dor) 
 - Indicação de clientes ativos (25%)
-- Inbound digital — conteúdo técnico solar + storage (20%)
-- Parceiros integradores solares (20%)
-
-> **114× LTV/CAC** — comparável a SaaS de alto crescimento, mas com contratos físicos de 15 anos e receita garantida por ativo real instalado.
+- Associações industriais + eventos ACL (20%)
+- Inbound digital — conteúdo sobre ACL + hedge (15%)
 
 ---
 
-## SLIDE 15 — FINANCEIROS CONSOLIDADOS
+## SLIDE 16 — FINANCEIROS CONSOLIDADOS
 
 ### P&L projetado — 7 anos
 
@@ -487,115 +547,112 @@ A eficiência via IA (O&M –54%) e a geração solar crescente (IPCA +5% vs. de
 | 6 | R$ 205,0M | R$ 156,7M | 76% | +R$ 89,2M |
 | 7 | R$ 261,5M | R$ 203,2M | 78% | +R$ 134,5M |
 
-**Capital necessário — solar + BESS por projeto: R$ 6,2M**
+**CAPEX por projeto (R$ 6,2M):**
 
-| Componente CAPEX | Valor | % |
-|-----------------|-------|---|
+| Componente | Valor | % |
+|-----------|-------|---|
 | Painéis solares + inversores (~2 MWp) | R$ 2.800.000 | 45% |
 | Sistema BESS Li-ion (~1 MWh) | R$ 2.400.000 | 39% |
 | Instalação civil + elétrica | R$ 620.000 | 10% |
 | SCADA + comissionamento | R$ 380.000 | 6% |
-| **Total EPC** | **R$ 6.200.000** | 100% |
 
-**Break-even:** Ano 4 | **Total captado 7 anos:** R$ 387M
+**Capital total captado: R$ 387M (Ano 7) | Break-even: Ano 4**
 
 ---
 
-## SLIDE 16 — VALUATION & EXIT
+## SLIDE 17 — VALUATION & EXIT
 
 ### Saída: IPO ou M&A estratégico — Ano 7
 
-**Múltiplos de referência:**
-
-| Tipo de receita | Múltiplo | EBITDA Ano 7 | Valor |
-|----------------|----------|-------------|-------|
-| Fee recorrente BOT (contratos 15a) | 15× | R$ 27,8M | R$ 417M |
-| Serviços O&M + SCADA terceiros | 12× | R$ 20,0M | R$ 240M |
-| BESS ancilares (CCEE) | 10× | R$ 20,0M | R$ 200M |
-| Plataforma IA Solar+BESS (SaaS) | 20× | R$ 8,0M | R$ 160M |
+| Tipo de receita | Múltiplo | EBITDA Ano 7 | EV parcial |
+|----------------|----------|-------------|------------|
+| Fee recorrente BOT | 15× | R$ 27,8M | R$ 417M |
+| Serviços O&M + SCADA | 12× | R$ 20,0M | R$ 240M |
+| BESS ancilares CCEE | 10× | R$ 20,0M | R$ 200M |
+| Plataforma IA (SaaS) | 20× | R$ 8,0M | R$ 160M |
 | Motor Transfer (recorrente) | 6× | R$ 134,5M | R$ 807M |
 | **EV Total** | | | **~R$ 1,82B** |
-| Margem de negociação (–20%) | | | **~R$ 1,46B** |
+| Desconto negociação (–20%) | | | **~R$ 1,46B** |
 | **Consenso** | | | **R$ 1,2B – R$ 1,8B** |
 
-**Perfil de compradores estratégicos:**
-
-| Tipo | Motivação | Múltiplo estimado |
-|------|-----------|------------------|
-| Utility nacional (Engie, EDP, CPFL) | 52 clientes C&I + plataforma IA + pipeline | 12–15× EBITDA rec. |
-| Utility internacional (Enel X, Iberdrola) | Entrada em mercado solar+storage brasileiro | 11–14× |
-| Fundo infraestrutura (Brookfield, Pátria) | Cash flow de longo prazo + ativo renovável | 9–12× |
-| PE energético (BTG Energia, Kinea) | Crescimento + PI plataforma IA | 10–12× |
+**Por que o valuation sobe no cenário ACL:**
+Um portfólio de 52 clientes com tarifa BOT fixada — enquanto o resto do mercado
+navega a volatilidade do ACL — é um ativo escasso. Compradores estratégicos
+(utilities) pagam prêmio por base de clientes imunes ao PLD.
 
 ---
 
-## SLIDE 17 — USO DOS RECURSOS & PRÓXIMOS PASSOS
+## SLIDE 18 — USO DOS RECURSOS & PRÓXIMOS PASSOS
 
-### Captação atual: Série A — Tranche Equity
+### Por que agir antes de 2028
 
-**Alvo:** R$ 6,2M por projeto | Mínimo R$ 1,0M por investidor
-
-**Uso dos recursos — 3 projetos piloto (Ano 1):**
+**A janela de vantagem competitiva tem data de validade:**
 
 ```
-  R$ 18,6M total
-  ├── R$ 8,4M — Painéis solares + inversores (3 sistemas ~2 MWp cada)
-  ├── R$ 7,2M — Sistemas BESS Li-ion (3 × ~1 MWh)
-  ├── R$ 1,9M — Instalação civil + elétrica + SCADA
-  ├── R$ 0,5M — Capital de giro pré-FIDC
-  └── R$ 0,6M — Estruturação FIDC I + jurídico
+  2026 — AGORA          2027–2028              2029+
+  ┌────────────────┐  ┌────────────────┐  ┌──────────────────┐
+  │ Custo BESS ainda  │  │ ACL pleno: 300k  │  │ Mercado congestion.│
+  │ em queda          │  │ empresas buscam  │  │ Concorrência         │
+  │ Pipeline limpo    │  │ hedge urgente    │  │ entrante            │
+  │ Clientes ainda    │  │ Nosso argumento  │  │ Spreads menores     │
+  │ não têm urgência │  │ mais forte       │  │                    │
+  │ (vendemos o futuro)│  │ (vendemos agora) │  │ Entramos com escala │
+  └────────────────┘  └────────────────┘  └──────────────────┘
+         Instalar AGORA          Colher AQUI              Vender
+```
+
+**Uso dos recursos — Série A: 3 projetos piloto (R$ 18,6M):**
+
+```
+  R$ 8,4M — Painéis solares + inversores (3 × ~2 MWp)
+  R$ 7,2M — Sistemas BESS Li-ion (3 × ~1 MWh)
+  R$ 1,9M — Instalação civil + elétrica + SCADA
+  R$ 0,5M — Capital de giro pré-FIDC
+  R$ 0,6M — Estruturação FIDC I + jurídico
 ```
 
 **Milestones Ano 1–2:**
 - [ ] 3 contratos BOT assinados (pipeline atual: 8 qualificados)
-- [ ] 3 SPEs constituídas — solar + BESS instalados e comissionados
 - [ ] Plataforma IA v1.0 com telemetria solar + BESS em tempo real
-- [ ] FIDC I estruturado e aprovado CVM (Q3 Ano 2)
-- [ ] Rating BBB+ (target) para cotas Sênior
-
-**Por que Solar + BESS agora?**
-- Custo BESS –70% desde 2015, continuando a cair –15%/ano
-- Marco Legal GD (Lei 14.300/2022): estabilidade de 25 anos
-- Pipeline de 8 clientes qualificados aguardando assinatura
-- Janela de regulação ANEEL: 24 meses antes de consolidação
-- Time completo formado: apenas capital falta
+- [ ] FIDC I aprovado CVM — Q3 Ano 2
+- [ ] Rating BBB+ cotas Sênior
+- [ ] 1 data center no pipeline para Ano 3+
 
 ---
 
-## APÊNDICE A — PREMISSAS MACROECONÔMICAS E TÉCNICAS
+## APÊNDICE A — PREMISSAS
 
 | Premissa | Valor base | Fonte |
 |----------|-----------|-------|
 | CDI | 13,25% a.a. | Banco Central |
-| IPCA | 5,0% a.a. | IPCA meta BACEN |
-| Degradação BESS Li-ion | 2,0%/ano | Spec. técnica fabricante |
-| Degradação painéis solares | 0,5%/ano | Garantia linear de fábrica |
-| FX (R$/USD) | Hedge via NDF | 100% CAPEX importado hedgeado |
-| Irradiação média (C&I Sul/Sudeste/Centro-Oeste) | 5,2 kWh/m²/dia | Atlas Solar INPE |
-| Performance Ratio do sistema solar | 80% | Padrão de mercado |
-| Tarifa energia base C&I | R$ 409/MWh (ponta) | ANEEL médio C&I 2025 |
-| Crescimento tarifa | IPCA a.a. | Premissa conservadora |
-| Custo BESS (tendência) | –15%/ano | BloombergNEF |
+| IPCA | 5,0% a.a. | Meta BACEN |
+| Degradação BESS | 2,0%/ano | Spec. técnica Li-ion |
+| Degradação solar | 0,5%/ano | Garantia linear fábrica |
+| FX (CAPEX importado) | Hedge NDF/swap | 100% travado |
+| Irradiação média | 5,2 kWh/m²/dia | Atlas Solar INPE |
+| Performance Ratio FV | 80% | Padrão de mercado |
+| Tarifa base C&I | R$ 409/MWh | ANEEL 2025 |
+| Crescimento tarifa (base) | IPCA a.a. | **Conservador** — ACL pode superar |
+| Abertura ACL total | 2028 | ANEEL cronograma |
 
 ---
 
-## APÊNDICE B — ANÁLISE DE SENSIBILIDADE
+## APÊNDICE B — SENSIBILIDADE
 
-### IRR do Equity vs. variáveis-chave
+### IRR Equity vs. variáveis-chave
 
-| Cenário | Mudança | IRR Equity |
-|---------|---------|------------|
-| Base | — | 22,6% |
-| IPCA +1pp (6%/ano) | Receita +1%/ano | 23,8% |
-| Irradiação +5% (norte/nordeste) | Geração solar maior | 23,2% |
-| Degradação BESS –1pp (1%/ano) | Melhor bateria | 23,4% |
+| Cenário | Variável | IRR Equity |
+|---------|----------|------------|
+| Base | Tarifa flat (IPCA) | 22,6% |
+| ACL leve (+1pp/ano sobre IPCA) | Alta tarifa moderada | 24,1% |
+| ACL forte (+3pp/ano sobre IPCA) | Volatilidade ACL pressão DCs | **27,8%** |
+| Irradiação +5% (projetos no Norte/NE) | Solar mais produtivo | 23,2% |
 | O&M +20% | Custo maior | 21,2% |
-| Maturidade IA 4 anos (vs. 3) | IA mais lenta | 20,0% |
-| Ticket –10% (R$ 5,58M) | Margem comprimida | 20,9% |
-| Motor Transfer 8× (vs. 10×) | Múltiplo menor | 21,4% |
+| Maturidade IA 4 anos | IA mais lenta | 20,0% |
+| Motor Transfer 8× | Múltiplo menor | 21,4% |
 | **Stress combinado** | **Pior caso** | **18,3%** |
 
-> No stress combinado, Equity ainda supera CDI+3% (16,25%). Sênior e Mezanino não são afetados (yield fixo).
+> No cenário ACL forte, o Equity chega a 27,8% de IRR. No stress combinado, ainda supera CDI+3%.
 
 ---
 
@@ -603,15 +660,14 @@ A eficiência via IA (O&M –54%) e a geração solar crescente (IPCA +5% vs. de
 
 | Risco | Prob. | Impacto | Mitigação |
 |-------|-------|---------|----------|
-| Degradação BESS acima de 2%/ano | Baixa | Médio | Garantia 90% capacidade; augmentação Ano 10 |
-| Degradação painel solar > 0,5%/ano | Muito baixa | Baixo | Garantia linear do fabricante (25 anos) |
-| FX (importação BESS + painéis) | Média | Alto | Hedge NDF/swap 100% CAPEX em USD |
-| Sombreamento / perda de área | Baixa | Médio | Auditoria técnica pré-assinatura |
-| Inadimplência cliente | Baixa | Alto | Score crédito; penhor da SPE; seguro de crédito |
-| Regulatório (ANEEL, GD, BESS) | Média | Alto | Marco Legal GD 14.300/2022; cláusula de revisão contratual |
-| Concorrência entrante | Média | Médio | Moat: IA dados + FIDC + WALE 12a + first-mover |
-| Taxa de juros | Média | Médio | Sênior/Mezanino fixo; Equity protegido por IPCA |
-| Atraso EPC | Média | Médio | Penalidades contratuais EPC; fornecedores alternativos |
+| ACL atrasa (regulação lenta) | Média | Baixo | Modelo funciona mesmo sem ACL — é upside, não tese básica |
+| Data centers não usam BOT | Média | Baixo | Pipeline C&I tradicional sustenta crescimento até Ano 5 |
+| Degradação BESS > 2%/ano | Baixa | Médio | Garantia 90% capacidade; augmentação Ano 10 |
+| FX no CAPEX | Média | Alto | Hedge NDF 100% |
+| Inadimplência cliente | Baixa | Alto | Score crédito; penhor SPE; seguro crédito |
+| Regulatório (ANEEL/GD) | Baixa | Alto | Marco Legal GD 14.300/2022: 25 anos de estabilidade |
+| Concorrência acelera | Média | Médio | Moat: IA + dados + FIDC + WALE 12a + first-mover |
+| Preço energia cai (BESS perde relevancia) | Muito baixa | Alto | ACL + DCs sustentam pressão altista por 10+ anos |
 
 ---
 
@@ -619,26 +675,26 @@ A eficiência via IA (O&M –54%) e a geração solar crescente (IPCA +5% vs. de
 
 | Termo | Definição |
 |-------|----------|
+| **ACL** | Ambiente de Contratação Livre: mercado de energia com preços negociados |
+| **ACR** | Ambiente de Contratação Regulada: mercado com tarifas controladas pela ANEEL |
+| **PLD** | Preço de Liquidação das Diferenças: preço spot no mercado livre |
 | **BOT** | Build-Operate-Transfer: construir, operar 15 anos, transferir o ativo |
 | **BESS** | Battery Energy Storage System: sistema de armazenamento em baterias |
-| **FV / Fotovoltaica** | Geração de energia elétrica a partir de painéis solares |
-| **MWp** | Megawatt-pico: capacidade instalada nominal do sistema solar |
+| **FV / Fotovoltaica** | Geração de energia a partir de painéis solares |
 | **GD** | Geração Distribuída: geração próxima ao ponto de consumo |
+| **MWp** | Megawatt-pico: capacidade instalada nominal do sistema solar |
 | **SPE** | Sociedade de Propósito Específico: empresa criada para cada projeto |
 | **FIDC** | Fundo de Investimento em Direitos Creditórios |
-| **DSCR** | Debt Service Coverage Ratio: capacidade de pagamento da dívida |
-| **Motor Transfer** | Venda de SPE madura (solar+BESS) a comprador estratégico |
-| **Waterfall** | Ordem de prioridade de distribuição de resultados |
+| **DSCR** | Debt Service Coverage Ratio: cobertura do serviço de dívida |
+| **Motor Transfer** | Venda de SPE madura a comprador estratégico (10× EBITDA) |
 | **WALE** | Weighted Average Lease Expiry: prazo médio ponderado dos contratos |
+| **Waterfall** | Ordem de prioridade de distribuição: Sênior → Mezanino → Equity |
 | **NDF** | Non-Deliverable Forward: instrumento de hedge cambial |
-| **IRR** | Internal Rate of Return: taxa interna de retorno |
-| **SoC** | State of Charge: estado de carga atual da bateria |
-| **SCADA** | Supervisory Control and Data Acquisition: sistema de monitoramento |
-| **LTV/CAC** | Lifetime Value / Custo de Aquisição de Cliente |
-| **C&I** | Commercial & Industrial: segmento comercial e industrial |
 | **IPCA** | Índice de Preços ao Consumidor Amplo — indexador da tarifa BOT |
-| **Degradação** | Perda gradual de capacidade: –0,5%/ano FV, –2,0%/ano BESS |
-| **Augmentação** | Adição de módulos de bateria para restaurar capacidade nominal |
+| **IRR** | Taxa Interna de Retorno |
+| **LTV/CAC** | Lifetime Value / Custo de Aquisição de Cliente |
+| **C&I** | Commercial & Industrial |
+| **SCADA** | Sistema de monitoramento e controle dos ativos |
 | **Ancilares** | Serviços auxiliares ao sistema elétrico comercializados na CCEE |
 
 ---
