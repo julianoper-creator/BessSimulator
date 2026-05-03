@@ -17,8 +17,9 @@
 | Participação da empresa no projeto | **10% do EBITDA** | Após dedução de O&M |
 | **Prazo dos contratos BOT** | **15 anos** | Mínimo para IRR investidor > CDI+3% |
 | **Estrutura de captação** | **3 tranches** | Senior 75% / Mezanino 15% / Equity 10% |
+| **Curva de maturidade O&M** | **3 anos** | Meses 1–36 inicial → Mês 37 IA plena |
 | Taxa de saída ao final do contrato | **R$ 800.000** | Custo operacional de retirada + reinstalação |
-| Monitoramento | **Plataforma IA própria** | Deploy Year 2 — substitui analistas SCADA manuais |
+| Monitoramento | **Plataforma IA própria** | Deploy Ano 2 — rollout completo Ano 3 |
 
 > ¹ **Por que BNDES não é a rota principal**: exige fabricação nacional, elevando CAPEX em
 > 20–30% para a mesma capacidade geradora. DSCR cai para 0,80–0,90× — inviável.
@@ -46,20 +47,21 @@ Valor mensal integral (sem desconto):
 
 Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa nem do investidor.
 
-| Item | Escala Inicial (1–30 proj.) | Escala Madura com IA (100+ proj.) | Variação |
-|------|-----------------------------|----------------------------------|----------|
+| Item | Escala Inicial (1–36 meses) | Escala Madura com IA (mês 37+) | Variação |
+|------|-----------------------------|--------------------------------|----------|
 | Manutenção técnica de campo | R$ 6.500 | R$ 2.800 | IA preditiva reduz visitas reativas |
 | Seguro patrimonial | R$ 2.200 | R$ 1.500 | Apólice coletiva |
 | SCADA / Monitoramento IA | R$ 1.500 | **R$ 150** | Plataforma própria amortizada |
 | Administração da SPE | R$ 1.000 | R$ 600 | Automação administrativa |
 | Fundo de contingência | R$ 1.300 | **R$ 700** | Manutenção preditiva reduz surpresas |
-| **Total O&M mensal** | **R$ 12.500** | **R$ 5.750** | **-54% vs escala inicial** |
+| **Total O&M mensal** | **R$ 12.500** | **R$ 5.750** | **-54% a partir do mês 37** |
 | **Total O&M anual** | **R$ 150.000** | **R$ 69.000** | |
 | **O&M como % receita BOT** | **11,4%** | **5,2%** | |
 
 > **O&M escala madura sem IA seria R$ 7.100/mês.** A plataforma de monitoramento por IA
 > reduz o custo em R$ 1.350/projeto/mês — representando R$ 3,68M/ano de economia
 > a 227 projetos. Investimento de desenvolvimento: R$ 250k (payback < 3 meses).
+> **Rollout completo até o Ano 3 (mês 36)** — 2 anos antes do modelo anterior.
 
 ### 3.2 Nível da Empresa — Overhead (anual)
 
@@ -102,24 +104,24 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
   RECEITA BOT (cliente, desconto 10%)         R$ 110.062/mês
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   (-) O&M — custo do projeto (antes do split)
-      Escala Inicial (sem IA)                -R$  12.500/mês
-      Escala Madura (com IA)                 -R$   5.750/mês
+      Fase inicial — meses 1–36  (sem IA plena)  -R$  12.500/mês
+      Fase madura  — mês 37–180  (IA plena)       -R$   5.750/mês
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   EBITDA PARA DISTRIBUIÇÃO
-      Escala Inicial                          R$  97.562/mês
-      Escala Madura com IA                    R$ 104.312/mês
+      Fase inicial                                R$  97.562/mês
+      Fase madura com IA                          R$ 104.312/mês
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   EMPRESA 10%:
-      Escala Inicial   R$   9.756/mês
-      Escala Madura    R$  10.431/mês
+      Fase inicial   R$   9.756/mês
+      Fase madura    R$  10.431/mês
 
   INVESTIDORES 90% — WATERFALL (3 tranches):
       🔵 Senior   (75%):  R$  65.875/mês  [17,0%/ano — fixo]
       🟡 Mezanino (15%):  R$  13.950/mês  [18,0%/ano — fixo]
-      🔴 Equity   (10%):  R$   7.981/mês  [15,4%/ano — inicial]
-                          R$  14.056/mês  [27,2%/ano — maduro c/ IA]
-      Total investidores (inicial):           R$  87.806/mês
-      Total investidores (maduro c/ IA):      R$  93.881/mês  [18,17% blended]
+      🔴 Equity   (10%):  R$   7.981/mês  [15,4%/ano — inicial, meses 1–36]
+                          R$  14.056/mês  [27,2%/ano — maduro c/ IA, mês 37+]
+      Total investidores (fase inicial):          R$  87.806/mês
+      Total investidores (fase madura c/ IA):     R$  93.881/mês  [18,17% blended]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -132,7 +134,7 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 ║        COMPARATIVO BOT — 10 ANOS vs 15 ANOS (com IA de monitoramento)  ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 
-━━━ INVESTIDORES | Capital total: R$ 6.200.000 | 3 tranches ━━━━━━━━━━━━━
+━━━ INVESTIDORES | Capital total: R$ 6.200.000 | 3 tranches | Maturidade 3 anos ━━━
 
                               10 ANOS           15 ANOS
   Total mensal (maduro)       R$ 93.881         R$ 93.881   (igual)
@@ -140,12 +142,12 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
   🔵 Senior yield             17,0% (fixo)      17,0% (fixo)
   🟡 Mezanino yield           18,0% (fixo)      18,0% (fixo)
   🔴 Equity yield (maduro)    27,2% (residual)  27,2% (residual)
-  🔴 Equity IRR               —                 ~19–20%  ✓
-  Recupera capital em         Mês 68            Mês 68      (igual)
-  Total recebido (blended)    R$ 10.996.020     R$ 16.534.080
-  Múltiplo blended            1,77×             2,67×
-  IRR blended                 ~14,2%  ✗         ~17,0%  ✓
-  vs CDI+3% (16,25%)          -2,05 p.p.  ✗    +0,75 p.p.  ✓
+  🔴 Equity IRR               —                 ~22,6%  ✓
+  Recupera capital em         Mês 69            Mês 69
+  Total recebido (blended)    R$ 11.141.136     R$ 16.679.760
+  Múltiplo blended            1,80×             2,69×
+  IRR blended                 ~14,5%  ✗         ~17,0%  ✓
+  vs CDI+3% (16,25%)          -1,75 p.p.  ✗    +0,75 p.p.  ✓
 
 ━━━ CLIENTE | Mensalidade: R$ 110.062/mês ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -160,8 +162,8 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 
                               10 ANOS           15 ANOS
   EPC margin (upfront)        R$   930.000      R$   930.000
-  Fee 10% acumulado           R$ 1.220.520      R$ 1.837.080
-  Total ciclo 1               R$ 2.150.520      R$ 2.767.080
+  Fee 10% acumulado           R$ 1.236.720      R$ 1.853.280
+  Total ciclo 1               R$ 2.166.720      R$ 2.783.280
   WALE médio na saída (Ano 7)  ~7 anos           ~12 anos
   Valuation saída estimado     ~R$ 2,05B         ~R$ 2,46B
 
@@ -169,7 +171,7 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 │  VEREDITO                                                                │
 │  Investidor:  IRR blended 17,0% > CDI+3% com contrato 15 anos  ✓       │
 │  Cliente:     economiza R$11M — proposta muito mais forte               │
-│  Empresa:     O&M -54%, Equity captura toda eficiência da IA            │
+│  Empresa:     O&M -54% a partir mês 37, Equity IRR 22,6%               │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -191,7 +193,7 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 ```
   EBITDA do projeto entra "por cima" e desce pela cachoeira
 
-  EBITDA maduro c/ IA:  R$ 104.312/mês
+  EBITDA maduro c/ IA (mês 37+):  R$ 104.312/mês
   ─────────────────────────────────────────────────────────────────────
   → 🏢 EMPRESA (10%):    R$  10.431/mês  (sai primeiro, fixo)
   → Investidores (90%):  R$  93.881/mês  (distribuídos em waterfall)
@@ -212,25 +214,29 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
   ┌──────────────────────────────────────────────────────────────────┐
   │  🔴 EQUITY — RESIDUAL                                           │
   │  Recebe o que sobrar após Senior e Mezanino.                    │
-  │  Fase inicial:  R$  7.981/mês  = 15,4%/ano                     │
-  │  Fase madura:   R$ 14.056/mês  = 27,2%/ano  ← ganho da IA      │
+  │  Meses 1–36  (fase inicial):  R$  7.981/mês  = 15,4%/ano       │
+  │  Mês 37–180  (fase madura):   R$ 14.056/mês  = 27,2%/ano       │
   └──────────────────────────────────────────────────────────────────┘
 ```
 
-### 6.3 Por Que o Equity Sobe de 15,4% para 27,2%
+### 6.3 Por Que o Equity Sobe de 15,4% para 27,2% no Mês 37
 
 ```
   A EFICIÊNCIA DA PLATAFORMA DE IA VAI INTEIRAMENTE PARA O EQUITY.
 
-  Senior e Mezanino recebem valores FIXOS — não capturm melhoria de O&M.
+  Senior e Mezanino recebem valores FIXOS — não capturam melhoria de O&M.
   O Equity recebe o RESIDUAL — toda redução de O&M se converte em upside.
 
-  Redução O&M (mês 60→61):  R$ 12.500 → R$ 5.750 = -R$ 6.750/mês
+  Redução O&M (mês 36→37):   R$ 12.500 → R$ 5.750 = -R$ 6.750/mês
   Impacto no EBITDA:          R$ 97.562 → R$ 104.312 = +R$ 6.750/mês
   90% vai para investidores:  +R$ 6.075/mês
   Senior recebe:              R$ 0 a mais  (fixo)
   Mezanino recebe:            R$ 0 a mais  (fixo)
   Equity recebe:              +R$ 6.075/mês  ← captura tudo
+
+  Maturidade atingida no Ano 3 (mês 36):
+  → Plataforma IA: MVP Ano 2, rollout completo Ano 3
+  → 24 meses de antecipação vs modelo de maturidade 5 anos
 ```
 
 ### 6.4 Retorno por Tranche — 15 Anos
@@ -239,8 +245,8 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 
 | Período | Mensal | Subtotal |
 |---------|--------|---------|
-| Meses 1–60 (inicial) | R$ 65.875 | R$ 3.952.500 |
-| Meses 61–180 (maduro c/ IA) | R$ 65.875 | R$ 7.905.000 |
+| Meses 1–36 (fase inicial) | R$ 65.875 | R$ 2.371.500 |
+| Meses 37–180 (fase madura c/ IA) | R$ 65.875 | R$ 9.486.000 |
 | **Total 15 anos** | | **R$ 11.857.500** |
 | Capital investido | | R$ 4.650.000 |
 | Múltiplo | | **2,55×** |
@@ -251,8 +257,8 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 
 | Período | Mensal | Subtotal |
 |---------|--------|---------|
-| Meses 1–60 (inicial) | R$ 13.950 | R$ 837.000 |
-| Meses 61–180 (maduro c/ IA) | R$ 13.950 | R$ 1.674.000 |
+| Meses 1–36 (fase inicial) | R$ 13.950 | R$ 502.200 |
+| Meses 37–180 (fase madura c/ IA) | R$ 13.950 | R$ 2.008.800 |
 | **Total 15 anos** | | **R$ 2.511.000** |
 | Capital investido | | R$ 930.000 |
 | Múltiplo | | **2,70×** |
@@ -263,18 +269,29 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 
 | Período | Mensal | Subtotal | Yield período |
 |---------|--------|---------|---------------|
-| Meses 1–60 (inicial, O&M R$12.500) | R$ 7.981 | R$ 478.860 | 15,4%/ano |
-| Meses 61–180 (maduro c/ IA, O&M R$5.750) | R$ 14.056 | R$ 1.686.720 | 27,2%/ano |
-| **Total 15 anos** | | **R$ 2.165.580** | |
+| Meses 1–36 (fase inicial, O&M R$12.500) | R$ 7.981 | R$ 287.316 | 15,4%/ano |
+| Meses 37–180 (fase madura c/ IA, O&M R$5.750) | R$ 14.056 | R$ 2.024.064 | 27,2%/ano |
+| **Total 15 anos** | | **R$ 2.311.380** | |
 | Capital investido | | R$ 620.000 | |
-| Múltiplo | | **3,49×** | |
-| **IRR 15 anos** | | **~19–20%** ✓ | |
+| Múltiplo | | **3,73×** | |
+| **Yield médio anual (contrato)** | | **24,9%/ano** | |
+| **IRR 15 anos** | | **22,6%** ✓ | |
 
 > **Pitch Equity**: *"Você investe R$ 620k e se beneficia diretamente da eficiência da
-> nossa plataforma de IA. O retorno começa conservador (15,4%) e cresce para 27,2%
-> quando a IA reduz os custos operacionais. IRR de ~19-20% em 15 anos — 3,49× o capital."*
+> nossa plataforma de IA. Retorno inicial de 15,4% sobe para 27,2% a partir do mês 37.
+> IRR de 22,6% em 15 anos — 3,73× o capital. Yield médio de 24,9%/ano no contrato."*
 
-### 6.5 Buffers de Proteção (DSCR)
+### 6.5 Rentabilidade Mensal — Resumo por Tranche
+
+| Tranche | Capital | Mensal (R$) | % ao mês | % ao ano | Tipo |
+|---------|---------|------------|---------|---------|------|
+| 🔵 Senior | R$ 4.650.000 | R$ 65.875 | **1,417%** | 17,0% | Fixo |
+| 🟡 Mezanino | R$ 930.000 | R$ 13.950 | **1,500%** | 18,0% | Fixo |
+| 🔴 Equity (meses 1–36) | R$ 620.000 | R$ 7.981 | **1,287%** | 15,4% | Residual |
+| 🔴 Equity (mês 37–180) | R$ 620.000 | R$ 14.056 | **2,267%** | 27,2% | Residual |
+| 🔴 **Equity (média contrato)** | R$ 620.000 | **R$ 12.841** | **1,490%** | **24,9%** | |
+
+### 6.6 Buffers de Proteção (DSCR)
 
 ```
   EBITDA mínimo fase inicial: R$ 97.562/mês
@@ -289,15 +306,15 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
   Senior quebra se EBITDA cai abaixo de:   R$ 73.194  (queda de 30%)
 ```
 
-### 6.6 Perfil de Investidor por Tranche
+### 6.7 Perfil de Investidor por Tranche
 
 | Tranche | Perfil ideal | Ticket | Argumento principal |
 |---------|-------------|--------|---------------------|
 | 🔵 Senior | Banco, fundo de pensão, FIDC | R$ 4,65M | "17% fixo, 1º na fila, DSCR 1,33×" |
 | 🟡 Mezanino | Family office, HNWI | R$ 930k | "18% fixo, protegido até -22% de EBITDA" |
-| 🔴 Equity | Angel, co-investidor, empresa | R$ 620k | "IRR ~19-20%, 3,49× capital, upside da IA" |
+| 🔴 Equity | Angel, co-investidor, empresa | R$ 620k | "IRR 22,6%, 3,73× capital, yield médio 24,9%" |
 
-### 6.7 Plataforma de IA como Diferencial Competitivo
+### 6.8 Plataforma de IA como Diferencial Competitivo
 
 ```
   O que a IA de monitoramento entrega:
@@ -309,10 +326,10 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
   │  • Relatórios mensais automatizados por SPE             │
   │  • Uptime: 98% → 99,2% com manutenção preditiva         │
   │  • Dados de 227 projetos × 15 anos = ativo intelectual  │
-  │    valioso no processo de venda da empresa              │
   └─────────────────────────────────────────────────────────┘
 
-  Investimento: R$ 250k (Ano 2: R$150k + Ano 3: R$100k)
+  Investimento: R$ 250k (Ano 2: R$150k MVP + Ano 3: R$100k v2)
+  Rollout completo: Ano 3 (mês 36) — todos os projetos ativos
   Economia anual (227 projetos): R$ 3,68M (O&M) + R$ 742k (analistas)
   Payback: < 3 meses
   Beneficiário direto: Tranche Equity — captura toda eficiência gerada
@@ -325,8 +342,8 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   CLIENTE PAGA: R$ 110.062/mês
-  (-) O&M:      -R$ 12.500 (inicial) → -R$ 5.750 (maduro c/ IA)
-  EBITDA:        R$  97.562 (inicial) →  R$ 104.312 (maduro c/ IA)
+  (-) O&M:  -R$ 12.500 (meses 1–36)  →  -R$ 5.750 (mês 37–180, c/ IA)
+  EBITDA:    R$  97.562 (meses 1–36)  →   R$ 104.312 (mês 37–180, c/ IA)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ┌──────────────────────────────────────┬────────────────────────────────────┐
@@ -334,15 +351,15 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 ├──────────────────────────────────────┼────────────────────────────────────┤
 │                                      │  EPC margin:   R$    930.000       │
 │  🔵 SENIOR (75%)                     │                                    │
-│  Capital:     R$ 4.650.000           │  Anos 1–5:                         │
-│  Yield fixo:  17,0%/ano              │  R$ 9.756/mês = R$  585.360       │
+│  Capital:     R$ 4.650.000           │  Meses 1–36:                       │
+│  Yield fixo:  17,0%/ano              │  R$ 9.756/mês = R$  351.216       │
 │  Mensal:      R$    65.875           │                                    │
-│  15 anos:     R$ 11.857.500          │  Anos 6–15:                        │
-│  Múltiplo:    2,55×                  │  R$10.431/mês = R$ 1.251.720      │
+│  15 anos:     R$ 11.857.500          │  Meses 37–180:                     │
+│  Múltiplo:    2,55×                  │  R$10.431/mês = R$ 1.502.064      │
 │  IRR:         ~16,8%  ✓              │                                    │
-│                                      │  Fee total:    R$ 1.837.080        │
+│                                      │  Fee total:    R$ 1.853.280        │
 │  🟡 MEZANINO (15%)                   │  + EPC:        R$   930.000        │
-│  Capital:     R$   930.000           │  TOTAL CICLO 1:R$ 2.767.080        │
+│  Capital:     R$   930.000           │  TOTAL CICLO 1:R$ 2.783.280        │
 │  Yield fixo:  18,0%/ano              │                                    │
 │  Mensal:      R$    13.950           │                                    │
 │  15 anos:     R$  2.511.000          │                                    │
@@ -351,20 +368,21 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 │                                      │                                    │
 │  🔴 EQUITY (10%) — residual          │                                    │
 │  Capital:     R$   620.000           │                                    │
-│  M1–60:   R$  7.981 = R$  478.860   │                                    │
-│  M61–180: R$ 14.056 = R$1.686.720   │                                    │
-│  15 anos:     R$  2.165.580          │                                    │
-│  Múltiplo:    3,49×                  │                                    │
-│  IRR:         ~19–20%  ✓             │                                    │
+│  M1–36:   R$  7.981 = R$  287.316   │                                    │
+│  M37–180: R$ 14.056 = R$2.024.064   │                                    │
+│  15 anos:     R$  2.311.380          │                                    │
+│  Múltiplo:    3,73×                  │                                    │
+│  Yield médio: 24,9%/ano              │                                    │
+│  IRR:         22,6%  ✓               │                                    │
 │                                      │                                    │
 │  TOTAL INVESTIDORES:                 │                                    │
-│  R$ 16.534.080 | 2,67× capital      │                                    │
+│  R$ 16.679.760 | 2,69× capital      │                                    │
 │  IRR blended: ~17,0%  ✓             │                                    │
 ├──────────────────────────────────────┴────────────────────────────────────┤
 │  FIM DO CONTRATO (MÊS 180):                                               │
 │  Taxa de saída (cliente paga):  R$ 800.000                               │
 │  Custo retirada + reinstalação: -R$ 800.000  → custo líquido = R$0       │
-│  Empresa retoma ativo. Investidores encerraram com 2,55–3,49× capital.   │
+│  Empresa retoma ativo. Investidores encerraram com 2,55–3,73× capital.   │
 ├───────────────────────────────────────────────────────────────────────────┤
 │  POSIÇÃO LÍQUIDA DO CLIENTE:                                              │
 │  Tarifa mercado 15 anos (+5%/ano):  R$31.671.000                         │
@@ -406,11 +424,11 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 | Fonte | Momento | Valor |
 |-------|---------|-------|
 | Margem EPC | Ano 0 | **R$ 930.000** |
-| Fee 10% — Anos 1–5 (inicial, ×60m) | Mensal | R$ 585.360 |
-| Fee 10% — Anos 6–15 (maduro IA, ×120m) | Mensal | R$ 1.251.720 |
-| **Total Ciclo 1** | | **R$ 2.767.080** |
+| Fee 10% — Meses 1–36 (fase inicial) | Mensal | R$ 351.216 |
+| Fee 10% — Meses 37–180 (fase madura c/ IA) | Mensal | R$ 1.502.064 |
+| **Total Ciclo 1** | | **R$ 2.783.280** |
 | Taxa de saída (custo líquido) | Mês 180 | R$ 0 |
-| **Receita média anual ciclo 1** | | **R$ 184.472** |
+| **Receita média anual ciclo 1** | | **R$ 185.552** |
 
 ---
 
@@ -432,7 +450,7 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 
 | Custo | Ano 1 | Ano 3 | Ano 5 | Ano 7 |
 |-------|-------|-------|-------|-------|
-| O&M dos ativos (com IA a partir Ano 3) | R$ 0,8M | R$ 4,8M | R$ 11,2M | R$ 15,6M |
+| O&M dos ativos (IA plena a partir Ano 3) | R$ 0,8M | R$ 4,8M | R$ 11,2M | R$ 15,6M |
 | Overhead da empresa | R$ 2,6M | R$ 8,7M | R$ 26,4M | R$ 42,7M |
 | **Total** | **R$ 3,4M** | **R$ 13,5M** | **R$ 37,6M** | **R$ 58,3M** |
 
@@ -487,7 +505,8 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 ### ANO 3 (2028) — Aceleração | +25 projetos | R$ 45,1M
 ```
 □ Plataforma IA v2: manutenção preditiva + dispatch automático (R$ 100k)
-□ Lançar FIDC (R$ 80–150M) — cota Equity captura eficiência da IA
+□ ROLLOUT COMPLETO DA IA — todos os projetos ativos migrados (mês 36)
+□ Lançar FIDC (R$ 80–150M) — cota Equity passa a receber R$ 14.056/mês a partir daqui
 □ Substituir analistas SCADA manuais pela plataforma IA
 □ Iniciar licenciamento da plataforma para terceiros
 □ Habilitação BESS para ancilares CCEE
@@ -557,10 +576,9 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 | Cliente não aceita 15 anos | Média | Alto | Economia R$11M é argumento central |
 | Yield spread fino vs CDI+3% | Alta | Crítico | Senior 17% e Mezanino 18% > CDI+3% |
 | O&M subestimado | Baixa | Médio | IA preditiva + fundo contingência + DSCR 1,33× Senior |
-| Plataforma IA não se desenvolve | Baixa | Médio | MVP em Ano 2; fallback: SaaS terceiro |
+| Plataforma IA atrasa rollout | Média | Médio | Equity recebe 15,4% até mês 36 — IRR cai mas ainda > CDI+3% |
 | Overhead cresce > receita | Média | Alto | Contratação vinculada a projetos assinados |
 | Comprador não aparece Ano 7 | Baixa | Crítico | 3 formatos de saída; 15+ compradores |
-| Equity questiona yield inicial baixo | Média | Baixo | IRR 15 anos ~19-20%; pitch como performance tranche |
 
 ---
 
@@ -575,11 +593,12 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 | AUM | R$ 136M | R$ 508M | R$ 787M | R$ 1,41B |
 | Yield Senior (fixo) | 17,0% | 17,0% | 17,0% | 17,0% |
 | Yield Mezanino (fixo) | 18,0% | 18,0% | 18,0% | 18,0% |
-| Yield Equity (residual, maduro) | — | ~25% | ~26% | 27,2% |
+| Yield Equity (residual, maduro) | 27,2% | 27,2% | 27,2% | 27,2% |
+| Yield Equity médio acumulado | ~16% | ~24% | ~25% | 24,9% |
 | IRR blended investidor | ~15% | ~16% | ~16,8% | ~17,0% |
 | Spread vs CDI+3% (yield blended) | +0,75 p.p. | +1,25 p.p. | +1,75 p.p. | +1,92 p.p. |
-| O&M como % receita BOT | 11,4% | 6,5% | 5,5% | 5,2% |
-| Uptime médio portfólio | 96% | 98% | 99% | 99,2% |
+| O&M como % receita BOT | 11,4% | 5,2% | 5,2% | 5,2% |
+| Uptime médio portfólio | 96% | 99,2% | 99,2% | 99,2% |
 | WALE médio contratos | 14 anos | 13 anos | 13 anos | 12 anos |
 | Projetos monitorados por IA | 0 | 82 | 127 | 227 |
 | NPS clientes | 55 | 65 | 72 | 78 |
@@ -596,7 +615,7 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 
 ### Sprint 2 (Semanas 3–8): Captação e Tecnologia
 - [ ] Pitch deck por perfil: Senior (bancos), Mezanino (family offices), Equity (angels)
-- [ ] Iniciar arquitetura da plataforma IA de monitoramento
+- [ ] Iniciar arquitetura da plataforma IA — meta: rollout completo Ano 3 (mês 36)
 - [ ] SPE piloto com 1º investidor real
 
 ### Sprint 3 (Semanas 5–12): Pipeline
@@ -614,6 +633,7 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 | **O&M** | Operação e manutenção — custo do projeto, antes do split |
 | **IA de Monitoramento** | Plataforma própria: detecção de anomalias + manutenção preditiva + dispatch automático |
 | **EBITDA do Projeto** | Receita BOT menos O&M — base para split 90/10 |
+| **Curva de Maturidade** | Período de transição do O&M inicial (R$12.500) para maduro c/ IA (R$5.750) — 3 anos |
 | **WALE** | Weighted Average Life: prazo médio ponderado restante dos contratos |
 | **IRR** | Taxa Interna de Retorno — considera timing e valor do dinheiro |
 | **Yield** | Retorno anual cash-on-cash — métrica principal para o investidor |
@@ -630,8 +650,8 @@ Deduzido da receita BOT **antes** do split. Custo do projeto — não da empresa
 
 ---
 
-*Versão 8.0 — Maio/2026 | Confidencial*
-*Contrato: 15 anos | O&M maduro com IA: R$ 5.750/projeto/mês*
-*Estrutura: 3 tranches — Senior 17% fixo / Mezanino 18% fixo / Equity residual (IRR ~19-20%)*
-*Waterfall: Empresa 10% → Senior → Mezanino → Equity | Base: EBITDA R$ 104.312/mês*
-*WALE saída: ~12 anos | Plataforma IA: benefício direto à tranche Equity*
+*Versão 9.0 — Maio/2026 | Confidencial*
+*Contrato: 15 anos | O&M maduro com IA: R$ 5.750/projeto/mês a partir do mês 37*
+*Estrutura: 3 tranches — Senior 17% fixo / Mezanino 18% fixo / Equity residual*
+*Equity: IRR 22,6% | yield médio 24,9%/ano | 3,73× capital em 15 anos*
+*Waterfall: Empresa 10% → Senior → Mezanino → Equity | Maturidade IA: Ano 3 (mês 36)*
